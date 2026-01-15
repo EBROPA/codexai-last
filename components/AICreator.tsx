@@ -103,7 +103,7 @@ export const AICreator: React.FC = () => {
                    <ul className="space-y-3">
                      {concept.features.map((feature, idx) => (
                        <li key={idx} className="flex items-start gap-3 text-zinc-300">
-                        <span className="text-neon-acid mt-1">{">>"}</span>
+                         <span className="text-neon-acid mt-1">>></span>
                          {feature}
                        </li>
                      ))}

@@ -64,19 +64,19 @@ export const Problem: React.FC = () => {
               </h3>
               <ul className="space-y-4 font-mono text-sm text-white">
                 <li className="flex items-center gap-2">
-                  <span className="text-neon-acid">{">>>"}</span> 
+                  <span className="text-neon-acid">>>></span> 
                   <span className="bg-neon-acid/10 px-1">Эмоциональный захват</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className="text-neon-acid">{">>>"}</span> 
+                  <span className="text-neon-acid">>>></span> 
                   Визуальная доминация
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className="text-neon-acid">{">>>"}</span> 
+                  <span className="text-neon-acid">>>></span> 
                   Сценарий продаж
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className="text-neon-acid">{">>>"}</span> 
+                  <span className="text-neon-acid">>>></span> 
                   Технологическое превосходство
                 </li>
               </ul>

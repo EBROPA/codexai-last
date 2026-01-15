@@ -50,7 +50,7 @@ export const ServicesPage: React.FC = () => {
                 {serviceKeys.map(key => (
                     <button
                         key={key}
-                        onClick={() => router.push(`/services/${String(key)}`)}
+                        onClick={() => router.push(`/services/${key}`)}
                         className={`
                             whitespace-nowrap px-4 py-3 text-left font-serif text-sm md:text-base border border-white/10 transition-all duration-300
                             ${serviceKey === key 
