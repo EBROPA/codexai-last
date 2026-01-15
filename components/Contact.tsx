@@ -7,12 +7,31 @@ export const Contact: React.FC = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const { t } = useLanguage();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsSubmitted(true);
-    setTimeout(() => {
-      setIsSubmitted(false);
-    }, 3000);
+    
+    const formData = new FormData(e.currentTarget);
+    const data = Object.fromEntries(formData.entries());
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (response.ok) {
+        setIsSubmitted(true);
+        setTimeout(() => {
+          setIsSubmitted(false);
+          (e.target as HTMLFormElement).reset();
+        }, 3000);
+      }
+    } catch (error) {
+      console.error('Error sending message:', error);
+    }
   };
 
   return (
@@ -81,30 +100,37 @@ export const Contact: React.FC = () => {
                     <div className="group/input">
                        <label className="block font-mono text-[10px] text-neon-purple mb-2 opacity-0 group-focus-within/input:opacity-100 transition-opacity uppercase">{t.contact.form.name}</label>
                        <input 
+                         name="name"
                          type="text" 
                          placeholder={t.contact.form.namePlaceholder}
                          className="w-full bg-transparent border-b border-zinc-800 py-3 text-lg font-sans text-white placeholder-zinc-600 focus:outline-none focus:border-neon-purple transition-colors"
+                         required
                        />
                     </div>
                     <div className="group/input">
                        <label className="block font-mono text-[10px] text-neon-purple mb-2 opacity-0 group-focus-within/input:opacity-100 transition-opacity uppercase">{t.contact.form.niche}</label>
                        <input 
+                         name="niche"
                          type="text" 
                          placeholder={t.contact.form.nichePlaceholder}
                          className="w-full bg-transparent border-b border-zinc-800 py-3 text-lg font-sans text-white placeholder-zinc-600 focus:outline-none focus:border-neon-purple transition-colors"
+                         required
                        />
                     </div>
                     <div className="group/input">
                        <label className="block font-mono text-[10px] text-neon-purple mb-2 opacity-0 group-focus-within/input:opacity-100 transition-opacity uppercase">{t.contact.form.contact}</label>
                        <input 
+                         name="contact"
                          type="text" 
                          placeholder={t.contact.form.contactPlaceholder}
                          className="w-full bg-transparent border-b border-zinc-800 py-3 text-lg font-sans text-white placeholder-zinc-600 focus:outline-none focus:border-neon-purple transition-colors"
+                         required
                        />
                     </div>
                     <div className="group/input">
                        <label className="block font-mono text-[10px] text-neon-purple mb-2 opacity-0 group-focus-within/input:opacity-100 transition-opacity uppercase">{t.contact.form.comment}</label>
                        <textarea 
+                         name="comment"
                          rows={2}
                          placeholder={t.contact.form.commentPlaceholder}
                          className="w-full bg-transparent border-b border-zinc-800 py-3 text-lg font-sans text-white placeholder-zinc-600 focus:outline-none focus:border-neon-purple transition-colors resize-none"
