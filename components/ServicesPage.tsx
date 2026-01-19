@@ -7,15 +7,13 @@ import { SEO } from './SEO';
 
 // Mapping icons for usage with dynamic content
 const ICONS = {
-  'web-development': <Layout className="text-neon-acid" size={48} />,
-  'telegram-bots': <Bot className="text-neon-acid" size={48} />,
-  'ai-integration': <Brain className="text-neon-acid" size={48} />,
-  'complex-integrations': <Database className="text-neon-acid" size={48} />,
-  'telegram-mini-apps': <Rocket className="text-neon-acid" size={48} />,
-  'reputation-guard': <Shield className="text-neon-acid" size={48} />,
-  'custom-software': <Cpu className="text-neon-acid" size={48} />,
-  'yandex-direct': <MousePointerClick className="text-neon-acid" size={48} />,
-  'telegram-ads': <Megaphone className="text-neon-acid" size={48} />
+  'web': <Layout className="text-neon-acid" size={48} />,
+  'bots': <Bot className="text-neon-acid" size={48} />,
+  'ai': <Brain className="text-neon-acid" size={48} />,
+  'complex': <Database className="text-neon-acid" size={48} />,
+  'tma': <Rocket className="text-neon-acid" size={48} />,
+  'reputation': <Shield className="text-neon-acid" size={48} />,
+  'custom': <Cpu className="text-neon-acid" size={48} />
 };
 
 export const ServicesPage: React.FC = () => {
@@ -27,10 +25,10 @@ export const ServicesPage: React.FC = () => {
   // Find service in translations
   const serviceKey = (slug && t.servicesPage[slug as keyof typeof t.servicesPage]) 
     ? slug as keyof typeof t.servicesPage 
-    : 'web-development';
+    : 'web';
     
   const activeService = t.servicesPage[serviceKey];
-  const activeIcon = ICONS[serviceKey] || ICONS['web-development'];
+  const activeIcon = ICONS[serviceKey] || ICONS['web'];
 
   // For the sidebar list, we iterate over the keys of servicesPage
   const serviceKeys = Object.keys(t.servicesPage) as Array<keyof typeof t.servicesPage>;
