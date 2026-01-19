@@ -54,13 +54,15 @@ export const Navbar: React.FC = () => {
       desc: t.nav.desc.services,
       image: 'https://picsum.photos/seed/tech/800/600',
       subItems: [
-          { id: '/services/web', label: t.services.items.web.title },
-          { id: '/services/bots', label: t.services.items.bots.title },
-          { id: '/services/ai', label: t.services.items.ai.title },
-          { id: '/services/complex', label: t.services.items.complex.title },
-          { id: '/services/tma', label: t.services.items.tma.title },
-          { id: '/services/reputation', label: t.services.items.reputation.title },
-          { id: '/services/custom', label: t.services.items.custom.title },
+          { id: '/services/web-development', label: t.services.items['web-development'].title },
+          { id: '/services/telegram-bots', label: t.services.items['telegram-bots'].title },
+          { id: '/services/ai-integration', label: t.services.items['ai-integration'].title },
+          { id: '/services/complex-integrations', label: t.services.items['complex-integrations'].title },
+          { id: '/services/telegram-mini-apps', label: t.services.items['telegram-mini-apps'].title },
+          { id: '/services/reputation-guard', label: t.services.items['reputation-guard'].title },
+          { id: '/services/custom-software', label: t.services.items['custom-software'].title },
+          { id: '/services/yandex-direct', label: t.services.items['yandex-direct'].title },
+          { id: '/services/telegram-ads', label: t.services.items['telegram-ads'].title },
       ]
     },
     { 

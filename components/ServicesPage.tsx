@@ -1,39 +1,48 @@
 
 import React from 'react';
-import { ArrowRight, Layout, Bot, Brain, Shield, Rocket, Cpu, Database, ChevronRight, Terminal, Layers, Code2 } from 'lucide-react';
+import { ArrowRight, Layout, Bot, Brain, Shield, Rocket, Cpu, Database, ChevronRight, Terminal, Layers, Code2, MousePointerClick, Megaphone } from 'lucide-react';
 import { useRouter, useParams } from '../lib/router';
 import { useLanguage } from '../lib/i18n';
+import { SEO } from './SEO';
 
 // Mapping icons for usage with dynamic content
 const ICONS = {
-  web: <Layout className="text-neon-acid" size={48} />,
-  bots: <Bot className="text-neon-acid" size={48} />,
-  ai: <Brain className="text-neon-acid" size={48} />,
-  complex: <Database className="text-neon-acid" size={48} />,
-  tma: <Rocket className="text-neon-acid" size={48} />,
-  reputation: <Shield className="text-neon-acid" size={48} />,
-  custom: <Cpu className="text-neon-acid" size={48} />
+  'web-development': <Layout className="text-neon-acid" size={48} />,
+  'telegram-bots': <Bot className="text-neon-acid" size={48} />,
+  'ai-integration': <Brain className="text-neon-acid" size={48} />,
+  'complex-integrations': <Database className="text-neon-acid" size={48} />,
+  'telegram-mini-apps': <Rocket className="text-neon-acid" size={48} />,
+  'reputation-guard': <Shield className="text-neon-acid" size={48} />,
+  'custom-software': <Cpu className="text-neon-acid" size={48} />,
+  'yandex-direct': <MousePointerClick className="text-neon-acid" size={48} />,
+  'telegram-ads': <Megaphone className="text-neon-acid" size={48} />
 };
 
 export const ServicesPage: React.FC = () => {
   const router = useRouter();
   const params = useParams(); 
   const { slug } = params as { slug?: string }; 
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
 
   // Find service in translations
   const serviceKey = (slug && t.servicesPage[slug as keyof typeof t.servicesPage]) 
     ? slug as keyof typeof t.servicesPage 
-    : 'web';
+    : 'web-development';
     
   const activeService = t.servicesPage[serviceKey];
-  const activeIcon = ICONS[serviceKey] || ICONS.web;
+  const activeIcon = ICONS[serviceKey] || ICONS['web-development'];
 
   // For the sidebar list, we iterate over the keys of servicesPage
   const serviceKeys = Object.keys(t.servicesPage) as Array<keyof typeof t.servicesPage>;
 
   return (
     <div className="min-h-screen bg-black pt-24 pb-20 px-4 md:px-12 flex flex-col lg:flex-row gap-12 relative overflow-hidden">
+        <SEO 
+            title={activeService.metaTitle || activeService.title} 
+            description={activeService.metaDescription || activeService.description}
+            path={`/services/${String(serviceKey)}`}
+            lang={lang}
+        />
         
         {/* Decorative Background */}
         <div className="fixed top-0 left-0 w-[500px] h-[500px] bg-neon-acid/5 blur-[150px] rounded-full pointer-events-none -z-10" />
@@ -50,7 +59,7 @@ export const ServicesPage: React.FC = () => {
                 {serviceKeys.map(key => (
                     <button
                         key={key}
-                        onClick={() => router.push(`/services/${key}`)}
+                        onClick={() => router.push(`/services/${String(key)}`)}
                         className={`
                             whitespace-nowrap px-4 py-3 text-left font-serif text-sm md:text-base border border-white/10 transition-all duration-300
                             ${serviceKey === key 

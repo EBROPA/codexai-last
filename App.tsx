@@ -5,19 +5,24 @@ import { WorkPage } from './components/WorkPage';
 import { ServicesPage } from './components/ServicesPage';
 import { Contact } from './components/Contact';
 import { Marquee } from './components/Marquee';
+import { LegalPage } from './components/LegalPage';
 import { SEO } from './components/SEO';
 import { Layout } from './components/Layout';
 import { RouterProvider, usePathname, useRouter } from './lib/router';
+import { useLanguage } from './lib/i18n';
 import { Reviews } from './components/Reviews';
 import { FAQ } from './components/FAQ';
 
 // SEO Configuration
 const getSeoData = (path: string) => {
-  if (path === '/') return { title: "Digital Architects", description: "CODEXAI — авангардное цифровое агентство." };
+  if (path === '/') return { title: "Digital Architects", description: "CodexAI (Codexai) — веб-студия и digital-агентство. Разработка сайтов, Telegram-ботов, Telegram Mini Apps и AI интеграций. Кодексай — Digital Architects." };
   if (path === '/work') return { title: "Портфолио & Кейсы", description: "Избранные проекты CodexAI." };
   if (path.startsWith('/services')) return { title: "Наши Услуги", description: "Полный спектр цифровых решений." };
   if (path === '/contact') return { title: "Контакты", description: "Свяжитесь с CodexAI." };
-  return { title: "Digital Architects", description: "CODEXAI" };
+  if (path === '/user-agreement') return { title: "Пользовательское соглашение", description: "Пользовательское соглашение CODEXAI." };
+  if (path === '/data-processing') return { title: "Политика обработки данных", description: "Политика обработки персональных данных и файлов Cookie." };
+  if (path === '/consent') return { title: "Согласие на обработку данных", description: "Согласие на обработку персональных данных." };
+  return { title: "404", description: "Страница не найдена.", noIndex: true };
 };
 
 const NotFound: React.FC = () => {
@@ -38,6 +43,7 @@ const NotFound: React.FC = () => {
 
 const AppContent: React.FC = () => {
   const pathname = usePathname();
+  const { lang } = useLanguage();
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [displayedPath, setDisplayedPath] = useState(pathname);
 
@@ -95,6 +101,11 @@ const AppContent: React.FC = () => {
       );
     }
 
+    // Legal Pages
+    if (path === '/user-agreement') return <LegalPage type="userAgreement" />;
+    if (path === '/data-processing') return <LegalPage type="privacyPolicy" />;
+    if (path === '/consent') return <LegalPage type="consent" />;
+
     // 404
     return <NotFound />;
   };
@@ -103,7 +114,7 @@ const AppContent: React.FC = () => {
 
   return (
     <div className="bg-black text-white min-h-screen selection:bg-neon-acid selection:text-black">
-      <SEO title={seo.title} description={seo.description} />
+      <SEO title={seo.title} description={seo.description} path={pathname} noIndex={seo.noIndex} lang={lang} />
       
       <Layout>
         {/* Page Transition Overlay */}

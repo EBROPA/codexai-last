@@ -165,9 +165,6 @@ export const Contact: React.FC = () => {
              <span className="text-zinc-600 font-mono text-[10px] uppercase tracking-widest">{t.footer.rights}</span>
           </div>
           
-          <div className="flex flex-wrap gap-8 md:gap-12">
-             <a href="mailto:hello@codexai.agency" className="text-zinc-400 hover:text-white font-mono text-xs uppercase tracking-widest transition-colors">hello@codexai.agency</a>
-          </div>
       </div>
     </section>
   );
