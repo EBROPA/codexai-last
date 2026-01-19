@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { ArrowRight, Layout, Bot, Brain, Database, Rocket, Shield, Cpu } from 'lucide-react';
+import { ArrowRight, Layout, Bot, Brain, Database, Rocket, Shield, Cpu, Target, Send } from 'lucide-react';
 import { useRouter } from '../lib/router';
 import { useLanguage } from '../lib/i18n';
 
@@ -51,6 +51,18 @@ export const Services: React.FC = () => {
         title: t.services.items.custom.title,
         desc: t.services.items.custom.desc,
         icon: <Cpu className="text-neon-acid" size={24} />
+    },
+    {
+        id: '/services/direct',
+        title: t.services.items.direct.title,
+        desc: t.services.items.direct.desc,
+        icon: <Target className="text-neon-acid" size={24} />
+    },
+    {
+        id: '/services/tgads',
+        title: t.services.items.tgads.title,
+        desc: t.services.items.tgads.desc,
+        icon: <Send className="text-neon-acid" size={24} />
     }
   ];
 
@@ -76,9 +88,6 @@ export const Services: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-1">
           {services.map((service, index) => {
-             // Create a bento-like grid where the last item spans full width on lg screens
-             const isLast = index === services.length - 1;
-             
              return (
               <button 
                 key={service.id}
@@ -88,7 +97,6 @@ export const Services: React.FC = () => {
                 className={`
                   relative flex flex-col justify-between p-8 md:p-12 border border-white/10 bg-zinc-950/50 
                   transition-all duration-500 group text-left cursor-pointer
-                  ${isLast ? 'lg:col-span-3 lg:flex-row lg:items-center' : ''}
                   hover:bg-zinc-900 hover:border-white/30
                 `}
               >
@@ -96,12 +104,9 @@ export const Services: React.FC = () => {
                    <div className="p-3 border border-white/10 rounded-full bg-black group-hover:border-neon-acid transition-colors">
                       {service.icon}
                    </div>
-                   {isLast && (
-                       <div className="hidden lg:block h-px w-32 bg-white/10 group-hover:bg-neon-acid/50 transition-colors"></div>
-                   )}
                 </div>
 
-                <div className={`${isLast ? 'lg:flex-1 lg:flex lg:items-center lg:justify-between' : ''}`}>
+                <div>
                    <div>
                        <h3 className="text-3xl font-serif font-bold text-white mb-2 group-hover:text-neon-acid transition-colors">
                          {service.title}
@@ -111,7 +116,7 @@ export const Services: React.FC = () => {
                        </p>
                    </div>
                    
-                   <div className={`mt-8 ${isLast ? 'lg:mt-0' : ''}`}>
+                   <div className="mt-8">
                        <div className="flex items-center gap-2 text-sm text-zinc-400 font-mono group-hover:text-white transition-colors group-hover:translate-x-2 duration-300">
                            <span className="uppercase tracking-widest">{t.services.details}</span>
                            <ArrowRight size={14} />

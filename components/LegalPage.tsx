@@ -1,43 +1,53 @@
 import React from 'react';
-import { legalContent } from '../lib/legalContent';
-import { useRouter } from '../lib/router';
-import { ArrowLeft } from 'lucide-react';
+import { useLanguage } from '../lib/i18n';
+import { Shield, FileText, CheckCircle } from 'lucide-react';
 
 interface LegalPageProps {
-  type: keyof typeof legalContent;
+  type: 'userAgreement' | 'privacyPolicy' | 'consent';
 }
 
 export const LegalPage: React.FC<LegalPageProps> = ({ type }) => {
-  const router = useRouter();
-  const data = legalContent[type];
+  const { lang } = useLanguage();
 
-  if (!data) return null;
+  const contentMap = {
+    userAgreement: {
+      title: lang === 'ru' ? 'Пользовательское соглашение' : 'User Agreement',
+      icon: <FileText className="w-12 h-12 text-neon-acid mb-6" />,
+      text: lang === 'ru' 
+        ? "Текст пользовательского соглашения находится в разработке."
+        : "User agreement text is under development."
+    },
+    privacyPolicy: {
+      title: lang === 'ru' ? 'Политика конфиденциальности' : 'Privacy Policy',
+      icon: <Shield className="w-12 h-12 text-neon-acid mb-6" />,
+      text: lang === 'ru'
+        ? "Текст политики конфиденциальности находится в разработке."
+        : "Privacy policy text is under development."
+    },
+    consent: {
+      title: lang === 'ru' ? 'Согласие на обработку данных' : 'Data Processing Consent',
+      icon: <CheckCircle className="w-12 h-12 text-neon-acid mb-6" />,
+      text: lang === 'ru'
+        ? "Текст согласия на обработку персональных данных находится в разработке."
+        : "Data processing consent text is under development."
+    }
+  };
+
+  const currentContent = contentMap[type];
 
   return (
-    <div className="min-h-screen bg-black text-white pt-24 pb-12 px-4 md:px-12">
+    <div className="bg-void min-h-screen pt-32 pb-20 text-white px-4 md:px-12">
       <div className="max-w-4xl mx-auto">
-        <button 
-          onClick={() => router.push('/')}
-          className="group flex items-center gap-2 text-zinc-500 hover:text-neon-acid transition-colors mb-12 font-mono text-sm uppercase tracking-widest"
-        >
-          <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-          Назад
-        </button>
-
-        <header className="mb-16 border-b border-white/10 pb-8">
-          <h1 className="text-3xl md:text-5xl font-serif font-bold mb-4">{data.title}</h1>
-          <p className="text-zinc-500 font-mono text-xs uppercase tracking-widest">
-            Последнее обновление: {data.updatedAt}
-          </p>
-        </header>
-
-        <div className="space-y-12 text-zinc-300 leading-relaxed">
-          {data.content.map((section, index) => (
-            <section key={index}>
-              <h2 className="text-xl text-white font-bold mb-4">{section.heading}</h2>
-              <p className="text-zinc-400">{section.text}</p>
-            </section>
-          ))}
+        <div className="flex flex-col items-start mb-12">
+          {currentContent.icon}
+          <h1 className="text-4xl md:text-6xl font-serif font-bold mb-8">
+            {currentContent.title}
+          </h1>
+          <div className="prose prose-invert prose-lg max-w-none">
+            <p className="text-white/70 text-lg leading-relaxed">
+              {currentContent.text}
+            </p>
+          </div>
         </div>
       </div>
     </div>

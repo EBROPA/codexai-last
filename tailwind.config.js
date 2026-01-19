@@ -19,20 +19,20 @@ export default {
         'float': 'float 6s ease-in-out infinite',
         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         'spin-slow': 'spin 12s linear infinite',
-        'marquee': 'marquee 25s linear infinite',
-        'marquee-reverse': 'marqueeReverse 25s linear infinite',
+        'marquee-infinite': 'marqueeInfinite 25s linear infinite',
+        'marquee-infinite-reverse': 'marqueeInfiniteReverse 25s linear infinite',
       },
       keyframes: {
         float: {
           '0%, 100%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(-20px)' },
         },
-        marquee: {
+        marqueeInfinite: {
           '0%': { transform: 'translateX(0%)' },
-          '100%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(-50%)' },
         },
-        marqueeReverse: {
-          '0%': { transform: 'translateX(-100%)' },
+        marqueeInfiniteReverse: {
+          '0%': { transform: 'translateX(-50%)' },
           '100%': { transform: 'translateX(0%)' },
         }
       }

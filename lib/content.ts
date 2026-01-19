@@ -63,7 +63,9 @@ export const content = {
         complex: { title: 'Сложные Интеграции', desc: 'Custom Architecture & PWA' },
         tma: { title: 'Telegram Mini Apps', desc: 'Future of Mobile' },
         reputation: { title: 'Reputation Guard', desc: 'AI Protection' },
-        custom: { title: 'Уникальный Продукт', desc: 'Tailor-made Software' }
+        custom: { title: 'Уникальный Продукт', desc: 'Tailor-made Software' },
+        direct: { title: 'Яндекс.Директ', desc: 'Performance Marketing' },
+        tgads: { title: 'TG-ads', desc: 'Targeting & Seeding' }
       },
       details: 'Подробнее'
     },
@@ -365,6 +367,38 @@ export const content = {
                 { step: "04", title: "Scale", desc: "Масштабирование продукта." }
             ],
             techStack: ["Custom Stack", "WebGL", "Three.js", "Arduino", "Socket.io"]
+        },
+        direct: {
+            title: "Яндекс.Директ",
+            subtitle: "Performance Marketing",
+            description: "Настройка и ведение контекстной рекламы. Мы не просто приводим клики, мы приводим целевых лидов и масштабируем продажи.",
+            features: [
+                { title: "Поиск и РСЯ", desc: "Охват горячей аудитории", points: ["Сбор семантического ядра", "Минус-слова и кросс-минусовка", "Ретаргетинг", "Баннерная реклама"] },
+                { title: "Аналитика", desc: "Сквозная аналитика", points: ["Настройка Яндекс.Метрики", "Call-tracking", "Отслеживание ROI/ROMI", "Еженедельные отчеты"] }
+            ],
+            workflow: [
+                { step: "01", title: "Audit", desc: "Анализ текущих кампаний и конкурентов." },
+                { step: "02", title: "Setup", desc: "Сбор семантики и создание объявлений." },
+                { step: "03", title: "Launch", desc: "Запуск тестовых кампаний." },
+                { step: "04", title: "Optimize", desc: "Чистка трафика и масштабирование." }
+            ],
+            techStack: ["Yandex Direct", "Yandex Metrica", "Key Collector", "Direct Commander"]
+        },
+        tgads: {
+            title: "TG-ads",
+            subtitle: "Targeting & Seeding",
+            description: "Официальная реклама в Telegram и нативные посевы. Достаем аудиторию конкурентов и лидеров мнений без накруток.",
+            features: [
+                { title: "Telegram Ads", desc: "Официальная платформа", points: ["Таргетинг по каналам", "Таргетинг по интересам", "Низкий CPM", "Прохождение модерации"] },
+                { title: "Посевы", desc: "Нативная реклама", points: ["Подбор качественных каналов", "Проверка на ботов", "Написание постов", "Маркировка рекламы"] }
+            ],
+            workflow: [
+                { step: "01", title: "Strategy", desc: "Определение ЦА и каналов." },
+                { step: "02", title: "Creatives", desc: "Создание текстов и креативов." },
+                { step: "03", title: "Launch", desc: "Запуск кабинета или посевов." },
+                { step: "04", title: "Report", desc: "Анализ эффективности и отчет." }
+            ],
+            techStack: ["Telegram Ads Platform", "Telemetr", "TGStat", "eLama"]
         }
     }
   },
@@ -429,7 +463,9 @@ export const content = {
         complex: { title: 'Complex Integrations', desc: 'Custom Architecture & PWA' },
         tma: { title: 'Telegram Mini Apps', desc: 'Future of Mobile' },
         reputation: { title: 'Reputation Guard', desc: 'AI Protection' },
-        custom: { title: 'Unique Product', desc: 'Tailor-made Software' }
+        custom: { title: 'Unique Product', desc: 'Tailor-made Software' },
+        direct: { title: 'Yandex.Direct', desc: 'Performance Marketing' },
+        tgads: { title: 'Telegram Ads', desc: 'Targeting & Seeding' }
       },
       details: 'Details'
     },
@@ -731,6 +767,38 @@ export const content = {
                 { step: "04", title: "Scale", desc: "Product scaling." }
             ],
             techStack: ["Custom Stack", "WebGL", "Three.js", "Arduino", "Socket.io"]
+        },
+        direct: {
+            title: "Yandex.Direct",
+            subtitle: "Performance Marketing",
+            description: "Contextual advertising setup and management. We don't just bring clicks, we bring targeted leads and scale sales.",
+            features: [
+                { title: "Search & Networks", desc: "Hot Audience Reach", points: ["Semantic core collection", "Negative keywords", "Retargeting", "Display advertising"] },
+                { title: "Analytics", desc: "End-to-end Analytics", points: ["Yandex.Metrica setup", "Call-tracking", "ROI/ROMI tracking", "Weekly reports"] }
+            ],
+            workflow: [
+                { step: "01", title: "Audit", desc: "Analysis of current campaigns and competitors." },
+                { step: "02", title: "Setup", desc: "Semantics collection and ad creation." },
+                { step: "03", title: "Launch", desc: "Launch of test campaigns." },
+                { step: "04", title: "Optimize", desc: "Traffic cleaning and scaling." }
+            ],
+            techStack: ["Yandex Direct", "Yandex Metrica", "Key Collector", "Direct Commander"]
+        },
+        tgads: {
+            title: "Telegram Ads",
+            subtitle: "Targeting & Seeding",
+            description: "Official Telegram advertising and native seeding. Reach competitor audiences and opinion leaders without bots.",
+            features: [
+                { title: "Telegram Ads", desc: "Official Platform", points: ["Channel targeting", "Interest targeting", "Low CPM", "Moderation pass"] },
+                { title: "Seeding", desc: "Native Advertising", points: ["Quality channel selection", "Bot check", "Post writing", "Ad labeling"] }
+            ],
+            workflow: [
+                { step: "01", title: "Strategy", desc: "Defining TA and channels." },
+                { step: "02", title: "Creatives", desc: "Creating texts and creatives." },
+                { step: "03", title: "Launch", desc: "Cabinet launch or seeding." },
+                { step: "04", title: "Report", desc: "Efficiency analysis and report." }
+            ],
+            techStack: ["Telegram Ads Platform", "Telemetr", "TGStat", "eLama"]
         }
     }
   }

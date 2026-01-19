@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ArrowRight, Layout, Bot, Brain, Shield, Rocket, Cpu, Database, ChevronRight, Terminal, Layers, Code2, MousePointerClick, Megaphone } from 'lucide-react';
+import { ArrowRight, Layout, Bot, Brain, Shield, Rocket, Cpu, Database, ChevronRight, Terminal, Layers, Code2, Target, Send } from 'lucide-react';
 import { useRouter, useParams } from '../lib/router';
 import { useLanguage } from '../lib/i18n';
 import { SEO } from './SEO';
@@ -13,7 +13,9 @@ const ICONS = {
   'complex': <Database className="text-neon-acid" size={48} />,
   'tma': <Rocket className="text-neon-acid" size={48} />,
   'reputation': <Shield className="text-neon-acid" size={48} />,
-  'custom': <Cpu className="text-neon-acid" size={48} />
+  'custom': <Cpu className="text-neon-acid" size={48} />,
+  'direct': <Target className="text-neon-acid" size={48} />,
+  'tgads': <Send className="text-neon-acid" size={48} />
 };
 
 export const ServicesPage: React.FC = () => {

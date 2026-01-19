@@ -12,7 +12,7 @@ export const Marquee: React.FC<MarqueeProps> = ({ text, reverse = false, outline
 
   return (
     <div className={`relative flex overflow-hidden whitespace-nowrap py-4 ${className}`}>
-      <div className={`flex w-max animate-${reverse ? 'marquee-reverse' : 'marquee'} whitespace-nowrap`}>
+      <div className={`flex w-max whitespace-nowrap ${reverse ? 'animate-marquee-infinite-reverse' : 'animate-marquee-infinite'}`}>
         {[0, 1].map((group) => (
           <div key={group} className="flex w-max">
             {items.map((_, i) => (

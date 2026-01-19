@@ -61,6 +61,8 @@ export const Navbar: React.FC = () => {
           { id: '/services/tma', label: t.services.items.tma.title },
           { id: '/services/reputation', label: t.services.items.reputation.title },
           { id: '/services/custom', label: t.services.items.custom.title },
+          { id: '/services/direct', label: t.services.items.direct.title },
+          { id: '/services/tgads', label: t.services.items.tgads.title },
       ]
     },
     { 
