@@ -10,6 +10,8 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const BASE_URL = 'https://codexai.pro';
+const SITEMAP_ROUTES = ['/', '/work', '/services', '/contact'];
 
 // Middleware
 app.use(cors());
@@ -17,6 +19,24 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'dist')));
 
 // API Routes
+app.get('/robots.txt', (req, res) => {
+  res.type('text/plain');
+  res.send(`User-agent: *\nAllow: /\nSitemap: ${BASE_URL}/sitemap.xml\n`);
+});
+
+app.get('/sitemap.xml', (req, res) => {
+  const urls = SITEMAP_ROUTES.map((route) => {
+    const loc = `${BASE_URL}${route}`;
+    return `<url><loc>${loc}</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>`;
+  }).join('');
+
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>` +
+    `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls}</urlset>`;
+
+  res.type('application/xml');
+  res.send(xml);
+});
+
 app.post('/api/contact', async (req, res) => {
   const { name, niche, contact, comment } = req.body;
   
