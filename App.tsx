@@ -15,7 +15,7 @@ import { FAQ } from './components/FAQ';
 
 // SEO Configuration
 const getSeoData = (path: string) => {
-  if (path === '/') return { title: "Digital Architects", description: "CodexAI (Codexai) — веб-студия и digital-агентство. Разработка сайтов, Telegram-ботов, Telegram Mini Apps и AI интеграций. Кодексай — Digital Architects." };
+  if (path === '/') return { title: "CODEXAI | Веб-разработка", description: "CodexAI (Codexai) — веб-студия и digital-агентство. Разработка сайтов, Telegram-ботов, Telegram Mini Apps и AI интеграций. Кодексай — Digital Architects." };
   if (path === '/work') return { title: "Портфолио & Кейсы", description: "Избранные проекты CodexAI." };
   if (path.startsWith('/services')) return { title: "Наши Услуги", description: "Полный спектр цифровых решений." };
   if (path === '/contact') return { title: "Контакты", description: "Свяжитесь с CodexAI." };

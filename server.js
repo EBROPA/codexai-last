@@ -3,6 +3,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import cors from 'cors';
 import bodyParser from 'body-parser';
+import 'dotenv/config';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -16,18 +17,55 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'dist')));
 
 // API Routes
-app.post('/api/contact', (req, res) => {
-  const { name, niche, contact } = req.body;
+app.post('/api/contact', async (req, res) => {
+  const { name, niche, contact, comment } = req.body;
   
   // Log the request to the console (visible in Render logs)
   console.log('--- NEW CONTACT FORM SUBMISSION ---');
   console.log('Name:', name);
   console.log('Niche:', niche);
   console.log('Contact:', contact);
+  console.log('Comment:', comment);
   console.log('Timestamp:', new Date().toISOString());
   console.log('-----------------------------------');
 
-  // Here you would typically send an email using Nodemailer or similar
+  // Send to Telegram
+  const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+  const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
+
+  if (BOT_TOKEN && CHAT_ID) {
+    try {
+      const message = `
+<b>New Contact Form Submission</b>
+<b>Name:</b> ${name}
+<b>Niche:</b> ${niche}
+<b>Contact:</b> ${contact}
+<b>Comment:</b> ${comment || 'No comment'}
+      `;
+
+      const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          chat_id: CHAT_ID,
+          text: message,
+          parse_mode: 'HTML',
+        }),
+      });
+
+      if (!response.ok) {
+        console.error('Telegram API error:', await response.text());
+      } else {
+        console.log('Message sent to Telegram successfully');
+      }
+    } catch (error) {
+      console.error('Error sending to Telegram:', error);
+    }
+  } else {
+    console.warn('TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID not set');
+  }
   
   res.status(200).json({ success: true, message: 'Message received successfully' });
 });

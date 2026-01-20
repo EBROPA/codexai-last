@@ -12,7 +12,7 @@ interface SEOProps {
 
 const BASE_URL = 'https://codexai.pro';
 const BRAND = 'CODEXAI';
-const DEFAULT_IMAGE = `${BASE_URL}/og-image.jpg`;
+const DEFAULT_IMAGE = `${BASE_URL}/img/codexai-logo.png`;
 const BRAND_VARIANTS = [
   'CodexAI',
   'Codexai',
