@@ -28,6 +28,7 @@ export const Footer: React.FC<FooterProps> = () => {
              <h4 className="font-mono text-white text-xs uppercase tracking-widest mb-8">{t.footer.nav}</h4>
              <ul className="space-y-4 font-sans text-zinc-400">
                 <li><button onClick={() => router.push('/')} className="hover:text-neon-acid transition-colors">{t.nav.home}</button></li>
+                <li><button onClick={() => router.push('/about')} className="hover:text-neon-acid transition-colors">{t.nav.about}</button></li>
                 <li><button onClick={() => router.push('/work')} className="hover:text-neon-acid transition-colors">{t.nav.work}</button></li>
                 <li><button onClick={() => router.push('/services')} className="hover:text-neon-acid transition-colors">{t.nav.services}</button></li>
                 <li><button onClick={() => router.push('/contact')} className="hover:text-neon-acid transition-colors">{t.nav.contact}</button></li>

@@ -11,7 +11,7 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3000;
 const BASE_URL = 'https://codexai.pro';
-const SITEMAP_ROUTES = ['/', '/work', '/services', '/contact'];
+const SITEMAP_ROUTES = ['/', '/about', '/work', '/services', '/contact'];
 
 // Middleware
 app.use(cors());

@@ -6,6 +6,7 @@ import { ServicesPage } from './components/ServicesPage';
 import { Contact } from './components/Contact';
 import { Marquee } from './components/Marquee';
 import { LegalPage } from './components/LegalPage';
+import { AboutPage } from './components/AboutPage';
 import { SEO } from './components/SEO';
 import { Layout } from './components/Layout';
 import { RouterProvider, usePathname, useRouter } from './lib/router';
@@ -14,15 +15,42 @@ import { Reviews } from './components/Reviews';
 import { FAQ } from './components/FAQ';
 
 // SEO Configuration
-const getSeoData = (path: string) => {
-  if (path === '/') return { title: "CODEXAI | Веб-разработка", description: "CodexAI (Codexai) — веб-студия и digital-агентство. Разработка сайтов, Telegram-ботов, Telegram Mini Apps и AI интеграций. Кодексай — Digital Architects." };
-  if (path === '/work') return { title: "Портфолио & Кейсы", description: "Избранные проекты CodexAI." };
-  if (path.startsWith('/services')) return { title: "Наши Услуги", description: "Полный спектр цифровых решений." };
-  if (path === '/contact') return { title: "Контакты", description: "Свяжитесь с CodexAI." };
-  if (path === '/user-agreement') return { title: "Пользовательское соглашение", description: "Пользовательское соглашение CODEXAI." };
-  if (path === '/data-processing') return { title: "Политика обработки данных", description: "Политика обработки персональных данных и файлов Cookie." };
-  if (path === '/consent') return { title: "Согласие на обработку данных", description: "Согласие на обработку персональных данных." };
-  return { title: "404", description: "Страница не найдена.", noIndex: true };
+const getSeoData = (path: string, lang: 'ru' | 'en') => {
+  const isRu = lang === 'ru';
+  if (path === '/') return { 
+    title: isRu ? "Разработка сайтов, Telegram‑боты и AI" : "Website Development, Telegram Bots & AI", 
+    description: isRu 
+      ? "Разработка сайтов под ключ, Telegram‑боты, Mini Apps и AI‑интеграции. Быстрый запуск, фиксированные сроки и рост лидов." 
+      : "Website development, Telegram bots, Mini Apps, and AI integrations. Fast launch, fixed timelines, and lead growth." 
+  };
+  if (path === '/about') return { 
+    title: isRu ? "О компании — гарантии и экспертиза" : "About — Guarantees and Expertise", 
+    description: isRu 
+      ? "Работаем по договору, соблюдаем сроки, даем гарантию на код 12 месяцев. Senior‑команда и прозрачные процессы." 
+      : "Contract-based work, on-time delivery, 12‑month code warranty. Senior team and transparent process." 
+  };
+  if (path === '/work') return { 
+    title: isRu ? "Кейсы и результаты клиентов" : "Client Results & Cases", 
+    description: isRu 
+      ? "Реальные проекты с ростом заявок и продаж. Сайты, боты и сервисы под бизнес‑цели." 
+      : "Real projects with lead and sales growth. Websites, bots, and services built for business goals." 
+  };
+  if (path.startsWith('/services')) return { 
+    title: isRu ? "Услуги для роста заявок" : "Services for Lead Growth", 
+    description: isRu 
+      ? "Разработка сайтов, Telegram‑ботов, Mini Apps и AI‑решений. Подберем формат и запустим быстро." 
+      : "Websites, Telegram bots, Mini Apps, and AI solutions. We pick the right format and launch fast." 
+  };
+  if (path === '/contact') return { 
+    title: isRu ? "Контакты и расчет стоимости" : "Contact & Cost Estimate", 
+    description: isRu 
+      ? "Оставьте заявку и получите расчет стоимости и сроков. Ответим быстро и по делу." 
+      : "Request a quote with clear scope and timeline. Fast response and clear next steps." 
+  };
+  if (path === '/user-agreement') return { title: isRu ? "Пользовательское соглашение" : "User Agreement", description: isRu ? "Пользовательское соглашение CODEXAI." : "CODEXAI user agreement.", noIndex: true };
+  if (path === '/data-processing') return { title: isRu ? "Политика обработки данных" : "Data Processing Policy", description: isRu ? "Политика обработки персональных данных и файлов Cookie." : "Personal data and cookie processing policy.", noIndex: true };
+  if (path === '/consent') return { title: isRu ? "Согласие на обработку данных" : "Data Processing Consent", description: isRu ? "Согласие на обработку персональных данных." : "Personal data processing consent.", noIndex: true };
+  return { title: "404", description: isRu ? "Страница не найдена." : "Page not found.", noIndex: true };
 };
 
 const NotFound: React.FC = () => {
@@ -101,6 +129,10 @@ const AppContent: React.FC = () => {
       );
     }
 
+    if (path === '/about') {
+      return <AboutPage />;
+    }
+
     // Legal Pages
     if (path === '/user-agreement') return <LegalPage type="userAgreement" />;
     if (path === '/data-processing') return <LegalPage type="privacyPolicy" />;
@@ -110,7 +142,7 @@ const AppContent: React.FC = () => {
     return <NotFound />;
   };
 
-  const seo = getSeoData(pathname);
+  const seo = getSeoData(pathname, lang);
 
   return (
     <div className="bg-black text-white min-h-screen selection:bg-neon-acid selection:text-black">

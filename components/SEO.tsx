@@ -34,6 +34,14 @@ const SERVICE_KEYWORDS = [
   'разработка сайтов',
   'создание сайтов',
   'digital-агентство',
+  'сайт под ключ',
+  'заказать сайт',
+  'создание лендинга',
+  'лендинг под ключ',
+  'корпоративный сайт',
+  'создание интернет-магазина',
+  'разработка сайта цена',
+  'веб студия спб',
   'разработка Telegram-ботов',
   'Telegram-боты',
   'Telegram Mini Apps',
@@ -41,9 +49,12 @@ const SERVICE_KEYWORDS = [
   'AI интеграция',
   'внедрение ИИ',
   'корпоративные сайты',
-  'лендинг под ключ',
+  'лидогенерация',
+  'привлечение клиентов',
   'web development',
   'digital agency',
+  'web studio',
+  'landing page',
   'website development'
 ];
 
@@ -121,6 +132,12 @@ export const SEO: React.FC<SEOProps> = ({ title, description, path, image, type,
           url: BASE_URL,
           logo: DEFAULT_IMAGE,
           email: 'contact@codexai.pro',
+          telephone: '+74950322199',
+          sameAs: [
+            'https://t.me/codexai_pro',
+            'https://instagram.com/codexai.agency',
+            'https://wa.me/74950322199'
+          ],
           brand: {
             '@type': 'Brand',
             name: BRAND,
@@ -139,6 +156,7 @@ export const SEO: React.FC<SEOProps> = ({ title, description, path, image, type,
           alternateName: BRAND_VARIANTS,
           url: BASE_URL,
           email: 'contact@codexai.pro',
+          telephone: '+74950322199',
           areaServed: {
             '@type': 'Country',
             name: 'Russia'

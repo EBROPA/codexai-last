@@ -5,6 +5,7 @@ export const content = {
   ru: {
     nav: {
       home: 'Главная',
+      about: 'О компании',
       work: 'Портфолио',
       services: 'Услуги',
       contact: 'Контакты',
@@ -13,6 +14,7 @@ export const content = {
       startProject: 'Начать проект',
       desc: {
         home: 'Начало пути',
+        about: 'О студии',
         work: 'Избранные кейсы',
         services: 'Экосистема решений',
         contact: 'Начать проект'
@@ -251,6 +253,37 @@ export const content = {
             { name: "DMITRY CODE", role: "Backend Architect" }
         ]
     },
+    aboutPage: {
+        hero: {
+            title: "Инженерный подход к цифровым продуктам",
+            subtitle: "CODEXAI",
+            desc: "Мы не продаем «креатив». Мы создаем рабочие бизнес-инструменты. Гарантируем сроки, фиксируем KPI и пишем чистый код, который легко поддерживать."
+        },
+        manifesto: {
+            title: "Железные Гарантии",
+            items: [
+                { title: "Юридическая защита", desc: "Работаем по договору. Штрафы за срыв сроков прописаны в документе. Права на код передаем вам." },
+                { title: "Прозрачность процессов", desc: "Вы видите прогресс в реальном времени. Еженедельные демо, отчеты и доступ к таск-трекеру." },
+                { title: "Техническая поддержка", desc: "Не бросаем после релиза. Даем гарантию на код 12 месяцев. Исправляем баги за свой счет." }
+            ]
+        },
+        stats: {
+            items: [
+                 { val: "100%", label: "Соблюдение сроков" },
+                 { val: "50+", label: "Реализованных проектов" },
+                 { val: "12 мес", label: "Гарантия на код" },
+                 { val: "24/7", label: "Мониторинг серверов" }
+            ]
+        },
+        team: {
+            title: "Экспертиза",
+            desc: "В штате только Senior и Middle+ специалисты. Мы не учим стажеров на ваших проектах. Каждый разработчик проходит 4 этапа отбора."
+        },
+        cta: {
+            title: "Обсудить проект с инженером",
+            btn: "Назначить встречу"
+        }
+    },
     servicesPage: {
         web: {
             title: "Веб-Разработка",
@@ -403,8 +436,40 @@ export const content = {
     }
   },
   en: {
+    aboutPage: {
+        hero: {
+            title: "Engineering Approach to Digital Products",
+            subtitle: "CODEXAI",
+            desc: "We don't sell 'creative fluff'. We build working business tools. Guaranteed deadlines, fixed KPIs, and clean, maintainable code."
+        },
+        manifesto: {
+            title: "Ironclad Guarantees",
+            items: [
+                { title: "Legal Protection", desc: "Official contract. Penalties for missed deadlines. You own 100% of the code and rights." },
+                { title: "Transparent Process", desc: "Real-time progress tracking. Weekly demos, reports, and direct access to our task tracker." },
+                { title: "Technical Support", desc: "We don't abandon you after launch. 12-month code warranty. Bug fixes at our expense." }
+            ]
+        },
+        stats: {
+            items: [
+                 { val: "100%", label: "Deadline Adherence" },
+                 { val: "50+", label: "Delivered Projects" },
+                 { val: "12 mo", label: "Code Warranty" },
+                 { val: "24/7", label: "Server Monitoring" }
+            ]
+        },
+        team: {
+            title: "Expertise",
+            desc: "Only Senior and Middle+ specialists. We don't train interns on your projects. Every developer passes a rigorous 4-stage selection."
+        },
+        cta: {
+            title: "Discuss project with an engineer",
+            btn: "Book a meeting"
+        }
+    },
     nav: {
       home: 'Home',
+      about: 'About',
       work: 'Portfolio',
       services: 'Services',
       contact: 'Contact',
@@ -413,6 +478,7 @@ export const content = {
       startProject: 'Start Project',
       desc: {
         home: 'Start Journey',
+        about: 'About Studio',
         work: 'Selected Cases',
         services: 'Solutions Ecosystem',
         contact: 'Start Project'

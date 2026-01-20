@@ -41,16 +41,23 @@ export const Navbar: React.FC = () => {
       image: glav_menu
     },
     { 
+      id: '/about', 
+      label: t.nav.about, 
+      sub: '02',
+      desc: t.nav.desc.about,
+      image: glav_menu
+    },
+    { 
       id: '/work', 
       label: t.nav.work, 
-      sub: '02',
+      sub: '03',
       desc: t.nav.desc.work,
       image: portfolio_menu
     },
     { 
       id: '/services', 
       label: t.nav.services, 
-      sub: '03',
+      sub: '04',
       desc: t.nav.desc.services,
       image: 'https://picsum.photos/seed/tech/800/600',
       subItems: [
@@ -68,7 +75,7 @@ export const Navbar: React.FC = () => {
     { 
       id: '/contact', 
       label: t.nav.contact, 
-      sub: '04',
+      sub: '05',
       desc: t.nav.desc.contact,
       image: contact_menu
     }
@@ -192,7 +199,7 @@ export const Navbar: React.FC = () => {
                     <div className="flex flex-wrap gap-8 text-zinc-400 font-mono text-xs uppercase tracking-widest">
                         <a href="#" className="hover:text-white flex items-center gap-2"><Send size={12}/> Telegram</a>
                         <a href="#" className="hover:text-white flex items-center gap-2"><Instagram size={12}/> Instagram</a>
-                        <a href="mailto:hello@codexai.agency" className="hover:text-white flex items-center gap-2"><Mail size={12}/> hello@codexai.agency</a>
+                        <a href="mailto:contact@codexai.pro" className="hover:text-white flex items-center gap-2"><Mail size={12}/> contact@codexai.pro</a>
                     </div>
                 </div>
             </div>
