@@ -1,17 +1,17 @@
 
 import React, { useState, useEffect } from 'react';
-import { Preloader } from './components/Preloader';
-import { HomePage } from './components/HomePage';
-import { WorkPage } from './components/WorkPage';
-import { ServicesPage } from './components/ServicesPage';
-import { Contact } from './components/Contact';
-import { Marquee } from './components/Marquee';
-import { SEO } from './components/SEO';
-import { Layout } from './components/Layout';
-import { RouterProvider, usePathname, useRouter } from './lib/router';
-import { Reviews } from './components/Reviews';
-import { FAQ } from './components/FAQ';
-import { useLanguage } from './lib/i18n';
+import { Preloader } from './Preloader';
+import { HomePage } from './HomePage';
+import { WorkPage } from './WorkPage';
+import { ServicesPage } from './ServicesPage';
+import { Contact } from './Contact';
+import { Marquee } from './Marquee';
+import { SEO } from './SEO';
+import { Layout } from './Layout';
+import { RouterProvider, usePathname, useRouter } from '../lib/router';
+import { Reviews } from './Reviews';
+import { FAQ } from './FAQ';
+import { useLanguage } from '../lib/i18n';
 
 // SEO Configuration
 const getSeoData = (path: string, lang: 'ru'|'en') => {

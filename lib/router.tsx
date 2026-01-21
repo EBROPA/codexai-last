@@ -9,6 +9,27 @@ interface RouterContextType {
 
 const RouterContext = createContext<RouterContextType | null>(null);
 
+const parseQuery = (queryString: string) => {
+  const searchParams = new URLSearchParams(queryString);
+  const q: Record<string, string> = {};
+  searchParams.forEach((val, key) => {
+    q[key] = val;
+  });
+  return q;
+};
+
+const getHashQuery = () => {
+  const hash = window.location.hash.slice(1);
+  if (!hash.includes('?')) return {};
+  return parseQuery(hash.split('?')[1]);
+};
+
+const getSearchQuery = () => {
+  const search = window.location.search;
+  if (!search) return {};
+  return parseQuery(search.slice(1));
+};
+
 // Helper to get path from hash
 const getHashPath = () => {
   // Get hash, remove first char '#'.
@@ -35,12 +56,17 @@ export const RouterProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       // Extract query from hash if needed e.g. #/path?foo=bar
       const hash = window.location.hash.slice(1);
       if (hash.includes('?')) {
-          const searchParams = new URLSearchParams(hash.split('?')[1]);
-          const q: Record<string, string> = {};
-          searchParams.forEach((val, key) => { q[key] = val; });
-          setQuery(q);
+          setQuery(getHashQuery());
       } else {
-          setQuery({});
+          const searchQuery = getSearchQuery();
+          setQuery(searchQuery);
+          const searchString = new URLSearchParams(Object.entries(searchQuery)).toString();
+          if (searchString) {
+            const nextHash = `${currentPath}?${searchString}`;
+            if (hash !== nextHash) {
+              window.location.hash = nextHash;
+            }
+          }
       }
     };
 
@@ -54,8 +80,17 @@ export const RouterProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   }, []);
 
   const push = (href: string) => {
+    const [path, existingQuery] = href.split('?');
+    const merged = new URLSearchParams(existingQuery || '');
+    Object.entries(query).forEach(([key, value]) => {
+      if (!merged.has(key)) {
+        merged.set(key, String(value));
+      }
+    });
+    const queryString = merged.toString();
+    const target = queryString ? `${path}?${queryString}` : path;
     // Update hash triggers hashchange event
-    window.location.hash = href;
+    window.location.hash = target;
     window.scrollTo(0, 0);
   };
 
@@ -91,7 +126,7 @@ export const useSearchParams = () => {
     if (!context) {
         throw new Error('useSearchParams must be used within a RouterProvider');
     }
-    return new URLSearchParams(context.query);
+    return new URLSearchParams(Object.entries(context.query));
 }
 
 export const useParams = () => {
