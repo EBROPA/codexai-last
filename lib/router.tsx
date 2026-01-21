@@ -18,79 +18,42 @@ const parseQuery = (queryString: string) => {
   return q;
 };
 
-const getHashQuery = () => {
-  const hash = window.location.hash.slice(1);
-  if (!hash.includes('?')) return {};
-  return parseQuery(hash.split('?')[1]);
-};
-
 const getSearchQuery = () => {
   const search = window.location.search;
   if (!search) return {};
   return parseQuery(search.slice(1));
 };
 
-// Helper to get path from hash
-const getHashPath = () => {
-  // Get hash, remove first char '#'.
-  const hash = window.location.hash.slice(1);
-  // If empty, default to '/'
-  if (!hash) return '/';
-  
-  // Extract path part (before '?')
-  return hash.split('?')[0]; 
-};
-
 export const RouterProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [pathname, setPathname] = useState('/');
-  const [query, setQuery] = useState<Record<string, string>>({});
+  const [pathname, setPathname] = useState(window.location.pathname);
+  const [query, setQuery] = useState<Record<string, string>>(getSearchQuery());
 
   useEffect(() => {
-    // Set initial path
-    setPathname(getHashPath());
-
-    const handleHashChange = () => {
-      const currentPath = getHashPath();
-      setPathname(currentPath);
-      
-      // Extract query from hash if needed e.g. #/path?foo=bar
-      const hash = window.location.hash.slice(1);
-      if (hash.includes('?')) {
-          setQuery(getHashQuery());
-      } else {
-          const searchQuery = getSearchQuery();
-          setQuery(searchQuery);
-          const searchString = new URLSearchParams(Object.entries(searchQuery)).toString();
-          if (searchString) {
-            const nextHash = `${currentPath}?${searchString}`;
-            if (hash !== nextHash) {
-              window.location.hash = nextHash;
-            }
-          }
-      }
+    const handlePopState = () => {
+      setPathname(window.location.pathname);
+      setQuery(getSearchQuery());
     };
 
-    // Listen for hash changes
-    window.addEventListener('hashchange', handleHashChange);
-    
-    // Handle initial query params if present
-    handleHashChange();
-
-    return () => window.removeEventListener('hashchange', handleHashChange);
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
   const push = (href: string) => {
     const [path, existingQuery] = href.split('?');
     const merged = new URLSearchParams(existingQuery || '');
+    
     Object.entries(query).forEach(([key, value]) => {
       if (!merged.has(key)) {
         merged.set(key, String(value));
       }
     });
+
     const queryString = merged.toString();
     const target = queryString ? `${path}?${queryString}` : path;
-    // Update hash triggers hashchange event
-    window.location.hash = target;
+
+    window.history.pushState({}, '', target);
+    setPathname(path);
+    setQuery(parseQuery(queryString));
     window.scrollTo(0, 0);
   };
 
