@@ -13,8 +13,28 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
-// Initialize Prisma Client
-const prisma = new PrismaClient();
+// Initialize Prisma Client with error handling
+let prisma = null;
+let dbConnected = false;
+
+try {
+  prisma = new PrismaClient({
+    log: ['error', 'warn'],
+  });
+  
+  // Test database connection
+  prisma.$connect()
+    .then(() => {
+      dbConnected = true;
+      console.log('[Database] Connected successfully to PostgreSQL');
+    })
+    .catch((err) => {
+      console.error('[Database] Failed to connect:', err.message);
+      console.log('[Database] Image upload will be disabled');
+    });
+} catch (err) {
+  console.error('[Database] Failed to initialize Prisma:', err.message);
+}
 
 // Configure multer to store files in memory
 const upload = multer({
@@ -218,9 +238,26 @@ app.post('/api/indexnow', async (req, res) => {
 // IMAGE UPLOAD API
 // =====================================================
 
+// Check database status endpoint
+app.get('/api/db-status', (req, res) => {
+  res.json({ 
+    connected: dbConnected,
+    message: dbConnected ? 'Database connected' : 'Database not available. Please configure DATABASE_URL environment variable.'
+  });
+});
+
 // Upload image
 app.post('/api/images/upload', upload.single('image'), async (req, res) => {
   try {
+    // Check if database is available
+    if (!prisma || !dbConnected) {
+      console.error('[Image Upload] Database not connected. DATABASE_URL:', process.env.DATABASE_URL ? 'set' : 'NOT SET');
+      return res.status(503).json({ 
+        error: 'Database not available. Please configure DATABASE_URL on Render.com',
+        details: 'Go to Render Dashboard -> Your Web Service -> Environment -> Add DATABASE_URL from your PostgreSQL service'
+      });
+    }
+
     if (!req.file) {
       return res.status(400).json({ error: 'No image file provided' });
     }
@@ -254,14 +291,19 @@ app.post('/api/images/upload', upload.single('image'), async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('[Image Upload] Error:', error);
-    res.status(500).json({ error: 'Failed to upload image' });
+    console.error('[Image Upload] Error:', error.message);
+    console.error('[Image Upload] Stack:', error.stack);
+    res.status(500).json({ error: 'Failed to upload image', details: error.message });
   }
 });
 
 // Get image by ID
 app.get('/api/images/:id', async (req, res) => {
   try {
+    if (!prisma || !dbConnected) {
+      return res.status(503).json({ error: 'Database not available' });
+    }
+
     const { id } = req.params;
 
     const image = await prisma.image.findUnique({
@@ -289,6 +331,10 @@ app.get('/api/images/:id', async (req, res) => {
 // List all images (for admin panel)
 app.get('/api/images', async (req, res) => {
   try {
+    if (!prisma || !dbConnected) {
+      return res.status(503).json({ error: 'Database not available', images: [] });
+    }
+
     const images = await prisma.image.findMany({
       select: {
         id: true,
@@ -319,6 +365,10 @@ app.get('/api/images', async (req, res) => {
 // Delete image by ID
 app.delete('/api/images/:id', async (req, res) => {
   try {
+    if (!prisma || !dbConnected) {
+      return res.status(503).json({ error: 'Database not available' });
+    }
+
     const { id } = req.params;
 
     await prisma.image.delete({
