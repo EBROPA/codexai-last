@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "prisma generate && vite build",
+    "build": "prisma generate && prisma db push --accept-data-loss && vite build",
     "postinstall": "prisma generate",
     "preview": "vite preview",
     "start": "node server.js",
