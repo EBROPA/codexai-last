@@ -27,7 +27,8 @@ export const Hero: React.FC = () => {
     // --- DESKTOP ANIMATION: NEURAL SPHERE ---
     const initDesktopAnimation = () => {
         const sphereRadius = Math.min(width, height) * 0.22;
-        const particlesCount = 1800;
+        // OPTIMIZATION: Reduced from 1800 to 800 for better Core Web Vitals (LCP/INP)
+        const particlesCount = 800;
         const rotationSpeed = 0.002;
         let time = 0;
         
@@ -207,7 +208,7 @@ export const Hero: React.FC = () => {
   return (
     <section className="relative h-screen flex flex-col justify-center items-center overflow-hidden bg-black">
       
-      <canvas ref={canvasRef} className="absolute inset-0 z-0" />
+      <canvas ref={canvasRef} className="absolute inset-0 z-0" style={{ willChange: 'transform' }} />
       <div 
         className="absolute inset-0 pointer-events-none z-0 opacity-60"
         style={{

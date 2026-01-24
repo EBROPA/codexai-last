@@ -41,7 +41,7 @@ export const RouterProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const push = (href: string) => {
     const [path, existingQuery] = href.split('?');
     const merged = new URLSearchParams(existingQuery || '');
-    
+
     Object.entries(query).forEach(([key, value]) => {
       if (!merged.has(key)) {
         merged.set(key, String(value));
@@ -85,21 +85,26 @@ export const usePathname = () => {
 };
 
 export const useSearchParams = () => {
-    const context = useContext(RouterContext);
-    if (!context) {
-        throw new Error('useSearchParams must be used within a RouterProvider');
-    }
-    return new URLSearchParams(Object.entries(context.query));
+  const context = useContext(RouterContext);
+  if (!context) {
+    throw new Error('useSearchParams must be used within a RouterProvider');
+  }
+  return new URLSearchParams(Object.entries(context.query));
 }
 
 export const useParams = () => {
-    const pathname = usePathname();
-    const segments = pathname.split('/').filter(Boolean);
-    
-    // /services/[slug]
-    if (segments[0] === 'services' && segments[1]) {
-        return { slug: segments[1] };
-    }
-    
-    return {};
+  const pathname = usePathname();
+  const segments = pathname.split('/').filter(Boolean);
+
+  // /services/[slug]
+  if (segments[0] === 'services' && segments[1]) {
+    return { slug: segments[1] };
+  }
+
+  // /blog/[slug]
+  if (segments[0] === 'blog' && segments[1]) {
+    return { slug: segments[1] };
+  }
+
+  return {};
 };

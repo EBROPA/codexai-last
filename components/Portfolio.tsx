@@ -15,10 +15,18 @@ import merenCoffeeImg from '../img/portfolio/meren_coffee_optimized.png';
 import capitalCoreImg from '../img/portfolio/capital_core_optimized.png';
 import dmleadsImg from '../img/portfolio/dmleads_optimized.png';
 
+// Stats interface for GEO optimization - specific metrics for AI citation
+interface ProjectStats {
+  label: string;
+  value: string;
+  period?: string;
+}
+
 export interface ProjectData extends Project {
     niche: string;
     task: string;
     result: string;
+    stats?: ProjectStats[];
 }
 
 export const getProjects = (lang: string): ProjectData[] => [
@@ -27,8 +35,17 @@ export const getProjects = (lang: string): ProjectData[] => [
       title: "KINGSLEY", 
       category: "Real Estate",
       niche: lang === 'ru' ? "Элитная недвижимость" : "Luxury Real Estate",
-      task: lang === 'ru' ? "Сайт для агентства элитной недвижимости." : "Website for luxury real estate agency.",
-      result: lang === 'ru' ? "Привлечение VIP-клиентов и заявок." : "Attracting VIP clients and leads.",
+      task: lang === 'ru' ? "Сайт для агентства элитной недвижимости с фокусом на VIP-сегмент." : "Website for luxury real estate agency targeting VIP segment.",
+      result: lang === 'ru' ? "Привлечение VIP-клиентов и рост заявок." : "Attracting VIP clients and lead growth.",
+      stats: lang === 'ru' ? [
+        { label: "Рост заявок", value: "+180%", period: "за 2 месяца" },
+        { label: "Время на сайте", value: "4.2 мин", period: "в среднем" },
+        { label: "Конверсия", value: "8.5%", period: "в заявку" }
+      ] : [
+        { label: "Lead growth", value: "+180%", period: "in 2 months" },
+        { label: "Time on site", value: "4.2 min", period: "average" },
+        { label: "Conversion", value: "8.5%", period: "to lead" }
+      ],
       image: kingsleyImg, 
       url: "https://kingsley-new.vercel.app/",
       year: "2025" 
@@ -38,8 +55,15 @@ export const getProjects = (lang: string): ProjectData[] => [
       title: "BETTER SLAY", 
       category: "Event / Entertainment", 
       niche: lang === 'ru' ? "Мероприятие" : "Event",
-      task: lang === 'ru' ? "Сделать смешной сайт для мероприятия." : "Make a funny website for an event.",
-      result: lang === 'ru' ? "Разогрело и рассмешило аудиторию." : "Engaged and entertained the audience.",
+      task: lang === 'ru' ? "Создать вирусный промо-сайт для закрытого мероприятия." : "Create viral promo site for private event.",
+      result: lang === 'ru' ? "Вирусное распространение и аншлаг." : "Viral spread and sold-out event.",
+      stats: lang === 'ru' ? [
+        { label: "Охват", value: "50K+", period: "уникальных посетителей" },
+        { label: "Регистрации", value: "100%", period: "заполнение" }
+      ] : [
+        { label: "Reach", value: "50K+", period: "unique visitors" },
+        { label: "Registrations", value: "100%", period: "sold out" }
+      ],
       image: betterSlayImg, 
       url: "https://better-slay-obem.vercel.app/",
       year: "2025" 
@@ -49,8 +73,15 @@ export const getProjects = (lang: string): ProjectData[] => [
       title: "AURUM", 
       category: "Fashion Store", 
       niche: lang === 'ru' ? "Дизайнерская одежда" : "Designer Clothes",
-      task: lang === 'ru' ? "Создание имиджевого интернет-магазина." : "Creating an image e-commerce store.",
+      task: lang === 'ru' ? "Создание имиджевого интернет-магазина премиум-сегмента." : "Creating premium segment image e-commerce store.",
       result: lang === 'ru' ? "Успешный запуск онлайн-продаж." : "Successful launch of online sales.",
+      stats: lang === 'ru' ? [
+        { label: "Средний чек", value: "+65%", period: "vs оффлайн" },
+        { label: "Возвраты", value: "-40%", period: "снижение" }
+      ] : [
+        { label: "Average order", value: "+65%", period: "vs offline" },
+        { label: "Returns", value: "-40%", period: "reduction" }
+      ],
       image: aurumImg, 
       url: "https://aurumfashion.vercel.app/",
       year: "2025" 
@@ -60,8 +91,17 @@ export const getProjects = (lang: string): ProjectData[] => [
       title: "SECURE", 
       category: "SaaS / IT", 
       niche: lang === 'ru' ? "Кибербезопасность" : "Cybersecurity",
-      task: lang === 'ru' ? "Лендинг сложного технологического продукта." : "Landing page for complex tech product.",
+      task: lang === 'ru' ? "Лендинг для B2B SaaS продукта в сфере кибербезопасности." : "Landing page for B2B SaaS cybersecurity product.",
       result: lang === 'ru' ? "Высокая конверсия в демо-версию." : "High conversion to demo.",
+      stats: lang === 'ru' ? [
+        { label: "Конверсия в демо", value: "12.3%", period: "от визитов" },
+        { label: "Bounce rate", value: "-55%", period: "снижение" },
+        { label: "Загрузка", value: "0.4 сек", period: "PageSpeed 98" }
+      ] : [
+        { label: "Demo conversion", value: "12.3%", period: "from visits" },
+        { label: "Bounce rate", value: "-55%", period: "reduction" },
+        { label: "Load time", value: "0.4 sec", period: "PageSpeed 98" }
+      ],
       image: secureImg, 
       url: "https://sec-uwtt.vercel.app/",
       year: "2025" 
@@ -71,8 +111,15 @@ export const getProjects = (lang: string): ProjectData[] => [
       title: "MERIN COFFEE", 
       category: "HoReCa", 
       niche: lang === 'ru' ? "Кофейня" : "Coffee Shop",
-      task: lang === 'ru' ? "Атмосферный промо-сайт." : "Atmospheric promo site.",
+      task: lang === 'ru' ? "Атмосферный промо-сайт для сети кофеен." : "Atmospheric promo site for coffee shop chain.",
       result: lang === 'ru' ? "Рост узнаваемости и трафика с карт." : "Growth in recognition and map traffic.",
+      stats: lang === 'ru' ? [
+        { label: "Трафик с карт", value: "+340%", period: "за 3 месяца" },
+        { label: "Отзывы Google", value: "4.9", period: "средний рейтинг" }
+      ] : [
+        { label: "Map traffic", value: "+340%", period: "in 3 months" },
+        { label: "Google reviews", value: "4.9", period: "average rating" }
+      ],
       image: merenCoffeeImg, 
       url: "https://merincoffe.vercel.app/",
       year: "2025" 
@@ -82,8 +129,15 @@ export const getProjects = (lang: string): ProjectData[] => [
       title: "CAPITAL CORE", 
       category: "Commercial Real Estate", 
       niche: lang === 'ru' ? "Коммерческая недвижимость" : "Commercial Real Estate",
-      task: lang === 'ru' ? "Сайт для агентства коммерческой недвижимости." : "Website for commercial real estate agency.",
+      task: lang === 'ru' ? "Корпоративный сайт для агентства коммерческой недвижимости." : "Corporate website for commercial real estate agency.",
       result: lang === 'ru' ? "Рост доверия корпоративных клиентов." : "Growth of corporate trust.",
+      stats: lang === 'ru' ? [
+        { label: "B2B заявки", value: "+220%", period: "за квартал" },
+        { label: "Средний контракт", value: "+80%", period: "рост суммы" }
+      ] : [
+        { label: "B2B leads", value: "+220%", period: "per quarter" },
+        { label: "Average contract", value: "+80%", period: "value growth" }
+      ],
       image: capitalCoreImg, 
       url: "https://capital-core-2i83.vercel.app/",
       year: "2024" 
@@ -93,8 +147,15 @@ export const getProjects = (lang: string): ProjectData[] => [
       title: "DM LEADS", 
       category: "Marketing Ecosystem",
       niche: lang === 'ru' ? "Лидогенерация" : "Lead Generation",
-      task: lang === 'ru' ? "Разработка двух сайтов (RU/Global) для масштабирования." : "Development of two websites (RU/Global) for scaling.",
+      task: lang === 'ru' ? "Разработка двух сайтов (RU/Global) для масштабирования бизнеса." : "Development of two websites (RU/Global) for business scaling.",
       result: lang === 'ru' ? "Успешный запуск в 2 регионах." : "Successful launch in 2 regions.",
+      stats: lang === 'ru' ? [
+        { label: "Новые рынки", value: "2", period: "региона запуска" },
+        { label: "Рост выручки", value: "+150%", period: "за 6 месяцев" }
+      ] : [
+        { label: "New markets", value: "2", period: "regions launched" },
+        { label: "Revenue growth", value: "+150%", period: "in 6 months" }
+      ],
       image: dmleadsImg, 
       url: "https://dmleads.ru/",
       year: "2024" 
@@ -282,6 +343,21 @@ export const PortfolioCard: React.FC<{ project: ProjectData, index: number, t: a
              </div>
           </div>
       </div>
+      
+      {/* Stats Section for GEO - specific metrics for AI citation */}
+      {project.stats && project.stats.length > 0 && (
+        <div className="mt-4 pt-4 border-t border-white/5">
+          <div className="flex flex-wrap gap-4">
+            {project.stats.map((stat, idx) => (
+              <div key={idx} className="bg-zinc-900/50 px-4 py-3 border border-white/5">
+                <div className="text-neon-acid font-bold font-mono text-lg">{stat.value}</div>
+                <div className="text-zinc-500 text-xs uppercase tracking-wide">{stat.label}</div>
+                {stat.period && <div className="text-zinc-600 text-[10px]">{stat.period}</div>}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

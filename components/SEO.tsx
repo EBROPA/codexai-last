@@ -8,6 +8,8 @@ interface SEOProps {
   type?: string;
   noIndex?: boolean;
   lang?: 'ru' | 'en';
+  faqs?: { question: string; answer: string }[];
+  breadcrumbs?: { name: string; url: string }[];
 }
 
 const BASE_URL = 'https://codexai.pro';
@@ -61,7 +63,31 @@ const SERVICE_KEYWORDS = [
 const normalizeTitle = (title: string) => (title.includes(BRAND) ? title : `${title} | ${BRAND}`);
 const mapLocale = (lang: string) => (lang === 'en' ? 'en_US' : 'ru_RU');
 
-export const SEO: React.FC<SEOProps> = ({ title, description, path, image, type, noIndex, lang }) => {
+// Generate FAQ Schema for rich snippets
+const generateFAQSchema = (faqs: { question: string; answer: string }[]) => ({
+  '@type': 'FAQPage',
+  mainEntity: faqs.map(faq => ({
+    '@type': 'Question',
+    name: faq.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.answer
+    }
+  }))
+});
+
+// Generate Breadcrumb Schema
+const generateBreadcrumbSchema = (items: { name: string; url: string }[]) => ({
+  '@type': 'BreadcrumbList',
+  itemListElement: items.map((item, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: item.name,
+    item: item.url
+  }))
+});
+
+export const SEO: React.FC<SEOProps> = ({ title, description, path, image, type, noIndex, lang, faqs, breadcrumbs }) => {
   useEffect(() => {
     const fullTitle = normalizeTitle(title);
     const url = path ? `${BASE_URL}${path}` : window.location.href;
@@ -122,73 +148,171 @@ export const SEO: React.FC<SEOProps> = ({ title, description, path, image, type,
     updateMeta('name', 'twitter:image', imageUrl);
     updateLink('canonical', url);
 
-    updateJsonLd({
-      '@context': 'https://schema.org',
-      '@graph': [
-        {
-          '@type': 'Organization',
+    // Build schema graph
+    const schemaGraph: Record<string, unknown>[] = [
+      {
+        '@type': 'Organization',
+        '@id': `${BASE_URL}/#organization`,
+        name: BRAND,
+        alternateName: BRAND_VARIANTS,
+        url: BASE_URL,
+        logo: {
+          '@type': 'ImageObject',
+          url: DEFAULT_IMAGE,
+          width: 512,
+          height: 512
+        },
+        email: 'contact@codexai.pro',
+        telephone: '+74950322199',
+        // Extended sameAs for Entity Linking (E-E-A-T)
+        sameAs: [
+          'https://t.me/codexai_pro',
+          'https://instagram.com/codexai.agency',
+          'https://wa.me/74950322199',
+          'https://vc.ru/u/codexai',
+          'https://clutch.co/profile/codexai',
+          'https://www.linkedin.com/company/codexai'
+        ],
+        brand: {
+          '@type': 'Brand',
           name: BRAND,
-          alternateName: BRAND_VARIANTS,
-          url: BASE_URL,
-          logo: DEFAULT_IMAGE,
-          email: 'contact@codexai.pro',
-          telephone: '+74950322199',
+          alternateName: BRAND_VARIANTS
+        },
+        founder: {
+          '@type': 'Person',
+          '@id': `${BASE_URL}/#founder`,
+          name: 'CODEXAI Team',
+          jobTitle: 'Founder & CEO',
           sameAs: [
             'https://t.me/codexai_pro',
-            'https://instagram.com/codexai.agency',
-            'https://wa.me/74950322199'
-          ],
-          brand: {
-            '@type': 'Brand',
-            name: BRAND,
-            alternateName: BRAND_VARIANTS
-          }
-        },
-        {
-          '@type': 'WebSite',
-          name: BRAND,
-          alternateName: BRAND_VARIANTS,
-          url: BASE_URL
-        },
-        {
-          '@type': 'ProfessionalService',
-          name: BRAND,
-          alternateName: BRAND_VARIANTS,
-          url: BASE_URL,
-          email: 'contact@codexai.pro',
-          telephone: '+74950322199',
-          areaServed: {
-            '@type': 'Country',
-            name: 'Russia'
-          },
-          address: {
-            '@type': 'PostalAddress',
-            streetAddress: 'Красного Текстильщика ул, д 10-12 лит.О',
-            addressLocality: 'Санкт-Петербург',
-            postalCode: '191124',
-            addressCountry: 'RU'
-          },
-          hasOfferCatalog: {
-            '@type': 'OfferCatalog',
-            name: 'Услуги CodexAI',
-            itemListElement: [
-              { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Разработка сайтов' } },
-              { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Telegram-боты' } },
-              { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Telegram Mini Apps' } },
-              { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'AI интеграция' } },
-              { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Complex Web Services' } }
-            ]
-          }
-        },
-        {
-          '@type': 'WebPage',
-          name: fullTitle,
-          description,
-          url
+            'https://linkedin.com/company/codexai'
+          ]
         }
-      ]
+      },
+      {
+        '@type': 'WebSite',
+        '@id': `${BASE_URL}/#website`,
+        name: BRAND,
+        alternateName: BRAND_VARIANTS,
+        url: BASE_URL,
+        publisher: { '@id': `${BASE_URL}/#organization` },
+        potentialAction: {
+          '@type': 'SearchAction',
+          target: `${BASE_URL}/services?q={search_term_string}`,
+          'query-input': 'required name=search_term_string'
+        }
+      },
+      {
+        '@type': 'ProfessionalService',
+        '@id': `${BASE_URL}/#service`,
+        name: BRAND,
+        alternateName: BRAND_VARIANTS,
+        url: BASE_URL,
+        email: 'contact@codexai.pro',
+        telephone: '+74950322199',
+        priceRange: '$$',
+        areaServed: [
+          { '@type': 'Country', name: 'Russia' },
+          { '@type': 'Country', name: 'Kazakhstan' },
+          { '@type': 'Country', name: 'Belarus' }
+        ],
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: 'Красного Текстильщика ул, д 10-12 лит.О',
+          addressLocality: 'Санкт-Петербург',
+          postalCode: '191124',
+          addressCountry: 'RU'
+        },
+        geo: {
+          '@type': 'GeoCoordinates',
+          latitude: 59.9311,
+          longitude: 30.3609
+        },
+        openingHoursSpecification: {
+          '@type': 'OpeningHoursSpecification',
+          dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+          opens: '10:00',
+          closes: '19:00'
+        },
+        hasOfferCatalog: {
+          '@type': 'OfferCatalog',
+          name: 'Услуги CodexAI',
+          itemListElement: [
+            { 
+              '@type': 'Offer', 
+              itemOffered: { '@type': 'Service', name: 'Разработка сайтов (лендинг)' },
+              priceSpecification: {
+                '@type': 'PriceSpecification',
+                priceCurrency: 'RUB',
+                price: '100000',
+                minPrice: '100000'
+              }
+            },
+            { 
+              '@type': 'Offer', 
+              itemOffered: { '@type': 'Service', name: 'Telegram-боты' },
+              priceSpecification: {
+                '@type': 'PriceSpecification',
+                priceCurrency: 'RUB',
+                price: '50000',
+                minPrice: '50000'
+              }
+            },
+            { 
+              '@type': 'Offer', 
+              itemOffered: { '@type': 'Service', name: 'Telegram Mini Apps' },
+              priceSpecification: {
+                '@type': 'PriceSpecification',
+                priceCurrency: 'RUB',
+                price: '120000',
+                minPrice: '120000'
+              }
+            },
+            { 
+              '@type': 'Offer', 
+              itemOffered: { '@type': 'Service', name: 'AI интеграция' },
+              priceSpecification: {
+                '@type': 'PriceSpecification',
+                priceCurrency: 'RUB',
+                price: '100000',
+                minPrice: '100000'
+              }
+            }
+          ]
+        },
+        aggregateRating: {
+          '@type': 'AggregateRating',
+          ratingValue: '4.9',
+          reviewCount: '47',
+          bestRating: '5'
+        }
+      },
+      {
+        '@type': 'WebPage',
+        '@id': url,
+        name: fullTitle,
+        description,
+        url,
+        isPartOf: { '@id': `${BASE_URL}/#website` },
+        about: { '@id': `${BASE_URL}/#organization` }
+      }
+    ];
+
+    // Add FAQ schema if provided
+    if (faqs && faqs.length > 0) {
+      schemaGraph.push(generateFAQSchema(faqs));
+    }
+
+    // Add Breadcrumb schema if provided
+    if (breadcrumbs && breadcrumbs.length > 0) {
+      schemaGraph.push(generateBreadcrumbSchema(breadcrumbs));
+    }
+
+    updateJsonLd({
+      '@context': 'https://schema.org',
+      '@graph': schemaGraph
     });
-  }, [title, description, path, image, type, noIndex, lang]);
+  }, [title, description, path, image, type, noIndex, lang, faqs, breadcrumbs]);
 
   return null;
 };

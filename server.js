@@ -3,6 +3,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import cors from 'cors';
 import bodyParser from 'body-parser';
+import fs from 'fs';
 import 'dotenv/config';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -11,30 +12,185 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3000;
 const BASE_URL = 'https://codexai.pro';
-const SITEMAP_ROUTES = ['/', '/about', '/work', '/services', '/contact'];
+const INDEXNOW_KEY = process.env.INDEXNOW_KEY || 'codexai-indexnow-key';
+
+// All routes for sitemap with metadata
+const SITEMAP_ROUTES = [
+  { path: '/', priority: '1.0', changefreq: 'weekly' },
+  { path: '/about', priority: '0.8', changefreq: 'monthly' },
+  { path: '/work', priority: '0.8', changefreq: 'weekly' },
+  { path: '/services', priority: '0.9', changefreq: 'monthly' },
+  { path: '/services/web', priority: '0.9', changefreq: 'monthly' },
+  { path: '/services/bots', priority: '0.9', changefreq: 'monthly' },
+  { path: '/services/ai', priority: '0.9', changefreq: 'monthly' },
+  { path: '/services/complex', priority: '0.8', changefreq: 'monthly' },
+  { path: '/services/tma', priority: '0.9', changefreq: 'monthly' },
+  { path: '/services/reputation', priority: '0.7', changefreq: 'monthly' },
+  { path: '/services/custom', priority: '0.7', changefreq: 'monthly' },
+  { path: '/services/direct', priority: '0.7', changefreq: 'monthly' },
+  { path: '/services/tgads', priority: '0.7', changefreq: 'monthly' },
+  { path: '/blog', priority: '0.8', changefreq: 'weekly' },
+  { path: '/contact', priority: '0.8', changefreq: 'monthly' }
+];
+
+// Bot User-Agent patterns for prerendering
+const BOT_USER_AGENTS = [
+  'googlebot',
+  'bingbot',
+  'yandexbot',
+  'duckduckbot',
+  'slurp',
+  'baiduspider',
+  'facebookexternalhit',
+  'twitterbot',
+  'linkedinbot',
+  'whatsapp',
+  'telegrambot',
+  'applebot',
+  'gptbot',
+  'chatgpt-user',
+  'perplexitybot',
+  'claudebot',
+  'google-extended',
+  'applebot-extended',
+  'ia_archiver',
+  'embedly',
+  'quora link preview',
+  'outbrain',
+  'pinterest',
+  'vkshare',
+  'w3c_validator'
+];
+
+// Bot detection middleware
+const isBotRequest = (userAgent) => {
+  if (!userAgent) return false;
+  const ua = userAgent.toLowerCase();
+  return BOT_USER_AGENTS.some(bot => ua.includes(bot));
+};
 
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
+
+// Prerender middleware for bots - serve static HTML with full content
+app.use(async (req, res, next) => {
+  const userAgent = req.headers['user-agent'] || '';
+  
+  if (isBotRequest(userAgent)) {
+    // Check if prerendered HTML exists
+    const prerenderPath = path.join(__dirname, 'prerendered', `${req.path === '/' ? 'index' : req.path.replace(/\//g, '_')}.html`);
+    
+    if (fs.existsSync(prerenderPath)) {
+      console.log(`[Prerender] Serving prerendered HTML for bot: ${userAgent.substring(0, 50)}`);
+      return res.sendFile(prerenderPath);
+    }
+    
+    // Fall back to index.html with injected meta tags
+    console.log(`[Bot Detected] ${userAgent.substring(0, 50)} - ${req.path}`);
+  }
+  
+  next();
+});
+
 app.use(express.static(path.join(__dirname, 'dist')));
 
 // API Routes
+
+// Enhanced robots.txt with AI bots
 app.get('/robots.txt', (req, res) => {
   res.type('text/plain');
-  res.send(`User-agent: *\nAllow: /\nSitemap: ${BASE_URL}/sitemap.xml\n`);
+  res.send(`User-agent: *
+Allow: /
+Sitemap: ${BASE_URL}/sitemap.xml
+
+# AI Crawlers - explicit allow
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Yandexbot
+Allow: /
+`);
 });
 
+// Enhanced sitemap with lastmod and priority
 app.get('/sitemap.xml', (req, res) => {
+  const lastmod = new Date().toISOString().split('T')[0];
+  
   const urls = SITEMAP_ROUTES.map((route) => {
-    const loc = `${BASE_URL}${route}`;
-    return `<url><loc>${loc}</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>`;
-  }).join('');
+    const loc = `${BASE_URL}${route.path}`;
+    return `  <url>
+    <loc>${loc}</loc>
+    <lastmod>${lastmod}</lastmod>
+    <changefreq>${route.changefreq}</changefreq>
+    <priority>${route.priority}</priority>
+  </url>`;
+  }).join('\n');
 
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>` +
-    `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls}</urlset>`;
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls}
+</urlset>`;
 
   res.type('application/xml');
   res.send(xml);
+});
+
+// IndexNow verification file
+app.get(`/${INDEXNOW_KEY}.txt`, (req, res) => {
+  res.type('text/plain');
+  res.send(INDEXNOW_KEY);
+});
+
+// IndexNow ping endpoint
+app.post('/api/indexnow', async (req, res) => {
+  const { urls } = req.body;
+  
+  if (!urls || !Array.isArray(urls)) {
+    return res.status(400).json({ error: 'urls array is required' });
+  }
+
+  try {
+    const response = await fetch('https://api.indexnow.org/indexnow', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        host: 'codexai.pro',
+        key: INDEXNOW_KEY,
+        urlList: urls.map(url => url.startsWith('http') ? url : `${BASE_URL}${url}`)
+      })
+    });
+
+    if (response.ok) {
+      console.log('[IndexNow] Successfully pinged:', urls);
+      res.json({ success: true, message: 'URLs submitted to IndexNow' });
+    } else {
+      const error = await response.text();
+      console.error('[IndexNow] Error:', error);
+      res.status(500).json({ error: 'IndexNow API error' });
+    }
+  } catch (error) {
+    console.error('[IndexNow] Request failed:', error);
+    res.status(500).json({ error: 'Failed to ping IndexNow' });
+  }
 });
 
 app.post('/api/contact', async (req, res) => {
