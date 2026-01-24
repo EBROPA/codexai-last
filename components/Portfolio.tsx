@@ -280,7 +280,7 @@ export const PortfolioCard: React.FC<{ project: ProjectData, index: number, t: a
         {isMobile ? (
              <div className="w-full h-full pt-8 relative">
                  <OptimizedImage 
-                    src={project.image || `https://picsum.photos/seed/${project.id}/800/600`} 
+                    src={project.image || '/img/codexai-logo.png'} 
                     alt={project.title}
                     className="w-full h-full opacity-70"
                     priority={true}

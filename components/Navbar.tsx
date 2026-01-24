@@ -59,7 +59,7 @@ export const Navbar: React.FC = () => {
             label: t.nav.services,
             sub: '04',
             desc: t.nav.desc.services,
-            image: 'https://picsum.photos/seed/tech/800/600',
+            image: '/img/codexai-logo.png',
             subItems: [
                 { id: '/services/web', label: t.services.items.web.title },
                 { id: '/services/bots', label: t.services.items.bots.title },

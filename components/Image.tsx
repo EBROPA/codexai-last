@@ -83,7 +83,6 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
           height={height}
           loading={priority ? 'eager' : 'lazy'}
           decoding="async"
-          crossOrigin="anonymous"
           onLoad={handleLoad}
           onError={handleError}
           className={`transition-opacity duration-500 ${
