@@ -45,12 +45,23 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
         body: formData,
       });
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Upload failed');
+      const text = await response.text();
+      let data;
+      
+      try {
+        data = text ? JSON.parse(text) : null;
+      } catch {
+        throw new Error(`Server returned invalid response: ${text.substring(0, 100)}`);
       }
 
-      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data?.error || data?.details || `Upload failed with status ${response.status}`);
+      }
+
+      if (!data?.image?.url) {
+        throw new Error('Server did not return image URL');
+      }
+
       onChange(data.image.url);
       if (onAltChange && data.image.alt) {
         onAltChange(data.image.alt);

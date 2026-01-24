@@ -51,7 +51,7 @@ const upload = multer({
     }
   }
 });
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 const BASE_URL = 'https://codexai.pro';
 const INDEXNOW_KEY = process.env.INDEXNOW_KEY || 'codexai-indexnow-key';
 
