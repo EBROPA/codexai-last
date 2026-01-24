@@ -286,11 +286,21 @@ const AppContent: React.FC = () => {
 };
 
 function App() {
-  const [loading, setLoading] = useState(true);
+  // Check if user has already visited the site in this session
+  const hasVisited = typeof window !== 'undefined' && sessionStorage.getItem('codexai_visited') === 'true';
+  const [loading, setLoading] = useState(!hasVisited);
+
+  const handlePreloaderComplete = () => {
+    // Mark that user has visited
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('codexai_visited', 'true');
+    }
+    setLoading(false);
+  };
 
   return (
     <RouterProvider>
-      {loading && <Preloader onComplete={() => setLoading(false)} />}
+      {loading && <Preloader onComplete={handlePreloaderComplete} />}
       {!loading && <AppContent />}
     </RouterProvider>
   );
