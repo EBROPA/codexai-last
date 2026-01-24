@@ -338,11 +338,13 @@ app.get('/api/images/:id', async (req, res) => {
       return res.status(404).json({ error: 'Image not found' });
     }
 
-    // Set proper content type and cache headers
+    // Set proper content type, CORS and cache headers
     res.set({
       'Content-Type': image.mimeType,
       'Content-Length': image.size,
       'Cache-Control': 'public, max-age=31536000', // Cache for 1 year
+      'Access-Control-Allow-Origin': '*',
+      'Cross-Origin-Resource-Policy': 'cross-origin',
     });
 
     res.send(Buffer.from(image.data));

@@ -224,13 +224,17 @@ const ArticleCard: React.FC<{
         onClick={onClick}
         className="group md:col-span-2 lg:col-span-3 grid md:grid-cols-2 gap-8 md:gap-12 cursor-pointer mb-12"
       >
-        <div className="aspect-[16/9] md:aspect-auto md:h-[500px] overflow-hidden rounded-2xl relative">
+        <div className="aspect-[16/9] md:aspect-auto md:h-[500px] overflow-hidden rounded-2xl relative bg-zinc-900">
           <div className="absolute inset-0 bg-black/20 z-10 group-hover:bg-transparent transition-colors duration-500" />
           <img
             src={article.featuredImage}
             alt={article.featuredImageAlt}
             className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
             loading="lazy"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.src = '/img/codexai-logo.png';
+            }}
           />
         </div>
         <div className="flex flex-col justify-center">
@@ -283,6 +287,10 @@ const ArticleCard: React.FC<{
           alt={article.featuredImageAlt}
           className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
           loading="lazy"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            target.src = '/img/codexai-logo.png';
+          }}
         />
         <div className="absolute top-4 left-4 z-20">
           <span className="px-3 py-1 rounded-full bg-black/50 backdrop-blur-md border border-white/10 text-white text-xs font-mono uppercase tracking-widest">
