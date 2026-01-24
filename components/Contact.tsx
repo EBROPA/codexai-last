@@ -98,40 +98,48 @@ export const Contact: React.FC = () => {
 
                  <form className="space-y-8 flex-1" onSubmit={handleSubmit}>
                     <div className="group/input">
-                       <label className="block font-mono text-[10px] text-neon-purple mb-2 opacity-0 group-focus-within/input:opacity-100 transition-opacity uppercase">{t.contact.form.name}</label>
+                       <label htmlFor="contact-name" className="block font-mono text-[10px] text-neon-purple mb-2 opacity-0 group-focus-within/input:opacity-100 transition-opacity uppercase">{t.contact.form.name}</label>
                        <input 
+                         id="contact-name"
                          name="name"
                          type="text" 
+                         autoComplete="name"
                          placeholder={t.contact.form.namePlaceholder}
                          className="w-full bg-transparent border-b border-zinc-800 py-3 text-lg font-sans text-white placeholder-zinc-600 focus:outline-none focus:border-neon-purple transition-colors"
                          required
                        />
                     </div>
                     <div className="group/input">
-                       <label className="block font-mono text-[10px] text-neon-purple mb-2 opacity-0 group-focus-within/input:opacity-100 transition-opacity uppercase">{t.contact.form.niche}</label>
+                       <label htmlFor="contact-niche" className="block font-mono text-[10px] text-neon-purple mb-2 opacity-0 group-focus-within/input:opacity-100 transition-opacity uppercase">{t.contact.form.niche}</label>
                        <input 
+                         id="contact-niche"
                          name="niche"
                          type="text" 
+                         autoComplete="organization"
                          placeholder={t.contact.form.nichePlaceholder}
                          className="w-full bg-transparent border-b border-zinc-800 py-3 text-lg font-sans text-white placeholder-zinc-600 focus:outline-none focus:border-neon-purple transition-colors"
                          required
                        />
                     </div>
                     <div className="group/input">
-                       <label className="block font-mono text-[10px] text-neon-purple mb-2 opacity-0 group-focus-within/input:opacity-100 transition-opacity uppercase">{t.contact.form.contact}</label>
+                       <label htmlFor="contact-info" className="block font-mono text-[10px] text-neon-purple mb-2 opacity-0 group-focus-within/input:opacity-100 transition-opacity uppercase">{t.contact.form.contact}</label>
                        <input 
+                         id="contact-info"
                          name="contact"
                          type="text" 
+                         autoComplete="email"
                          placeholder={t.contact.form.contactPlaceholder}
                          className="w-full bg-transparent border-b border-zinc-800 py-3 text-lg font-sans text-white placeholder-zinc-600 focus:outline-none focus:border-neon-purple transition-colors"
                          required
                        />
                     </div>
                     <div className="group/input">
-                       <label className="block font-mono text-[10px] text-neon-purple mb-2 opacity-0 group-focus-within/input:opacity-100 transition-opacity uppercase">{t.contact.form.comment}</label>
+                       <label htmlFor="contact-comment" className="block font-mono text-[10px] text-neon-purple mb-2 opacity-0 group-focus-within/input:opacity-100 transition-opacity uppercase">{t.contact.form.comment}</label>
                        <textarea 
+                         id="contact-comment"
                          name="comment"
                          rows={2}
+                         autoComplete="off"
                          placeholder={t.contact.form.commentPlaceholder}
                          className="w-full bg-transparent border-b border-zinc-800 py-3 text-lg font-sans text-white placeholder-zinc-600 focus:outline-none focus:border-neon-purple transition-colors resize-none"
                        />

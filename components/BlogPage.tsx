@@ -98,11 +98,15 @@ export const BlogPage: React.FC = () => {
             <div className="p-2 backdrop-blur-xl bg-zinc-900/80 border border-white/10 rounded-2xl md:rounded-full shadow-2xl flex flex-col md:flex-row gap-2">
               {/* Search */}
               <div className="relative flex-1 group">
+                <label htmlFor="blog-search" className="sr-only">{isRu ? 'Поиск статей' : 'Search articles'}</label>
                 <div className="absolute left-4 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-zinc-800 text-zinc-400 group-focus-within:bg-neon-acid group-focus-within:text-black transition-all duration-300">
                   <Search size={14} />
                 </div>
                 <input
+                  id="blog-search"
+                  name="search"
                   type="text"
+                  autoComplete="off"
                   placeholder={isRu ? 'Поиск статей...' : 'Search articles...'}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -114,10 +118,13 @@ export const BlogPage: React.FC = () => {
 
               {/* Category Filter */}
               <div className="relative group min-w-[220px]">
+                <label htmlFor="blog-category" className="sr-only">{isRu ? 'Выбор категории' : 'Select category'}</label>
                 <div className="absolute left-4 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-zinc-800 text-zinc-400 group-focus-within:bg-neon-acid group-focus-within:text-black transition-all duration-300 pointer-events-none">
                   <Filter size={14} />
                 </div>
                 <select
+                  id="blog-category"
+                  name="category"
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
                   className="w-full pl-14 pr-8 py-3 bg-transparent text-white focus:outline-none appearance-none cursor-pointer rounded-full hover:bg-white/5 transition-colors"
