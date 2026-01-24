@@ -1,0 +1,31 @@
+# Render Blueprint configuration
+# https://render.com/docs/blueprint-spec
+
+databases:
+  - name: codexai-db
+    databaseName: codexai
+    user: codexai
+    plan: free
+    region: frankfurt
+
+services:
+  - type: web
+    name: codexai
+    runtime: node
+    region: frankfurt
+    plan: free
+    buildCommand: npm install && npm run build && npm run db:push
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: codexai-db
+          property: connectionString
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_CHAT_ID
+        sync: false
+      - key: INDEXNOW_KEY
+        value: codexai-indexnow-key

@@ -15,58 +15,37 @@ interface BreadcrumbsProps {
 export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ items, className = '' }) => {
   const router = useRouter();
 
-  // Generate schema for SEO
-  const breadcrumbSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: items.map((item, i) => ({
-      '@type': 'ListItem',
-      position: i + 1,
-      name: item.name,
-      item: item.url.startsWith('http') ? item.url : `https://codexai.pro${item.url}`
-    }))
-  };
-
   return (
-    <>
-      {/* Structured data for search engines */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
-      
-      {/* Visual breadcrumbs */}
-      <nav 
-        aria-label="Breadcrumb" 
-        className={`flex items-center gap-2 text-xs font-mono uppercase tracking-widest ${className}`}
+    <nav
+      aria-label="Breadcrumb"
+      className={`flex items-center gap-2 text-xs font-mono uppercase tracking-widest ${className}`}
+    >
+      <button
+        onClick={() => router.push('/')}
+        className="text-zinc-500 hover:text-neon-acid transition-colors flex items-center gap-1"
+        aria-label="Home"
       >
-        <button 
-          onClick={() => router.push('/')}
-          className="text-zinc-500 hover:text-neon-acid transition-colors flex items-center gap-1"
-          aria-label="Home"
-        >
-          <Home size={12} />
-        </button>
-        
-        {items.map((item, index) => (
-          <React.Fragment key={item.url}>
-            <ChevronRight size={12} className="text-zinc-600" />
-            {index === items.length - 1 ? (
-              <span className="text-white" aria-current="page">
-                {item.name}
-              </span>
-            ) : (
-              <button
-                onClick={() => router.push(item.url)}
-                className="text-zinc-500 hover:text-neon-acid transition-colors"
-              >
-                {item.name}
-              </button>
-            )}
-          </React.Fragment>
-        ))}
-      </nav>
-    </>
+        <Home size={12} />
+      </button>
+
+      {items.map((item, index) => (
+        <React.Fragment key={item.url}>
+          <ChevronRight size={12} className="text-zinc-600" />
+          {index === items.length - 1 ? (
+            <span className="text-white" aria-current="page">
+              {item.name}
+            </span>
+          ) : (
+            <button
+              onClick={() => router.push(item.url)}
+              className="text-zinc-500 hover:text-neon-acid transition-colors"
+            >
+              {item.name}
+            </button>
+          )}
+        </React.Fragment>
+      ))}
+    </nav>
   );
 };
 
@@ -118,7 +97,7 @@ export const getBreadcrumbs = (path: string, lang: 'ru' | 'en' = 'ru'): Breadcru
     items.push({ name: l.contact, url: '/contact' });
   } else if (path.startsWith('/services')) {
     items.push({ name: l.services, url: '/services' });
-    
+
     const serviceSlug = path.replace('/services/', '').replace('/services', '');
     if (serviceSlug && serviceSlug !== '') {
       const serviceLabels: Record<string, string> = {
@@ -132,7 +111,7 @@ export const getBreadcrumbs = (path: string, lang: 'ru' | 'en' = 'ru'): Breadcru
         direct: l.direct,
         tgads: l.tgads
       };
-      
+
       if (serviceLabels[serviceSlug]) {
         items.push({ name: serviceLabels[serviceSlug], url: path });
       }

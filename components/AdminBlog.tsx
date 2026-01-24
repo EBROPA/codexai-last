@@ -28,6 +28,7 @@ import {
   ArticleAnalytics
 } from '../lib/blogTypes';
 import { BlockEditor } from './BlockEditor';
+import { ImageUploader } from './ImageUploader';
 
 // Simple password protection (in production use proper auth)
 const ADMIN_PASSWORD = 'codexai2026';
@@ -839,14 +840,25 @@ const ArticleEditor: React.FC<{
 
             {/* Featured Image */}
             <div>
-              <label className="block text-zinc-400 text-sm mb-2">URL изображения</label>
-              <input
-                type="text"
+              <label className="block text-zinc-400 text-sm mb-2">Главное изображение</label>
+              <ImageUploader
                 value={article.featuredImage}
-                onChange={(e) => updateField('featuredImage', e.target.value)}
-                className="w-full px-4 py-3 bg-zinc-900 border border-white/10 text-white focus:border-neon-acid focus:outline-none"
-                placeholder="/img/article-image.jpg"
+                onChange={(url) => updateField('featuredImage', url)}
+                onAltChange={(alt) => updateField('featuredImageAlt', alt)}
+                alt={article.featuredImageAlt}
+                placeholder="Upload featured image"
               />
+              {article.featuredImage && (
+                <div className="mt-2">
+                  <input
+                    type="text"
+                    value={article.featuredImageAlt}
+                    onChange={(e) => updateField('featuredImageAlt', e.target.value)}
+                    className="w-full px-3 py-2 bg-zinc-900 border border-white/10 text-white text-sm focus:border-neon-acid focus:outline-none"
+                    placeholder="Alt text for SEO..."
+                  />
+                </div>
+              )}
             </div>
 
             {/* Editor Mode Toggle */}

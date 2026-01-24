@@ -5,11 +5,32 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import fs from 'fs';
 import 'dotenv/config';
+import multer from 'multer';
+import { PrismaClient } from '@prisma/client';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+
+// Initialize Prisma Client
+const prisma = new PrismaClient();
+
+// Configure multer to store files in memory
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB max file size
+  },
+  fileFilter: (req, file, cb) => {
+    // Accept only image files
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed!'), false);
+    }
+  }
+});
 const PORT = process.env.PORT || 3000;
 const BASE_URL = 'https://codexai.pro';
 const INDEXNOW_KEY = process.env.INDEXNOW_KEY || 'codexai-indexnow-key';
@@ -192,6 +213,129 @@ app.post('/api/indexnow', async (req, res) => {
     res.status(500).json({ error: 'Failed to ping IndexNow' });
   }
 });
+
+// =====================================================
+// IMAGE UPLOAD API
+// =====================================================
+
+// Upload image
+app.post('/api/images/upload', upload.single('image'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No image file provided' });
+    }
+
+    const { originalname, mimetype, size, buffer } = req.file;
+    const alt = req.body.alt || '';
+
+    // Save image to database
+    const image = await prisma.image.create({
+      data: {
+        filename: originalname,
+        mimeType: mimetype,
+        size: size,
+        data: buffer,
+        alt: alt,
+      },
+    });
+
+    console.log(`[Image Upload] Saved image: ${originalname} (${size} bytes)`);
+
+    res.json({
+      success: true,
+      image: {
+        id: image.id,
+        filename: image.filename,
+        mimeType: image.mimeType,
+        size: image.size,
+        alt: image.alt,
+        url: `/api/images/${image.id}`,
+        createdAt: image.createdAt,
+      },
+    });
+  } catch (error) {
+    console.error('[Image Upload] Error:', error);
+    res.status(500).json({ error: 'Failed to upload image' });
+  }
+});
+
+// Get image by ID
+app.get('/api/images/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const image = await prisma.image.findUnique({
+      where: { id },
+    });
+
+    if (!image) {
+      return res.status(404).json({ error: 'Image not found' });
+    }
+
+    // Set proper content type and cache headers
+    res.set({
+      'Content-Type': image.mimeType,
+      'Content-Length': image.size,
+      'Cache-Control': 'public, max-age=31536000', // Cache for 1 year
+    });
+
+    res.send(Buffer.from(image.data));
+  } catch (error) {
+    console.error('[Image Get] Error:', error);
+    res.status(500).json({ error: 'Failed to get image' });
+  }
+});
+
+// List all images (for admin panel)
+app.get('/api/images', async (req, res) => {
+  try {
+    const images = await prisma.image.findMany({
+      select: {
+        id: true,
+        filename: true,
+        mimeType: true,
+        size: true,
+        alt: true,
+        createdAt: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    res.json({
+      success: true,
+      images: images.map((img) => ({
+        ...img,
+        url: `/api/images/${img.id}`,
+      })),
+    });
+  } catch (error) {
+    console.error('[Image List] Error:', error);
+    res.status(500).json({ error: 'Failed to list images' });
+  }
+});
+
+// Delete image by ID
+app.delete('/api/images/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    await prisma.image.delete({
+      where: { id },
+    });
+
+    console.log(`[Image Delete] Deleted image: ${id}`);
+    res.json({ success: true });
+  } catch (error) {
+    console.error('[Image Delete] Error:', error);
+    res.status(500).json({ error: 'Failed to delete image' });
+  }
+});
+
+// =====================================================
+// CONTACT FORM API
+// =====================================================
 
 app.post('/api/contact', async (req, res) => {
   const { name, niche, contact, comment } = req.body;

@@ -164,6 +164,13 @@ export const SEO: React.FC<SEOProps> = ({ title, description, path, image, type,
         },
         email: 'contact@codexai.pro',
         telephone: '+74950322199',
+        contactPoint: {
+          '@type': 'ContactPoint',
+          telephone: '+74950322199',
+          contactType: 'sales',
+          areaServed: ['RU', 'KZ', 'BY'],
+          availableLanguage: ['Russian', 'English']
+        },
         // Extended sameAs for Entity Linking (E-E-A-T)
         sameAs: [
           'https://t.me/codexai_pro',
@@ -238,8 +245,8 @@ export const SEO: React.FC<SEOProps> = ({ title, description, path, image, type,
           '@type': 'OfferCatalog',
           name: 'Услуги CodexAI',
           itemListElement: [
-            { 
-              '@type': 'Offer', 
+            {
+              '@type': 'Offer',
               itemOffered: { '@type': 'Service', name: 'Разработка сайтов (лендинг)' },
               priceSpecification: {
                 '@type': 'PriceSpecification',
@@ -248,8 +255,8 @@ export const SEO: React.FC<SEOProps> = ({ title, description, path, image, type,
                 minPrice: '100000'
               }
             },
-            { 
-              '@type': 'Offer', 
+            {
+              '@type': 'Offer',
               itemOffered: { '@type': 'Service', name: 'Telegram-боты' },
               priceSpecification: {
                 '@type': 'PriceSpecification',
@@ -258,8 +265,8 @@ export const SEO: React.FC<SEOProps> = ({ title, description, path, image, type,
                 minPrice: '50000'
               }
             },
-            { 
-              '@type': 'Offer', 
+            {
+              '@type': 'Offer',
               itemOffered: { '@type': 'Service', name: 'Telegram Mini Apps' },
               priceSpecification: {
                 '@type': 'PriceSpecification',
@@ -268,8 +275,8 @@ export const SEO: React.FC<SEOProps> = ({ title, description, path, image, type,
                 minPrice: '120000'
               }
             },
-            { 
-              '@type': 'Offer', 
+            {
+              '@type': 'Offer',
               itemOffered: { '@type': 'Service', name: 'AI интеграция' },
               priceSpecification: {
                 '@type': 'PriceSpecification',

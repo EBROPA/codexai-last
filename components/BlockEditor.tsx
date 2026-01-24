@@ -525,13 +525,98 @@ const HeadingEditor: React.FC<{
 };
 
 // =====================================================
-// IMAGE EDITOR
+// IMAGE EDITOR with file upload and drag-and-drop
 // =====================================================
 const ImageEditor: React.FC<{
   block: ImageBlock;
   onChange: (updates: Partial<ImageBlock>) => void;
 }> = ({ block, onChange }) => {
   const [imageUrl, setImageUrl] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Upload file to server
+  const uploadFile = async (file: File) => {
+    setIsUploading(true);
+    setUploadError(null);
+
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+      formData.append('alt', file.name.split('.')[0]); // Default alt from filename
+
+      const response = await fetch('/api/images/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Upload failed');
+      }
+
+      const data = await response.json();
+      onChange({ src: data.image.url, alt: data.image.alt || '' });
+    } catch (error) {
+      console.error('Upload error:', error);
+      setUploadError(error instanceof Error ? error.message : 'Failed to upload image');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  // Handle file input change
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      uploadFile(file);
+    }
+  };
+
+  // Handle drag events
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+
+    const file = e.dataTransfer.files?.[0];
+    if (file && file.type.startsWith('image/')) {
+      uploadFile(file);
+    } else {
+      setUploadError('Please drop an image file');
+    }
+  };
+
+  // Handle paste from clipboard
+  const handlePaste = async (e: React.ClipboardEvent) => {
+    const items = e.clipboardData?.items;
+    if (!items) return;
+
+    for (const item of Array.from(items) as DataTransferItem[]) {
+      if (item.type.startsWith('image/')) {
+        const file = item.getAsFile();
+        if (file) {
+          e.preventDefault();
+          uploadFile(file);
+          return;
+        }
+      }
+    }
+  };
 
   return (
     <div className="image-block space-y-3">
@@ -555,33 +640,72 @@ const ImageEditor: React.FC<{
           </button>
         </div>
       ) : (
-        <div className="border border-dashed border-white/20 rounded p-8 text-center">
-          <Image size={32} className="mx-auto text-zinc-500 mb-3" />
-          <input
-            type="text"
-            value={imageUrl}
-            onChange={(e) => setImageUrl(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && imageUrl) {
-                onChange({ src: imageUrl });
-                setImageUrl('');
-              }
-            }}
-            placeholder="Вставьте URL изображения и нажмите Enter..."
-            className="w-full bg-zinc-900 border border-white/10 px-4 py-2 text-white text-center rounded"
-          />
-          <button
-            type="button"
-            onClick={() => {
-              if (imageUrl) {
-                onChange({ src: imageUrl });
-                setImageUrl('');
-              }
-            }}
-            className="mt-3 px-4 py-2 bg-zinc-800 text-white text-sm hover:bg-zinc-700 rounded transition-colors"
-          >
-            Добавить
-          </button>
+        <div
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+          onPaste={handlePaste}
+          className={`border-2 border-dashed rounded p-8 text-center transition-colors ${
+            isDragging 
+              ? 'border-neon-acid bg-neon-acid/10' 
+              : 'border-white/20 hover:border-white/40'
+          }`}
+        >
+          {isUploading ? (
+            <div className="flex flex-col items-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-2 border-neon-acid border-t-transparent mb-3"></div>
+              <p className="text-zinc-400 text-sm">Uploading...</p>
+            </div>
+          ) : (
+            <>
+              <Image size={32} className="mx-auto text-zinc-500 mb-3" />
+              
+              {/* Hidden file input */}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="hidden"
+              />
+              
+              {/* Upload button */}
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="px-4 py-2 bg-neon-acid text-black font-mono text-sm hover:bg-white transition-colors rounded mb-3"
+              >
+                Choose file
+              </button>
+              
+              <p className="text-zinc-500 text-sm mb-4">
+                or drag and drop, paste from clipboard
+              </p>
+
+              {/* URL input as fallback */}
+              <div className="border-t border-white/10 pt-4 mt-4">
+                <p className="text-zinc-600 text-xs mb-2">Or paste URL:</p>
+                <input
+                  type="text"
+                  value={imageUrl}
+                  onChange={(e) => setImageUrl(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && imageUrl) {
+                      onChange({ src: imageUrl });
+                      setImageUrl('');
+                    }
+                  }}
+                  placeholder="https://..."
+                  className="w-full bg-zinc-900 border border-white/10 px-4 py-2 text-white text-center rounded text-sm"
+                />
+              </div>
+
+              {/* Error message */}
+              {uploadError && (
+                <p className="text-red-500 text-sm mt-3">{uploadError}</p>
+              )}
+            </>
+          )}
         </div>
       )}
 
@@ -592,7 +716,7 @@ const ImageEditor: React.FC<{
               type="text"
               value={block.alt}
               onChange={(e) => onChange({ alt: e.target.value })}
-              placeholder="Alt текст для SEO..."
+              placeholder="Alt text for SEO..."
               className="flex-1 bg-zinc-900 border border-white/10 px-3 py-2 text-white text-sm rounded"
             />
             <select
@@ -600,16 +724,16 @@ const ImageEditor: React.FC<{
               onChange={(e) => onChange({ width: e.target.value as 'full' | 'wide' | 'normal' })}
               className="bg-zinc-900 border border-white/10 px-3 py-2 text-white text-sm rounded"
             >
-              <option value="normal">Обычная</option>
-              <option value="wide">Широкая</option>
-              <option value="full">Во всю ширину</option>
+              <option value="normal">Normal</option>
+              <option value="wide">Wide</option>
+              <option value="full">Full width</option>
             </select>
           </div>
           <input
             type="text"
             value={block.caption || ''}
             onChange={(e) => onChange({ caption: e.target.value })}
-            placeholder="Подпись к изображению..."
+            placeholder="Image caption..."
             className="w-full bg-transparent border-b border-white/10 px-0 py-2 text-zinc-400 text-sm text-center"
           />
         </>
