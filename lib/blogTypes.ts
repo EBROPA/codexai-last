@@ -521,4 +521,69 @@ export const generateKeyTakeaways = (blocks: ContentBlock[]): KeyTakeaway[] => {
   return takeaways.slice(0, 5);
 };
 
+// Generate FAQ from content (based on headings and content)
+export const generateFAQs = (title: string, blocks: ContentBlock[]): ArticleFAQ[] => {
+  const faqs: ArticleFAQ[] = [];
+  
+  // Common question patterns to generate
+  const questionTemplates = [
+    { pattern: /стоимость|цен[аы]|сколько стоит|бюджет/i, question: 'Сколько это стоит?' },
+    { pattern: /срок[иа]?|время|долго|быстро/i, question: 'Сколько времени это займёт?' },
+    { pattern: /гарант/i, question: 'Какие гарантии вы даёте?' },
+    { pattern: /преимуществ|выгод|польз/i, question: 'Какие преимущества?' },
+    { pattern: /как работает|процесс|этап/i, question: 'Как проходит процесс?' },
+  ];
+  
+  const text = blocksToText(blocks);
+  
+  // Generate contextual FAQs based on content
+  for (const template of questionTemplates) {
+    if (template.pattern.test(text) && faqs.length < 3) {
+      // Find relevant paragraph
+      const sentences = text.split(/[.!?]/).filter(s => template.pattern.test(s));
+      if (sentences.length > 0) {
+        faqs.push({
+          question: template.question,
+          answer: sentences[0].trim().slice(0, 200) + (sentences[0].length > 200 ? '...' : '')
+        });
+      }
+    }
+  }
+  
+  // Add a general FAQ based on title
+  if (faqs.length < 3) {
+    faqs.push({
+      question: `Что важно знать о "${title.slice(0, 30)}${title.length > 30 ? '...' : ''}"?`,
+      answer: blocksToText(blocks).slice(0, 200) + '...'
+    });
+  }
+  
+  return faqs.slice(0, 5);
+};
 
+// Generate statistics from content
+export const generateStats = (blocks: ContentBlock[]): ArticleStat[] => {
+  const stats: ArticleStat[] = [];
+  const text = blocksToText(blocks);
+  
+  // Find numbers with context
+  const numberPatterns = [
+    { pattern: /(\d+(?:\s*(?:000|тыс|млн))?)\s*(?:₽|руб|рублей)/gi, label: 'Стоимость' },
+    { pattern: /(\d+)\s*(?:дней|недел|месяц)/gi, label: 'Срок' },
+    { pattern: /(\d+)\s*%/gi, label: 'Показатель' },
+    { pattern: /(\d+)\s*(?:проект|клиент|заказ)/gi, label: 'Опыт' },
+  ];
+  
+  for (const { pattern, label } of numberPatterns) {
+    const matches = text.match(pattern);
+    if (matches && matches.length > 0 && stats.length < 4) {
+      stats.push({
+        label,
+        value: matches[0],
+        source: 'CODEXAI'
+      });
+    }
+  }
+  
+  return stats;
+};

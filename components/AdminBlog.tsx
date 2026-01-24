@@ -25,6 +25,8 @@ import {
   generateMetaTitle,
   generateTLDR,
   generateKeyTakeaways,
+  generateFAQs,
+  generateStats,
   ArticleAnalytics
 } from '../lib/blogTypes';
 import { BlockEditor } from './BlockEditor';
@@ -616,11 +618,15 @@ const ArticleEditor: React.FC<{
 
     const tldr = generateTLDR(article.title, article.blocks);
     const keyTakeaways = generateKeyTakeaways(article.blocks);
+    const faqs = generateFAQs(article.title, article.blocks);
+    const stats = generateStats(article.blocks);
 
     onChange({
       ...article,
       tldr,
       keyTakeaways,
+      faqs: article.faqs.length > 0 ? article.faqs : faqs,
+      stats: article.stats && article.stats.length > 0 ? article.stats : stats,
       autoGEO: true
     });
   };
@@ -634,6 +640,8 @@ const ArticleEditor: React.FC<{
     const metaDescription = generateMetaDescription(article.title, text);
     const tldr = generateTLDR(article.title, article.blocks);
     const keyTakeaways = generateKeyTakeaways(article.blocks);
+    const faqs = generateFAQs(article.title, article.blocks);
+    const stats = generateStats(article.blocks);
 
     onChange({
       ...article,
@@ -642,6 +650,8 @@ const ArticleEditor: React.FC<{
       metaTitle: article.title,
       tldr,
       keyTakeaways,
+      faqs: article.faqs.length > 0 ? article.faqs : faqs,
+      stats: article.stats && article.stats.length > 0 ? article.stats : stats,
       autoSEO: true,
       autoGEO: true
     });

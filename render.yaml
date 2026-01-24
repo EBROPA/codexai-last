@@ -14,7 +14,7 @@ services:
     runtime: node
     region: frankfurt
     plan: free
-    buildCommand: npm install && npm run build && npm run db:push
+    buildCommand: npm install && npm run build:render
     startCommand: npm start
     envVars:
       - key: NODE_ENV
