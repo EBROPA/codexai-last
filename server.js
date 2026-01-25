@@ -21,7 +21,7 @@ try {
   prisma = new PrismaClient({
     log: ['error', 'warn'],
   });
-  
+
   // Test database connection
   prisma.$connect()
     .then(() => {
@@ -112,7 +112,7 @@ const isBotRequest = (userAgent) => {
 
 // Middleware
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
+  origin: process.env.NODE_ENV === 'production'
     ? ['https://codexai.pro', 'https://www.codexai.pro']
     : true,
   methods: ['GET', 'POST', 'DELETE'],
@@ -125,11 +125,12 @@ app.use((req, res, next) => {
   res.setHeader(
     'Content-Security-Policy',
     "default-src 'self'; " +
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://mc.yandex.ru; " +
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
     "font-src 'self' https://fonts.gstatic.com; " +
     "img-src 'self' data: blob: https:; " +
-    "connect-src 'self' https://api.telegram.org https://*.supabase.co; " +
+    "connect-src 'self' https://api.telegram.org https://*.supabase.co https://mc.yandex.ru; " +
+    "frame-src 'self' https://www.youtube.com https://player.vimeo.com https://rutube.ru https://mc.yandex.ru; " +
     "frame-ancestors 'self';"
   );
   res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -141,20 +142,20 @@ app.use((req, res, next) => {
 // Prerender middleware for bots - serve static HTML with full content
 app.use(async (req, res, next) => {
   const userAgent = req.headers['user-agent'] || '';
-  
+
   if (isBotRequest(userAgent)) {
     // Check if prerendered HTML exists
     const prerenderPath = path.join(__dirname, 'prerendered', `${req.path === '/' ? 'index' : req.path.replace(/\//g, '_')}.html`);
-    
+
     if (fs.existsSync(prerenderPath)) {
       console.log(`[Prerender] Serving prerendered HTML for bot: ${userAgent.substring(0, 50)}`);
       return res.sendFile(prerenderPath);
     }
-    
+
     // Fall back to index.html with injected meta tags
     console.log(`[Bot Detected] ${userAgent.substring(0, 50)} - ${req.path}`);
   }
-  
+
   next();
 });
 
@@ -199,7 +200,7 @@ Allow: /
 // Enhanced sitemap with lastmod and priority
 app.get('/sitemap.xml', (req, res) => {
   const lastmod = new Date().toISOString().split('T')[0];
-  
+
   const urls = SITEMAP_ROUTES.map((route) => {
     const loc = `${BASE_URL}${route.path}`;
     return `  <url>
@@ -228,7 +229,7 @@ app.get(`/${INDEXNOW_KEY}.txt`, (req, res) => {
 // IndexNow ping endpoint
 app.post('/api/indexnow', async (req, res) => {
   const { urls } = req.body;
-  
+
   if (!urls || !Array.isArray(urls)) {
     return res.status(400).json({ error: 'urls array is required' });
   }
@@ -264,7 +265,7 @@ app.post('/api/indexnow', async (req, res) => {
 
 // Check database status endpoint
 app.get('/api/db-status', (req, res) => {
-  res.json({ 
+  res.json({
     connected: dbConnected,
     message: dbConnected ? 'Database connected' : 'Database not available. Please configure DATABASE_URL environment variable.'
   });
@@ -276,7 +277,7 @@ app.post('/api/images/upload', upload.single('image'), async (req, res) => {
     // Check if database is available
     if (!prisma || !dbConnected) {
       console.error('[Image Upload] Database not connected. DATABASE_URL:', process.env.DATABASE_URL ? 'set' : 'NOT SET');
-      return res.status(503).json({ 
+      return res.status(503).json({
         error: 'Database not available. Please configure DATABASE_URL on Render.com',
         details: 'Go to Render Dashboard -> Your Web Service -> Environment -> Add DATABASE_URL from your PostgreSQL service'
       });
@@ -415,7 +416,7 @@ app.delete('/api/images/:id', async (req, res) => {
 
 app.post('/api/contact', async (req, res) => {
   const { name, niche, contact, comment } = req.body;
-  
+
   // Log the request to the console (visible in Render logs)
   console.log('--- NEW CONTACT FORM SUBMISSION ---');
   console.log('Name:', name);
@@ -462,7 +463,7 @@ app.post('/api/contact', async (req, res) => {
   } else {
     console.warn('TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID not set');
   }
-  
+
   res.status(200).json({ success: true, message: 'Message received successfully' });
 });
 

@@ -103,12 +103,24 @@ export const BlogPreview: React.FC = () => {
     );
 };
 
+// Helper to fix image URL if it's just an ID
+const getImageUrl = (url: string): string => {
+  if (!url) return '/img/codexai-logo.png';
+  // If it looks like a UUID (no slashes, 36 chars with dashes), prepend /api/images/
+  const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (uuidPattern.test(url)) {
+    return `/api/images/${url}`;
+  }
+  return url;
+};
+
 const ArticleCard: React.FC<{
     article: BlogArticle;
     isRu: boolean;
     onClick: () => void;
 }> = ({ article, isRu, onClick }) => {
     const categoryMeta = CATEGORY_META[article.category as ArticleCategory];
+    const featuredImageUrl = getImageUrl(article.featuredImage);
 
     return (
         <article
@@ -117,7 +129,7 @@ const ArticleCard: React.FC<{
         >
             {/* Background Image */}
             <img
-                src={article.featuredImage}
+                src={featuredImageUrl}
                 alt={article.featuredImageAlt}
                 className="absolute inset-0 w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
                 loading="lazy"

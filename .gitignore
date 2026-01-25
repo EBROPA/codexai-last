@@ -16,3 +16,4 @@ prisma.config.ts
 .env
 .env.local
 .env.*.local
+dev.db

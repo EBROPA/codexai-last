@@ -31,8 +31,27 @@ export default defineConfig(({ mode }) => {
       },
       assetsInclude: ['**/*.webp'],
       build: {
+        // Optimize chunk size
+        chunkSizeWarningLimit: 500,
         rollupOptions: {
           output: {
+            // Manual chunk splitting for better caching
+            manualChunks: (id) => {
+              // Vendor chunks
+              if (id.includes('node_modules')) {
+                if (id.includes('react-dom') || id.includes('react/')) {
+                  return 'vendor-react';
+                }
+                if (id.includes('lucide-react')) {
+                  return 'ui-icons';
+                }
+                if (id.includes('@google/genai')) {
+                  return 'vendor-genai';
+                }
+                // Other node_modules go to vendor
+                return 'vendor';
+              }
+            },
             assetFileNames: (assetInfo) => {
               if (assetInfo.name && assetInfo.name.endsWith('.webp')) {
                 return 'assets/images/[name]-[hash][extname]';

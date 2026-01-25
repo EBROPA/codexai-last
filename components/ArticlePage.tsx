@@ -195,6 +195,8 @@ const renderBlock = (block: ContentBlock, index: number): React.ReactNode => {
 // Markdown renderer (fallback for old articles)
 const renderMarkdown = (content: string): string => {
   return content
+    // TL;DR Header - specific styling
+    .replace(/^## TL;DR$/gim, '<div class="font-mono text-neon-acid text-xs uppercase tracking-widest mt-12 mb-4">// TL;DR</div>')
     // Headers
     .replace(/^### (.*$)/gim, '<h3 class="text-2xl font-serif font-bold text-white mt-12 mb-6">$1</h3>')
     .replace(/^## (.*$)/gim, '<h2 class="text-3xl md:text-4xl font-serif font-bold text-white mt-16 mb-8">$1</h2>')
@@ -210,17 +212,39 @@ const renderMarkdown = (content: string): string => {
     // Ordered lists
     .replace(/^\d+\. (.*$)/gim, '<li class="ml-4 mb-2 text-zinc-300 list-decimal">$1</li>')
     // Tables
-    .replace(/\|(.+)\|/g, (match) => {
-      const cells = match.split('|').filter(c => c.trim());
-      if (cells.every(c => c.trim().match(/^-+$/))) {
-        return ''; // Skip separator row
-      }
-      const isHeader = cells[0].trim().match(/^[A-ZА-Я]/);
-      const tag = isHeader ? 'th' : 'td';
-      const cellClass = isHeader
-        ? 'py-4 px-6 text-left font-mono text-xs uppercase tracking-widest text-zinc-500 border-b border-white/10 bg-white/5'
-        : 'py-4 px-6 text-zinc-300 border-b border-white/5';
-      return `<tr>${cells.map(c => `<${tag} class="${cellClass}">${c.trim()}</${tag}>`).join('')}</tr>`;
+    // Tables - Process the whole block
+    .replace(/((?:^\|.+\|(?:\r\n|\n|$))+)/gm, (match) => {
+      const lines = match.trim().split(/\r\n|\n/);
+      if (lines.length === 0) return '';
+
+      let html = '<div class="overflow-x-auto my-12 -mx-4 md:mx-0 px-4 md:px-0"><table class="w-full text-left border-collapse min-w-[500px]">';
+
+      lines.forEach((line, index) => {
+        // Skip separator row (e.g. |---|---|)
+        if (line.replace(/\|/g, '').trim().match(/^-+$/)) {
+          return;
+        }
+
+        const cells = line.split('|').filter(c => c && c.trim() !== '');
+        if (cells.length === 0) return;
+
+        // Assume first row is header if it's the 0th index
+        // (Simple heuristic, standard markdown writers usually put header first)
+        const isHeaderRow = index === 0;
+        const tag = isHeaderRow ? 'th' : 'td';
+        const cellClass = isHeaderRow
+          ? 'py-3 px-4 text-left font-mono text-xs uppercase tracking-widest text-zinc-500 border-b border-white/10 bg-white/5 whitespace-nowrap'
+          : 'py-3 px-4 text-sm md:text-base text-zinc-300 border-b border-white/5 whitespace-nowrap';
+
+        html += '<tr>';
+        cells.forEach(cell => {
+          html += `<${tag} class="${cellClass}">${cell.trim()}</${tag}>`;
+        });
+        html += '</tr>';
+      });
+
+      html += '</table></div>';
+      return html;
     })
     // Code blocks
     .replace(/```(\w*)\n([\s\S]*?)```/gim, '<pre class="bg-[#0d0d0d] border border-white/10 p-6 my-8 overflow-x-auto rounded-xl shadow-2xl"><code class="text-sm text-zinc-300">$2</code></pre>')
@@ -232,16 +256,28 @@ const renderMarkdown = (content: string): string => {
     .replace(/\n/gim, '<br>');
 };
 
+// Helper to fix image URL if it's just an ID (for schema generation)
+const fixImageUrl = (url: string): string => {
+  if (!url) return '/img/codexai-logo.png';
+  const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (uuidPattern.test(url)) {
+    return `/api/images/${url}`;
+  }
+  return url;
+};
+
 // Generate Article Schema for AI citation
-const generateArticleSchema = (article: BlogArticle, author: BlogAuthor | undefined) => ({
+const generateArticleSchema = (article: BlogArticle, author: BlogAuthor | undefined) => {
+  const imageUrl = fixImageUrl(article.featuredImage);
+  return {
   '@context': 'https://schema.org',
   '@type': 'Article',
   '@id': `https://codexai.pro/blog/${article.slug}`,
   headline: article.title,
   description: article.metaDescription || article.excerpt,
-  image: article.featuredImage.startsWith('http')
-    ? article.featuredImage
-    : `https://codexai.pro${article.featuredImage}`,
+  image: imageUrl.startsWith('http')
+    ? imageUrl
+    : `https://codexai.pro${imageUrl}`,
   datePublished: article.publishedAt || article.createdAt,
   dateModified: article.updatedAt,
   author: {
@@ -280,7 +316,8 @@ const generateArticleSchema = (article: BlogArticle, author: BlogAuthor | undefi
     text: `${s.label}: ${s.value}`,
     author: s.source || 'CODEXAI'
   }))
-});
+};
+};
 
 // Generate FAQ Schema
 const generateFAQSchema = (faqs: { question: string; answer: string }[]) => ({
@@ -350,6 +387,19 @@ export const ArticlePage: React.FC = () => {
 
   const categoryMeta = CATEGORY_META[article.category as ArticleCategory];
 
+  // Helper to fix image URL if it's just an ID
+  const getImageUrl = (url: string): string => {
+    if (!url) return '/img/codexai-logo.png';
+    // If it looks like a UUID (no slashes, 36 chars with dashes), prepend /api/images/
+    const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (uuidPattern.test(url)) {
+      return `/api/images/${url}`;
+    }
+    return url;
+  };
+
+  const featuredImageUrl = getImageUrl(article.featuredImage);
+
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
     return date.toLocaleDateString(isRu ? 'ru-RU' : 'en-US', {
@@ -384,7 +434,7 @@ export const ArticlePage: React.FC = () => {
         title={article.metaTitle || `${article.title} | CODEXAI`}
         description={article.metaDescription || article.excerpt}
         path={`/blog/${article.slug}`}
-        image={article.featuredImage}
+        image={featuredImageUrl}
         lang={lang}
         breadcrumbs={breadcrumbs}
         faqs={faqsForSchema}
@@ -397,13 +447,13 @@ export const ArticlePage: React.FC = () => {
         }}
       />
 
-      <article className="relative z-10 pt-32 pb-20">
+      <article className="relative z-10 pt-24 md:pt-24 pb-10 md:pb-20">
         <div className="max-w-4xl mx-auto px-4 md:px-12">
           {/* Top Bar */}
-          <div className="flex items-center justify-between mb-16">
+          <div className="flex items-center justify-between mb-8 md:mb-16">
             <button
               onClick={() => router.push('/blog')}
-              className="group flex items-center gap-2 text-zinc-500 hover:text-white transition-colors"
+              className="group flex items-center gap-2 text-zinc-500 hover:text-white transition-colors md:hidden"
             >
               <div className="p-2 rounded-full border border-white/10 group-hover:border-neon-acid group-hover:bg-neon-acid group-hover:text-black transition-all">
                 <ChevronLeft size={16} />
@@ -427,19 +477,19 @@ export const ArticlePage: React.FC = () => {
           </div>
 
           {/* Header */}
-          <header className="text-center mb-16">
+          <header className="text-center mb-8 md:mb-16">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm mb-8">
               <span className="text-neon-acid font-mono text-xs uppercase tracking-widest">
                 {isRu ? categoryMeta?.name : categoryMeta?.nameEn}
               </span>
             </div>
 
-            <h1 className="text-4xl md:text-6xl font-serif font-bold text-white mb-8 leading-tight">
+            <h1 className="text-3xl md:text-6xl font-serif font-bold text-white mb-4 md:mb-8 leading-tight">
               {article.title}
             </h1>
 
             {article.subtitle && (
-              <p className="text-xl md:text-2xl text-zinc-400 mb-10 max-w-2xl mx-auto leading-relaxed">
+              <p className="text-lg md:text-2xl text-zinc-400 mb-6 md:mb-10 max-w-2xl mx-auto leading-relaxed">
                 {article.subtitle}
               </p>
             )}
@@ -463,32 +513,17 @@ export const ArticlePage: React.FC = () => {
           </header>
 
           {/* Featured Image */}
-          <div className="aspect-video w-full rounded-2xl overflow-hidden border border-white/10 shadow-2xl mb-16 relative">
+          <div className="aspect-video w-full rounded-2xl overflow-hidden border border-white/10 shadow-2xl mb-8 md:mb-16 relative">
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10" />
             <img
-              src={article.featuredImage}
+              src={featuredImageUrl}
               alt={article.featuredImageAlt}
               className="w-full h-full object-cover"
             />
           </div>
 
           <div className="max-w-3xl mx-auto">
-            {/* TL;DR - Answer Capsule for AI */}
-            {article.tldr && (
-              <div className="bg-zinc-900/50 backdrop-blur-md border border-white/10 rounded-2xl p-8 mb-12">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="p-2 rounded-lg bg-neon-acid/10 text-neon-acid">
-                    <MessageSquare size={18} />
-                  </div>
-                  <span className="font-mono text-white text-xs uppercase tracking-widest">
-                    TL;DR
-                  </span>
-                </div>
-                <p className="text-zinc-300 text-lg leading-relaxed italic">
-                  {article.tldr}
-                </p>
-              </div>
-            )}
+
 
             {/* Key Takeaways */}
             {article.keyTakeaways.length > 0 && (

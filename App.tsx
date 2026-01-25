@@ -1,21 +1,30 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { Preloader } from './components/Preloader';
-import { HomePage } from './components/HomePage';
-import { WorkPage } from './components/WorkPage';
-import { ServicesPage } from './components/ServicesPage';
-import { Contact } from './components/Contact';
-import { Marquee } from './components/Marquee';
-import { LegalPage } from './components/LegalPage';
-import { AboutPage } from './components/AboutPage';
 import { SEO } from './components/SEO';
 import { Layout } from './components/Layout';
 import { RouterProvider, usePathname, useRouter } from './lib/router';
 import { useLanguage } from './lib/i18n';
-import { Reviews } from './components/Reviews';
-import { FAQ } from './components/FAQ';
-import { BlogPage } from './components/BlogPage';
-import { ArticlePage } from './components/ArticlePage';
-import { AdminBlog } from './components/AdminBlog';
+
+// Lazy load heavy components for better code splitting
+const HomePage = lazy(() => import('./components/HomePage').then(m => ({ default: m.HomePage })));
+const WorkPage = lazy(() => import('./components/WorkPage').then(m => ({ default: m.WorkPage })));
+const ServicesPage = lazy(() => import('./components/ServicesPage').then(m => ({ default: m.ServicesPage })));
+const Contact = lazy(() => import('./components/Contact').then(m => ({ default: m.Contact })));
+const Marquee = lazy(() => import('./components/Marquee').then(m => ({ default: m.Marquee })));
+const LegalPage = lazy(() => import('./components/LegalPage').then(m => ({ default: m.LegalPage })));
+const AboutPage = lazy(() => import('./components/AboutPage').then(m => ({ default: m.AboutPage })));
+const Reviews = lazy(() => import('./components/Reviews').then(m => ({ default: m.Reviews })));
+const FAQ = lazy(() => import('./components/FAQ').then(m => ({ default: m.FAQ })));
+const BlogPage = lazy(() => import('./components/BlogPage').then(m => ({ default: m.BlogPage })));
+const ArticlePage = lazy(() => import('./components/ArticlePage').then(m => ({ default: m.ArticlePage })));
+const AdminBlog = lazy(() => import('./components/AdminBlog').then(m => ({ default: m.AdminBlog })));
+
+// Loading fallback component
+const PageLoader = () => (
+  <div className="min-h-screen flex items-center justify-center bg-black">
+    <div className="text-neon-acid font-mono text-sm animate-pulse">Loading...</div>
+  </div>
+);
 
 // SEO Configuration with unique meta for each service page
 const servicesSeoRu: Record<string, { title: string; description: string }> = {
@@ -278,7 +287,9 @@ const AppContent: React.FC = () => {
         <main
           className={`relative z-10 transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}
         >
-          {renderContent()}
+          <Suspense fallback={<PageLoader />}>
+            {renderContent()}
+          </Suspense>
         </main>
       </Layout>
     </div>

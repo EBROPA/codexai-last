@@ -68,33 +68,33 @@ export const BlogPage: React.FC = () => {
         breadcrumbs={breadcrumbs}
       />
 
-      <div className="relative z-10 pt-32 pb-20 px-4 md:px-12">
+      <div className="relative z-10 pt-24 md:pt-32 pb-10 md:pb-20 px-4 md:px-12">
         <div className="max-w-7xl mx-auto">
           {/* Breadcrumbs */}
-          <div className="mb-12 flex justify-center md:justify-start">
+          <div className="mb-6 md:mb-12 flex justify-center md:justify-start">
             <Breadcrumbs items={breadcrumbs} />
           </div>
 
           {/* Header */}
-          <div className="mb-20 text-center relative">
-            <div className="inline-block mb-4 px-4 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-sm">
+          <div className="mb-8 md:mb-20 text-center relative">
+            <div className="inline-block mb-2 md:mb-4 px-4 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-sm">
               <span className="font-mono text-neon-acid text-xs uppercase tracking-widest">
                 // {isRu ? 'База знаний' : 'Knowledge Base'}
               </span>
             </div>
-            <h1 className="text-6xl md:text-8xl font-serif font-bold text-white mb-6 tracking-tight leading-tight">
+            <h1 className="text-4xl md:text-6xl lg:text-8xl font-serif font-bold text-white mb-3 md:mb-6 tracking-tight leading-tight">
               {isRu ? 'Блог' : 'Blog'} <span className="text-transparent bg-clip-text bg-gradient-to-r from-zinc-400 to-zinc-700">CODEXAI</span>
             </h1>
-            <p className="text-zinc-400 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
+            <p className="text-zinc-400 text-sm md:text-xl max-w-2xl mx-auto leading-relaxed">
               {isRu
-                ? 'Экспертные статьи о веб-разработке, Telegram-ботах, AI и digital-маркетинге. Делимся опытом и практическими знаниями для роста вашего бизнеса.'
-                : 'Expert articles about web development, Telegram bots, AI and digital marketing. Sharing experience and practical knowledge to grow your business.'
+                ? <>{'Экспертные статьи о веб-разработке, Telegram-ботах, AI и digital-маркетинге.'} <span className="hidden md:inline">Делимся опытом и практическими знаниями для роста вашего бизнеса.</span></>
+                : <>{'Expert articles about web development, Telegram bots, AI and digital marketing.'} <span className="hidden md:inline">Sharing experience and practical knowledge to grow your business.</span></>
               }
             </p>
           </div>
 
           {/* Filters Bar */}
-          <div className="sticky top-24 z-30 mb-16 mx-auto max-w-4xl">
+          <div className="sticky top-20 md:top-24 z-30 mb-8 md:mb-16 mx-auto max-w-4xl">
             <div className="p-2 backdrop-blur-xl bg-zinc-900/80 border border-white/10 rounded-2xl md:rounded-full shadow-2xl flex flex-col md:flex-row gap-2">
               {/* Search */}
               <div className="relative flex-1 group">
@@ -200,6 +200,17 @@ export const BlogPage: React.FC = () => {
   );
 };
 
+// Helper to fix image URL if it's just an ID
+const getImageUrl = (url: string): string => {
+  if (!url) return '/img/codexai-logo.png';
+  // If it looks like a UUID (no slashes, 36 chars with dashes), prepend /api/images/
+  const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (uuidPattern.test(url)) {
+    return `/api/images/${url}`;
+  }
+  return url;
+};
+
 // Article Card Component
 const ArticleCard: React.FC<{
   article: BlogArticle;
@@ -208,6 +219,7 @@ const ArticleCard: React.FC<{
   onClick: () => void;
 }> = ({ article, isRu, featured, onClick }) => {
   const categoryMeta = CATEGORY_META[article.category as ArticleCategory];
+  const featuredImageUrl = getImageUrl(article.featuredImage);
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
@@ -227,7 +239,7 @@ const ArticleCard: React.FC<{
         <div className="aspect-[16/9] md:aspect-auto md:h-[500px] overflow-hidden rounded-2xl relative bg-zinc-900">
           <div className="absolute inset-0 bg-black/20 z-10 group-hover:bg-transparent transition-colors duration-500" />
           <img
-            src={article.featuredImage}
+            src={featuredImageUrl}
             alt={article.featuredImageAlt}
             className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
             loading="lazy"
@@ -283,7 +295,7 @@ const ArticleCard: React.FC<{
       <div className="aspect-[4/3] bg-zinc-900 overflow-hidden rounded-2xl mb-6 relative">
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors z-10" />
         <img
-          src={article.featuredImage}
+          src={featuredImageUrl}
           alt={article.featuredImageAlt}
           className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
           loading="lazy"

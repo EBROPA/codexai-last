@@ -72,7 +72,7 @@ export const Preloader: React.FC<PreloaderProps> = ({ onComplete }) => {
       <div className="flex flex-col gap-2 font-mono text-sm h-64 overflow-hidden border border-white/10 p-4 bg-zinc-900/50">
         {logs.map((log, i) => (
           <div key={i} className="flex gap-4">
-             <span className="text-zinc-500">
+             <span className="text-zinc-400">
                  {`000${i * 14}`.slice(-4)}:
              </span>
              <span className="typing-effect">{log}</span>

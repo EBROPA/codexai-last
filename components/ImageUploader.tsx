@@ -133,12 +133,25 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
     }
   };
 
+  // Helper to fix image URL if it's just an ID
+  const getDisplayUrl = (url: string): string => {
+    if (!url) return '';
+    // If it looks like a UUID (no slashes, 36 chars with dashes), prepend /api/images/
+    const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (uuidPattern.test(url)) {
+      return `/api/images/${url}`;
+    }
+    return url;
+  };
+
+  const displayUrl = getDisplayUrl(value);
+
   return (
     <div className={`image-uploader ${className}`}>
       {value ? (
         <div className="relative">
           <img
-            src={value}
+            src={displayUrl}
             alt={alt}
             className="w-full h-48 object-cover rounded border border-white/10"
           />
@@ -150,7 +163,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
             <X size={16} />
           </button>
           <div className="mt-2 text-xs text-zinc-500 truncate">
-            {value}
+            {displayUrl}
           </div>
         </div>
       ) : (
