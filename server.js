@@ -131,7 +131,7 @@ app.use((req, res, next) => {
     "font-src 'self' https://fonts.gstatic.com; " +
     "img-src 'self' data: blob: https:; " +
     "connect-src 'self' https://api.telegram.org https://*.supabase.co https://mc.yandex.ru; " +
-    "frame-src 'self' https://www.youtube.com https://player.vimeo.com https://rutube.ru https://mc.yandex.ru; " +
+    "frame-src 'self' https://www.youtube.com https://player.vimeo.com https://rutube.ru https://mc.yandex.ru https://yandex.ru; " +
     "frame-ancestors 'self';"
   );
   res.setHeader('X-Content-Type-Options', 'nosniff');
