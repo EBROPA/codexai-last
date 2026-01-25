@@ -17,6 +17,8 @@ const FAQ = lazy(() => import('./components/FAQ').then(m => ({ default: m.FAQ })
 const BlogPage = lazy(() => import('./components/BlogPage').then(m => ({ default: m.BlogPage })));
 const ArticlePage = lazy(() => import('./components/ArticlePage').then(m => ({ default: m.ArticlePage })));
 const AdminBlog = lazy(() => import('./components/AdminBlog').then(m => ({ default: m.AdminBlog })));
+const RequestPage = lazy(() => import('./components/RequestPage').then(m => ({ default: m.RequestPage })));
+const ThankYouPage = lazy(() => import('./components/ThankYouPage').then(m => ({ default: m.ThankYouPage })));
 
 // Loading fallback component (invisible to prevent flash)
 const PageLoader = () => (
@@ -155,6 +157,8 @@ const getSeoData = (path: string, lang: 'ru' | 'en') => {
   if (path === '/user-agreement') return { title: isRu ? "Пользовательское соглашение" : "User Agreement", description: isRu ? "Пользовательское соглашение CODEXAI." : "CODEXAI user agreement.", noIndex: true };
   if (path === '/data-processing') return { title: isRu ? "Политика обработки данных" : "Data Processing Policy", description: isRu ? "Политика обработки персональных данных и файлов Cookie." : "Personal data and cookie processing policy.", noIndex: true };
   if (path === '/consent') return { title: isRu ? "Согласие на обработку данных" : "Data Processing Consent", description: isRu ? "Согласие на обработку персональных данных." : "Personal data processing consent.", noIndex: true };
+  if (path === '/request') return { title: isRu ? "Оставить заявку | CODEXAI" : "Leave a Request | CODEXAI", description: isRu ? "Заполните форму, и мы свяжемся с вами." : "Fill out the form and we will contact you." };
+  if (path === '/thank-you') return { title: isRu ? "Спасибо за заявку | CODEXAI" : "Thank You | CODEXAI", description: isRu ? "Ваша заявка принята." : "Your request has been received.", noIndex: true };
   return { title: "404", description: isRu ? "Страница не найдена." : "Page not found.", noIndex: true };
 };
 
@@ -262,6 +266,10 @@ const AppContent: React.FC = () => {
     if (path === '/user-agreement') return <LegalPage type="userAgreement" />;
     if (path === '/data-processing') return <LegalPage type="privacyPolicy" />;
     if (path === '/consent') return <LegalPage type="consent" />;
+
+    // Request & Success Pages
+    if (path === '/request') return <RequestPage />;
+    if (path === '/thank-you') return <ThankYouPage />;
 
     // 404
     return <NotFound />;

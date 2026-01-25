@@ -236,24 +236,23 @@ export const Hero: React.FC = () => {
             </h1>
           </div>
 
-          <p className="mt-8 text-lg font-mono text-zinc-300 max-w-2xl mx-auto leading-relaxed mix-blend-difference uppercase tracking-wide">
+          <p className="mt-8 text-lg md:text-xl font-mono text-zinc-300 max-w-2xl mx-auto leading-relaxed mix-blend-difference uppercase tracking-wide opacity-80 hover:opacity-100 transition-opacity">
             {t.hero.subtitle}
           </p>
 
-          <div className="mt-12 flex items-center justify-center gap-6">
+          <div className="mt-12 flex flex-col items-center gap-6">
             <button
-              onClick={() => router.push('/contact')}
-              className="px-8 py-5 bg-white text-black font-bold font-mono text-sm uppercase tracking-widest hover:bg-neon-acid transition-colors flex items-center justify-center gap-3 group"
+              onClick={() => router.push('/request')}
+              className="relative px-12 py-6 bg-neon-acid text-black font-black font-mono text-lg uppercase tracking-widest hover:scale-105 transition-transform flex items-center justify-center gap-4 group shadow-[0_0_40px_rgba(204,255,0,0.4)] hover:shadow-[0_0_60px_rgba(204,255,0,0.6)] rounded-sm"
             >
-              {t.hero.btnDiscuss}
-              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+              <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <span className="relative z-10">{t.hero.btnDiscuss}</span>
+              <ArrowRight size={24} className="relative z-10 group-hover:translate-x-2 transition-transform" />
             </button>
-            <button
-              onClick={() => router.push('/contact')}
-              className="px-8 py-5 border border-white/20 text-white font-mono text-sm uppercase tracking-widest hover:bg-white/10 transition-colors backdrop-blur-sm"
-            >
-              {t.hero.btnAudit}
-            </button>
+            <p className="flex items-center gap-2 text-zinc-500 font-mono text-xs uppercase tracking-widest">
+              <Zap size={14} className="text-neon-acid" />
+              {t.hero.heroTrust || 'Answer in 15 mins'}
+            </p>
           </div>
         </div>
 
@@ -293,20 +292,18 @@ export const Hero: React.FC = () => {
         </div>
 
         {/* Mobile Buttons (Bottom Pinned) */}
-        <div className="flex flex-col gap-3 w-full pointer-events-auto mt-auto">
+        <div className="flex flex-col gap-3 w-full pointer-events-auto mt-auto mb-20">
           <button
-            onClick={() => router.push('/contact')}
-            className="w-full py-5 bg-neon-acid text-black font-bold font-mono text-xs uppercase tracking-widest flex items-center justify-between px-6 shadow-[0_0_20px_rgba(204,255,0,0.3)] active:scale-95 transition-transform"
+            onClick={() => router.push('/request')}
+            className="w-full py-5 bg-neon-acid text-black font-black font-mono text-sm uppercase tracking-widest flex items-center justify-center gap-4 shadow-[0_0_20px_rgba(204,255,0,0.3)] active:scale-95 transition-transform"
           >
             <span>{t.hero.btnDiscuss}</span>
-            <Zap size={16} className="fill-black" />
+            <ArrowRight size={18} />
           </button>
-          <button
-            onClick={() => router.push('/contact')}
-            className="w-full py-5 border border-white/30 bg-black/50 backdrop-blur-md text-white font-mono text-xs uppercase tracking-widest active:scale-95 transition-transform"
-          >
-            {t.hero.btnAudit}
-          </button>
+          <div className="flex justify-center items-center gap-2 text-zinc-400 font-mono text-[10px] uppercase tracking-widest">
+            <Zap size={12} className="text-neon-acid" />
+            {t.hero.heroTrust || 'Answer in 15 mins'}
+          </div>
         </div>
       </div>
     </section>
