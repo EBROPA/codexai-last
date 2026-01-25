@@ -283,7 +283,7 @@ async function createThumbnail(buffer) {
       })
       .webp({ quality: 75 })
       .toBuffer();
-    
+
     return thumbnail;
   } catch (error) {
     console.error('[Thumbnail] Error creating thumbnail:', error.message);
@@ -312,7 +312,7 @@ app.post('/api/images/upload', upload.single('image'), async (req, res) => {
 
     // Create optimized thumbnail for fast loading in lists
     const thumbnailBuffer = await createThumbnail(buffer);
-    
+
     // Save image to database with thumbnail
     const image = await prisma.image.create({
       data: {
@@ -476,7 +476,7 @@ app.post('/api/images/generate-thumbnails', async (req, res) => {
     for (const image of imagesWithoutThumbnails) {
       try {
         const thumbnailBuffer = await createThumbnail(Buffer.from(image.data));
-        
+
         if (thumbnailBuffer) {
           await prisma.image.update({
             where: { id: image.id },
@@ -514,13 +514,14 @@ app.post('/api/images/generate-thumbnails', async (req, res) => {
 // =====================================================
 
 app.post('/api/contact', async (req, res) => {
-  const { name, niche, contact, comment } = req.body;
+  const { name, niche, contact, comment, budget } = req.body;
 
   // Log the request to the console (visible in Render logs)
   console.log('--- NEW CONTACT FORM SUBMISSION ---');
   console.log('Name:', name);
   console.log('Niche:', niche);
   console.log('Contact:', contact);
+  console.log('Budget:', budget);
   console.log('Comment:', comment);
   console.log('Timestamp:', new Date().toISOString());
   console.log('-----------------------------------');
@@ -532,11 +533,13 @@ app.post('/api/contact', async (req, res) => {
   if (BOT_TOKEN && CHAT_ID) {
     try {
       const message = `
-<b>New Contact Form Submission</b>
-<b>Name:</b> ${name}
-<b>Niche:</b> ${niche}
-<b>Contact:</b> ${contact}
-<b>Comment:</b> ${comment || 'No comment'}
+<b>🔔 Новая заявка с сайта</b>
+
+<b>Имя:</b> ${name || 'Не указано'}
+<b>Контакт:</b> ${contact || 'Не указан'}
+<b>Бюджет:</b> ${budget && budget.trim() ? budget : 'Не выбран'}
+<b>Ниша:</b> ${niche && niche.trim() ? niche : 'Не указана'}
+<b>Комментарий:</b> ${comment && comment.trim() ? comment : 'Нет'}
       `;
 
       const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
