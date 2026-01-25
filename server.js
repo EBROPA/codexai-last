@@ -6,6 +6,7 @@ import bodyParser from 'body-parser';
 import fs from 'fs';
 import 'dotenv/config';
 import multer from 'multer';
+import sharp from 'sharp';
 import { PrismaClient } from '@prisma/client';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -271,6 +272,25 @@ app.get('/api/db-status', (req, res) => {
   });
 });
 
+// Helper function to create optimized thumbnail
+async function createThumbnail(buffer) {
+  try {
+    const thumbnail = await sharp(buffer)
+      .resize(400, 300, {
+        fit: 'cover',
+        position: 'center',
+        withoutEnlargement: true,
+      })
+      .webp({ quality: 75 })
+      .toBuffer();
+    
+    return thumbnail;
+  } catch (error) {
+    console.error('[Thumbnail] Error creating thumbnail:', error.message);
+    return null;
+  }
+}
+
 // Upload image
 app.post('/api/images/upload', upload.single('image'), async (req, res) => {
   try {
@@ -290,18 +310,23 @@ app.post('/api/images/upload', upload.single('image'), async (req, res) => {
     const { originalname, mimetype, size, buffer } = req.file;
     const alt = req.body.alt || '';
 
-    // Save image to database
+    // Create optimized thumbnail for fast loading in lists
+    const thumbnailBuffer = await createThumbnail(buffer);
+    
+    // Save image to database with thumbnail
     const image = await prisma.image.create({
       data: {
         filename: originalname,
         mimeType: mimetype,
         size: size,
         data: buffer,
+        thumbnailData: thumbnailBuffer,
+        thumbnailSize: thumbnailBuffer ? thumbnailBuffer.length : null,
         alt: alt,
       },
     });
 
-    console.log(`[Image Upload] Saved image: ${originalname} (${size} bytes)`);
+    console.log(`[Image Upload] Saved image: ${originalname} (${size} bytes, thumbnail: ${thumbnailBuffer ? thumbnailBuffer.length : 0} bytes)`);
 
     res.json({
       success: true,
@@ -312,6 +337,7 @@ app.post('/api/images/upload', upload.single('image'), async (req, res) => {
         size: image.size,
         alt: image.alt,
         url: `/api/images/${image.id}`,
+        thumbnailUrl: `/api/images/${image.id}?size=thumb`,
         createdAt: image.createdAt,
       },
     });
@@ -322,7 +348,7 @@ app.post('/api/images/upload', upload.single('image'), async (req, res) => {
   }
 });
 
-// Get image by ID
+// Get image by ID (supports ?size=thumb for thumbnail)
 app.get('/api/images/:id', async (req, res) => {
   try {
     if (!prisma || !dbConnected) {
@@ -330,6 +356,7 @@ app.get('/api/images/:id', async (req, res) => {
     }
 
     const { id } = req.params;
+    const { size } = req.query;
 
     const image = await prisma.image.findUnique({
       where: { id },
@@ -337,6 +364,18 @@ app.get('/api/images/:id', async (req, res) => {
 
     if (!image) {
       return res.status(404).json({ error: 'Image not found' });
+    }
+
+    // If thumbnail requested and available, serve it
+    if (size === 'thumb' && image.thumbnailData) {
+      res.set({
+        'Content-Type': 'image/webp',
+        'Content-Length': image.thumbnailSize,
+        'Cache-Control': 'public, max-age=31536000', // Cache for 1 year
+        'Access-Control-Allow-Origin': '*',
+        'Cross-Origin-Resource-Policy': 'cross-origin',
+      });
+      return res.send(Buffer.from(image.thumbnailData));
     }
 
     // Set proper content type, CORS and cache headers
@@ -407,6 +446,66 @@ app.delete('/api/images/:id', async (req, res) => {
   } catch (error) {
     console.error('[Image Delete] Error:', error);
     res.status(500).json({ error: 'Failed to delete image' });
+  }
+});
+
+// Generate thumbnails for existing images that don't have them
+app.post('/api/images/generate-thumbnails', async (req, res) => {
+  try {
+    if (!prisma || !dbConnected) {
+      return res.status(503).json({ error: 'Database not available' });
+    }
+
+    // Find images without thumbnails
+    const imagesWithoutThumbnails = await prisma.image.findMany({
+      where: {
+        thumbnailData: null,
+      },
+      select: {
+        id: true,
+        filename: true,
+        data: true,
+      },
+    });
+
+    console.log(`[Thumbnails] Found ${imagesWithoutThumbnails.length} images without thumbnails`);
+
+    let processed = 0;
+    let failed = 0;
+
+    for (const image of imagesWithoutThumbnails) {
+      try {
+        const thumbnailBuffer = await createThumbnail(Buffer.from(image.data));
+        
+        if (thumbnailBuffer) {
+          await prisma.image.update({
+            where: { id: image.id },
+            data: {
+              thumbnailData: thumbnailBuffer,
+              thumbnailSize: thumbnailBuffer.length,
+            },
+          });
+          processed++;
+          console.log(`[Thumbnails] Generated thumbnail for: ${image.filename}`);
+        } else {
+          failed++;
+        }
+      } catch (err) {
+        console.error(`[Thumbnails] Failed for ${image.filename}:`, err.message);
+        failed++;
+      }
+    }
+
+    res.json({
+      success: true,
+      message: `Generated thumbnails for ${processed} images, ${failed} failed`,
+      processed,
+      failed,
+      total: imagesWithoutThumbnails.length,
+    });
+  } catch (error) {
+    console.error('[Thumbnails] Error:', error);
+    res.status(500).json({ error: 'Failed to generate thumbnails' });
   }
 });
 

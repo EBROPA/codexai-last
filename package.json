@@ -10,7 +10,7 @@
     "dev": "concurrently \"npm run dev:vite\" \"npm run dev:server\"",
     "dev:vite": "vite",
     "dev:server": "node server.js",
-    "build": "prisma generate && vite build && node inline_css.js",
+    "build": "prisma generate && vite build",
     "build:render": "prisma generate && prisma db push --accept-data-loss && vite build",
     "postinstall": "prisma generate",
     "preview": "vite preview",

@@ -12,14 +12,17 @@ datasource db {
 
 // Model for storing images in the database
 model Image {
-  id        String   @id @default(uuid())
-  filename  String   // Original filename
-  mimeType  String   // MIME type (image/jpeg, image/png, etc.)
-  size      Int      // File size in bytes
-  data      Bytes    // Binary image data stored as bytea in PostgreSQL
-  alt       String?  // Alt text for SEO
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String   @id @default(uuid())
+  filename      String   // Original filename
+  mimeType      String   // MIME type (image/jpeg, image/png, etc.)
+  size          Int      // File size in bytes
+  data          Bytes    // Binary image data stored as bytea in PostgreSQL
+  // Optimized thumbnail for fast loading in lists
+  thumbnailData Bytes?   // Compressed thumbnail (WebP, ~400px width)
+  thumbnailSize Int?     // Thumbnail file size in bytes
+  alt           String?  // Alt text for SEO
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   @@index([createdAt])
 }
