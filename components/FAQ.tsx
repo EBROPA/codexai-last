@@ -11,16 +11,16 @@ export const FAQ: React.FC = () => {
     <section className="py-32 px-4 md:px-12 bg-black border-t border-white/10">
       <div className="max-w-4xl mx-auto">
         <h2 className="text-4xl md:text-6xl font-serif font-bold text-white mb-16 text-center uppercase">
-          {t.faq.title} <span className="text-zinc-600">{t.faq.titleHighlight}</span>
+          {t.faq.title} <span className="text-zinc-500">{t.faq.titleHighlight}</span>
         </h2>
-        
+
         <div className="space-y-4">
           {t.faq.items.map((item, idx) => (
-            <div 
-              key={idx} 
+            <div
+              key={idx}
               className="border border-white/10 bg-zinc-950 overflow-hidden transition-colors hover:border-white/30"
             >
-              <button 
+              <button
                 onClick={() => setOpenIndex(openIndex === idx ? null : idx)}
                 className="w-full flex items-center justify-between p-6 md:p-8 text-left interactive group"
               >
@@ -29,8 +29,8 @@ export const FAQ: React.FC = () => {
                   {openIndex === idx ? <Minus size={16} /> : <Plus size={16} />}
                 </div>
               </button>
-              
-              <div 
+
+              <div
                 className={`transition-all duration-500 ease-in-out overflow-hidden ${openIndex === idx ? 'max-h-80 opacity-100' : 'max-h-0 opacity-0'}`}
               >
                 <div className="p-6 md:p-8 pt-0 text-zinc-400 font-sans text-sm md:text-base leading-relaxed border-t border-white/5">

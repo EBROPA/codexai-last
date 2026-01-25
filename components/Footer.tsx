@@ -72,10 +72,10 @@ export const Footer: React.FC<FooterProps> = () => {
             </div>
 
             <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-               <div className="text-zinc-600 font-mono text-[10px] uppercase tracking-widest">
+               <div className="text-zinc-500 font-mono text-[10px] uppercase tracking-widest">
                   {t.footer.rights}
                </div>
-               <div className="flex gap-8 text-zinc-600 font-mono text-[10px] uppercase tracking-widest">
+               <div className="flex gap-8 text-zinc-500 font-mono text-[10px] uppercase tracking-widest">
                   <a href="#" className="hover:text-white transition-colors">{t.footer.privacy}</a>
                   <a href="#" className="hover:text-white transition-colors">{t.footer.terms}</a>
                </div>
