@@ -194,7 +194,13 @@ export const AdminBlog: React.FC = () => {
     return (
       <ArticleEditor
         article={editingArticle}
-        onChange={setEditingArticle}
+        onChange={(update) => {
+          if (typeof update === 'function') {
+            setEditingArticle(prev => prev ? update(prev) : prev);
+          } else {
+            setEditingArticle(update);
+          }
+        }}
         onSave={handleSave}
         onCancel={() => {
           setEditingArticle(null);
@@ -577,7 +583,7 @@ const AnalyticsDashboard: React.FC<{ articles: BlogArticle[] }> = ({ articles })
 // Article Editor Component
 const ArticleEditor: React.FC<{
   article: BlogArticle;
-  onChange: (article: BlogArticle) => void;
+  onChange: (article: BlogArticle | ((prev: BlogArticle) => BlogArticle)) => void;
   onSave: () => void;
   onCancel: () => void;
   isNew: boolean;
@@ -587,12 +593,13 @@ const ArticleEditor: React.FC<{
 
   const updateField = <K extends keyof BlogArticle>(field: K, value: BlogArticle[K]) => {
     console.log('[AdminBlog] updateField:', field, value);
-    onChange({ ...article, [field]: value });
+    // Use functional update to avoid stale closure
+    onChange((prev: BlogArticle) => ({ ...prev, [field]: value }));
   };
 
   const updateBlocks = (blocks: ContentBlock[]) => {
     const readingTime = calculateReadingTimeFromBlocks(blocks);
-    onChange({ ...article, blocks, readingTime });
+    onChange((prev: BlogArticle) => ({ ...prev, blocks, readingTime }));
   };
 
   // Auto-generate SEO fields
