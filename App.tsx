@@ -1,12 +1,11 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
-import { Preloader } from './components/Preloader';
 import { SEO } from './components/SEO';
 import { Layout } from './components/Layout';
+import { HomePage } from './components/HomePage';
 import { RouterProvider, usePathname, useRouter } from './lib/router';
 import { useLanguage } from './lib/i18n';
 
 // Lazy load heavy components for better code splitting
-const HomePage = lazy(() => import('./components/HomePage').then(m => ({ default: m.HomePage })));
 const WorkPage = lazy(() => import('./components/WorkPage').then(m => ({ default: m.WorkPage })));
 const ServicesPage = lazy(() => import('./components/ServicesPage').then(m => ({ default: m.ServicesPage })));
 const Contact = lazy(() => import('./components/Contact').then(m => ({ default: m.Contact })));
@@ -19,11 +18,9 @@ const BlogPage = lazy(() => import('./components/BlogPage').then(m => ({ default
 const ArticlePage = lazy(() => import('./components/ArticlePage').then(m => ({ default: m.ArticlePage })));
 const AdminBlog = lazy(() => import('./components/AdminBlog').then(m => ({ default: m.AdminBlog })));
 
-// Loading fallback component
+// Loading fallback component (invisible to prevent flash)
 const PageLoader = () => (
-  <div className="min-h-screen flex items-center justify-center bg-black">
-    <div className="text-neon-acid font-mono text-sm animate-pulse">Loading...</div>
-  </div>
+  <div className="min-h-screen bg-black" />
 );
 
 // SEO Configuration with unique meta for each service page
@@ -297,22 +294,9 @@ const AppContent: React.FC = () => {
 };
 
 function App() {
-  // Check if user has already visited the site in this session
-  const hasVisited = typeof window !== 'undefined' && sessionStorage.getItem('codexai_visited') === 'true';
-  const [loading, setLoading] = useState(!hasVisited);
-
-  const handlePreloaderComplete = () => {
-    // Mark that user has visited
-    if (typeof window !== 'undefined') {
-      sessionStorage.setItem('codexai_visited', 'true');
-    }
-    setLoading(false);
-  };
-
   return (
     <RouterProvider>
-      {loading && <Preloader onComplete={handlePreloaderComplete} />}
-      {!loading && <AppContent />}
+      <AppContent />
     </RouterProvider>
   );
 }
