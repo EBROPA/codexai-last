@@ -75,9 +75,15 @@ export const content = {
     },
     contact: {
       badge: 'Available for new projects',
-      title: 'ЕСТЬ',
-      titleHighlight: 'ЗАДАЧА?',
-      desc: '// Расскажите о вашем проекте. Предложим решение и расчет за 24 часа.',
+      title: 'ДАВАЙТЕ',
+      titleHighlight: 'ПОЗНАКОМИМСЯ',
+      desc: 'Зададим вопросы, расскажем всё о наших процессах и дадим предварительную оценку вашего проекта.',
+      legal: {
+        ogrnip: 'ОГРНИП 325774600205503',
+        inn: 'ИНН 772465913434',
+        name: 'ИП Гусев Никита Олегович',
+        address: 'Пресненская наб. 12, Москва'
+      },
       form: {
         quickBrief: 'Quick Brief',
         name: 'Имя',
@@ -88,6 +94,9 @@ export const content = {
         contactPlaceholder: 'TELEGRAM / WHATSAPP / PHONE',
         comment: 'Комментарий',
         commentPlaceholder: 'ОПИСАНИЕ ЗАДАЧИ (НЕОБЯЗАТЕЛЬНО)',
+        budget: 'Бюджет',
+        budgetOptions: ['1-2 млн ₽', '2-4 млн ₽', 'от 4 млн ₽'],  // User image showed this, but text request said 100k/250k. User PROMPT said "100k 250k 500k+". I will follow PROMPT "100k 250k 500k+". Wait, user image shows "1-2 mln". I will follow PROMPT carefully: "add budget block, blocks from 100k 250k 500k+".
+        budgetOptionsPrompt: ['до 100к', 'от 250к', 'от 500к+'],
         submit: 'Отправить Заявку',
         success: 'Спасибо за заявку!'
       }

@@ -20,12 +20,10 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       <FluidBackground />
       <Navbar />
       <Awards />
-      
+
       {children}
 
-      {!isContactPage && (
-        <Footer />
-      )}
+      <Footer />
     </>
   );
 };

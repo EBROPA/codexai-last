@@ -225,7 +225,10 @@ export const Navbar: React.FC = () => {
 
                     {/* Contact Button Desktop */}
                     <button
-                        onClick={() => router.push('/contact')}
+                        onClick={() => {
+                            window.location.href = '/contact#request-form';
+                            setIsOpen(false);
+                        }}
                         className="hidden md:flex px-6 py-3 bg-white text-black font-bold font-mono text-xs uppercase tracking-widest hover:bg-[#CCFF00] transition-colors rounded-full items-center gap-2"
                     >
                         <span>{lang === 'ru' ? 'Оставить заявку' : 'Leave a Request'}</span>
