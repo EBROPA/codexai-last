@@ -5,10 +5,24 @@ export const CustomCursor: React.FC = () => {
   const [position, setPosition] = useState<MousePosition>({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
   const [isClicking, setIsClicking] = useState(false);
+  const [isMobile, setIsMobile] = useState(true);
 
   useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.matchMedia('(max-width: 768px)').matches);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  useEffect(() => {
+    if (isMobile) return;
+
     const updatePosition = (e: MouseEvent) => {
-      setPosition({ x: e.clientX, y: e.clientY });
+      requestAnimationFrame(() => {
+        setPosition({ x: e.clientX, y: e.clientY });
+      });
     };
 
     const handleMouseOver = (e: MouseEvent) => {
@@ -34,24 +48,26 @@ export const CustomCursor: React.FC = () => {
       window.removeEventListener('mousedown', handleMouseDown);
       window.removeEventListener('mouseup', handleMouseUp);
     };
-  }, []);
+  }, [isMobile]);
+
+  if (isMobile) return null;
 
   return (
     <>
-      <div 
+      <div
         className="fixed top-0 left-0 pointer-events-none z-[100] mix-blend-difference hidden md:block"
         style={{
           transform: `translate(${position.x}px, ${position.y}px)`,
         }}
       >
-        <div 
+        <div
           className={`
             relative -top-3 -left-3 rounded-full border border-white transition-all duration-300 ease-out
             ${isHovering ? 'w-16 h-16 -top-8 -left-8 bg-white/20' : 'w-6 h-6'}
             ${isClicking ? 'scale-75' : 'scale-100'}
           `}
         />
-        <div 
+        <div
           className={`
             absolute top-0 left-0 w-1 h-1 bg-neon-acid rounded-full
             transition-transform duration-75 ease-out

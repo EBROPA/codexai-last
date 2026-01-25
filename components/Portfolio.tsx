@@ -7,13 +7,13 @@ import { useLanguage } from '../lib/i18n';
 import { OptimizedImage } from './Image';
 
 // Import portfolio images
-import kingsleyImg from '../img/portfolio/kinhsley_optimized.png';
-import betterSlayImg from '../img/portfolio/hype_awards_optimized.png';
-import aurumImg from '../img/portfolio/aurum_optimized.png';
-import secureImg from '../img/portfolio/crimson_optimized.png';
-import merenCoffeeImg from '../img/portfolio/meren_coffee_optimized.png';
-import capitalCoreImg from '../img/portfolio/capital_core_optimized.png';
-import dmleadsImg from '../img/portfolio/dmleads_optimized.png';
+import kingsleyImg from '../img/portfolio/kinhsley_optimized.webp';
+import betterSlayImg from '../img/portfolio/hype_awards_optimized.webp';
+import aurumImg from '../img/portfolio/aurum_optimized.webp';
+import secureImg from '../img/portfolio/crimson_optimized.webp';
+import merenCoffeeImg from '../img/portfolio/meren_coffee_optimized.webp';
+import capitalCoreImg from '../img/portfolio/capital_core_optimized.webp';
+import dmleadsImg from '../img/portfolio/dmleads_optimized.webp';
 
 // Stats interface for GEO optimization - specific metrics for AI citation
 interface ProjectStats {
