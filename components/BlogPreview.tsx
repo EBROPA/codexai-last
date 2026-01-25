@@ -5,6 +5,27 @@ import { useLanguage } from '../lib/i18n';
 import { blogStore } from '../lib/blogStore';
 import { BlogArticle, CATEGORY_META, ArticleCategory } from '../lib/blogTypes';
 
+// Image cache to prevent re-loading
+const imageCache = new Map<string, boolean>();
+
+// Preload image utility
+const preloadImage = (src: string): Promise<void> => {
+  if (imageCache.has(src)) return Promise.resolve();
+  
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      imageCache.set(src, true);
+      resolve();
+    };
+    img.onerror = () => {
+      imageCache.set(src, false);
+      resolve();
+    };
+    img.src = src;
+  });
+};
+
 export const BlogPreview: React.FC = () => {
     const router = useRouter();
     const { lang } = useLanguage();
@@ -115,6 +136,86 @@ const getImageUrl = (url: string, useThumbnail: boolean = false): string => {
   return url;
 };
 
+// Blog Preview Image Component with instant display
+const BlogPreviewImage: React.FC<{
+  src: string;
+  alt: string;
+  className?: string;
+}> = ({ src, alt, className = '' }) => {
+  const [isLoaded, setIsLoaded] = useState(() => imageCache.has(src));
+  const [hasError, setHasError] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Preload image when component is about to enter viewport
+  useEffect(() => {
+    if (imageCache.has(src)) {
+      setIsLoaded(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          preloadImage(src).then(() => {
+            if (imageCache.get(src)) {
+              setIsLoaded(true);
+            }
+          });
+          observer.disconnect();
+        }
+      },
+      { 
+        threshold: 0,
+        rootMargin: '300px' // Start loading 300px before entering viewport
+      }
+    );
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [src]);
+
+  return (
+    <div ref={containerRef} className="absolute inset-0">
+      {/* Solid background - always visible immediately */}
+      <div className="absolute inset-0 bg-zinc-800" />
+      
+      {/* Shimmer effect while loading */}
+      {!isLoaded && !hasError && (
+        <div className="absolute inset-0 animate-shimmer" />
+      )}
+      
+      {/* Actual image */}
+      {!hasError && (
+        <img
+          src={isLoaded ? src : undefined}
+          data-src={src}
+          alt={alt}
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
+            isLoaded ? 'opacity-100' : 'opacity-0'
+          } ${className}`}
+          onLoad={() => {
+            imageCache.set(src, true);
+            setIsLoaded(true);
+          }}
+          onError={() => setHasError(true)}
+        />
+      )}
+      
+      {/* Fallback on error */}
+      {hasError && (
+        <img
+          src="/img/codexai-logo.png"
+          alt={alt}
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+      )}
+    </div>
+  );
+};
+
 const ArticleCard: React.FC<{
     article: BlogArticle;
     isRu: boolean;
@@ -130,11 +231,10 @@ const ArticleCard: React.FC<{
             className="group relative min-w-[320px] md:min-w-[450px] aspect-[16/10] rounded-3xl overflow-hidden cursor-pointer border border-white/10 snap-center"
         >
             {/* Background Image */}
-            <img
+            <BlogPreviewImage
                 src={featuredImageUrl}
                 alt={article.featuredImageAlt}
-                className="absolute inset-0 w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
-                loading="lazy"
+                className="transform group-hover:scale-105 transition-transform duration-700"
             />
 
             {/* Overlay */}

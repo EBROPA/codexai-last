@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Calendar, Clock, ChevronRight, Tag, Search, Filter, ArrowUpRight } from 'lucide-react';
 import { useRouter } from '../lib/router';
 import { useLanguage } from '../lib/i18n';
@@ -6,6 +6,27 @@ import { SEO } from './SEO';
 import { Breadcrumbs } from './Breadcrumbs';
 import { blogStore } from '../lib/blogStore';
 import { BlogArticle, CATEGORY_META, ArticleCategory } from '../lib/blogTypes';
+
+// Image cache to prevent re-loading
+const imageCache = new Map<string, boolean>();
+
+// Preload image utility
+const preloadImage = (src: string): Promise<void> => {
+  if (imageCache.has(src)) return Promise.resolve();
+  
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      imageCache.set(src, true);
+      resolve();
+    };
+    img.onerror = () => {
+      imageCache.set(src, false);
+      resolve();
+    };
+    img.src = src;
+  });
+};
 
 export const BlogPage: React.FC = () => {
   const router = useRouter();
@@ -212,6 +233,99 @@ const getImageUrl = (url: string, useThumbnail: boolean = false): string => {
   return url;
 };
 
+// Blog Image Component with instant display
+const BlogImage: React.FC<{
+  src: string;
+  alt: string;
+  className?: string;
+  onError?: () => void;
+}> = ({ src, alt, className = '', onError }) => {
+  const [isLoaded, setIsLoaded] = useState(() => imageCache.has(src));
+  const [hasError, setHasError] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Preload image when component is about to enter viewport
+  useEffect(() => {
+    if (imageCache.has(src)) {
+      setIsLoaded(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          preloadImage(src).then(() => {
+            if (imageCache.get(src)) {
+              setIsLoaded(true);
+            }
+          });
+          observer.disconnect();
+        }
+      },
+      { 
+        threshold: 0,
+        rootMargin: '200px' // Start loading 200px before entering viewport
+      }
+    );
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [src]);
+
+  const handleError = () => {
+    setHasError(true);
+    onError?.();
+  };
+
+  return (
+    <div ref={containerRef} className="absolute inset-0">
+      {/* Solid background - always visible immediately */}
+      <div className="absolute inset-0 bg-zinc-800" />
+      
+      {/* Gradient shimmer effect while loading */}
+      {!isLoaded && !hasError && (
+        <div className="absolute inset-0 bg-gradient-to-r from-zinc-800 via-zinc-700 to-zinc-800 animate-shimmer" 
+          style={{
+            backgroundSize: '200% 100%',
+            animation: 'shimmer 1.5s ease-in-out infinite'
+          }}
+        />
+      )}
+      
+      {/* Actual image - only render when cached or loaded */}
+      {!hasError && (
+        <img
+          ref={imgRef}
+          src={isLoaded ? src : undefined}
+          data-src={src}
+          alt={alt}
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
+            isLoaded ? 'opacity-100' : 'opacity-0'
+          } ${className}`}
+          onLoad={() => {
+            imageCache.set(src, true);
+            setIsLoaded(true);
+          }}
+          onError={handleError}
+        />
+      )}
+      
+      {/* Fallback on error */}
+      {hasError && (
+        <img
+          src="/img/codexai-logo.png"
+          alt={alt}
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+      )}
+    </div>
+  );
+};
+
 // Article Card Component
 const ArticleCard: React.FC<{
   article: BlogArticle;
@@ -238,18 +352,13 @@ const ArticleCard: React.FC<{
         onClick={onClick}
         className="group md:col-span-2 lg:col-span-3 grid md:grid-cols-2 gap-8 md:gap-12 cursor-pointer mb-12"
       >
-        <div className="aspect-[16/9] md:aspect-auto md:h-[500px] overflow-hidden rounded-2xl relative bg-zinc-900">
-          <div className="absolute inset-0 bg-black/20 z-10 group-hover:bg-transparent transition-colors duration-500" />
-          <img
+        <div className="aspect-[16/9] md:aspect-auto md:h-[500px] overflow-hidden rounded-2xl relative">
+          <BlogImage
             src={featuredImageUrl}
             alt={article.featuredImageAlt}
-            className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
-            loading="lazy"
-            onError={(e) => {
-              const target = e.target as HTMLImageElement;
-              target.src = '/img/codexai-logo.png';
-            }}
+            className="transform group-hover:scale-105 transition-transform duration-700"
           />
+          <div className="absolute inset-0 bg-black/20 z-10 group-hover:bg-transparent transition-colors duration-500" />
         </div>
         <div className="flex flex-col justify-center">
           <div className="flex items-center gap-3 mb-6">
@@ -294,18 +403,13 @@ const ArticleCard: React.FC<{
       className="group flex flex-col cursor-pointer"
     >
       {/* Image */}
-      <div className="aspect-[4/3] bg-zinc-900 overflow-hidden rounded-2xl mb-6 relative">
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors z-10" />
-        <img
+      <div className="aspect-[4/3] overflow-hidden rounded-2xl mb-6 relative">
+        <BlogImage
           src={featuredImageUrl}
           alt={article.featuredImageAlt}
-          className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
-          loading="lazy"
-          onError={(e) => {
-            const target = e.target as HTMLImageElement;
-            target.src = '/img/codexai-logo.png';
-          }}
+          className="transform group-hover:scale-105 transition-transform duration-700"
         />
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors z-10" />
         <div className="absolute top-4 left-4 z-20">
           <span className="px-3 py-1 rounded-full bg-black/50 backdrop-blur-md border border-white/10 text-white text-xs font-mono uppercase tracking-widest">
             {isRu ? categoryMeta?.name : categoryMeta?.nameEn}
