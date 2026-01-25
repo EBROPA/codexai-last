@@ -91,7 +91,7 @@ export const AdminBlog: React.FC = () => {
       stats: [],
       category: 'web-development',
       tags: [],
-      featuredImage: '/img/codexai-logo.png',
+      featuredImage: '',
       featuredImageAlt: '',
       authorId: 'codexai-team',
       createdAt: new Date().toISOString(),
@@ -586,6 +586,7 @@ const ArticleEditor: React.FC<{
   const [useBlockEditor, setUseBlockEditor] = useState(true);
 
   const updateField = <K extends keyof BlogArticle>(field: K, value: BlogArticle[K]) => {
+    console.log('[AdminBlog] updateField:', field, value);
     onChange({ ...article, [field]: value });
   };
 

@@ -24,6 +24,8 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
   placeholder = 'Upload image or paste URL',
   className = ''
 }) => {
+  console.log('[ImageUploader] RENDER, value:', value);
+  
   const [imageUrl, setImageUrl] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
@@ -32,6 +34,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
 
   // Upload file to server
   const uploadFile = async (file: File) => {
+    console.log('[ImageUploader] uploadFile called with:', file.name, file.size);
     setIsUploading(true);
     setUploadError(null);
 
@@ -40,17 +43,22 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
       formData.append('image', file);
       formData.append('alt', alt || file.name.split('.')[0]);
 
+      console.log('[ImageUploader] Sending fetch request...');
       const response = await fetch('/api/images/upload', {
         method: 'POST',
         body: formData,
       });
 
+      console.log('[ImageUploader] Response received, status:', response.status);
       const text = await response.text();
+      console.log('[ImageUploader] Response text:', text);
       let data;
       
       try {
         data = text ? JSON.parse(text) : null;
-      } catch {
+        console.log('[ImageUploader] Parsed data:', data);
+      } catch (parseError) {
+        console.error('[ImageUploader] JSON parse error:', parseError);
         throw new Error(`Server returned invalid response: ${text.substring(0, 100)}`);
       }
 
@@ -59,17 +67,23 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
       }
 
       if (!data?.image?.url) {
+        console.error('[ImageUploader] No URL in response:', data);
         throw new Error('Server did not return image URL');
       }
 
-      onChange(data.image.url);
+      const imageUrl = data.image.url;
+      console.log('[ImageUploader] Calling onChange with URL:', imageUrl);
+      onChange(imageUrl);
+      console.log('[ImageUploader] onChange called successfully');
+      
       if (onAltChange && data.image.alt) {
         onAltChange(data.image.alt);
       }
     } catch (error) {
-      console.error('Upload error:', error);
+      console.error('[ImageUploader] Upload error:', error);
       setUploadError(error instanceof Error ? error.message : 'Failed to upload image');
     } finally {
+      console.log('[ImageUploader] Upload finished');
       setIsUploading(false);
     }
   };
