@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Instagram, Send, Mail, ArrowUpRight } from 'lucide-react';
+import { Instagram, Send, Mail, ArrowUpRight, Phone } from 'lucide-react';
 import { useRouter } from '../lib/router';
 import { useLanguage } from '../lib/i18n';
 
@@ -48,6 +48,12 @@ export const Footer: React.FC<FooterProps> = () => {
                <div>
                   <h3 className="font-mono text-white text-xs uppercase tracking-widest mb-8">{t.footer.contacts}</h3>
                   <ul className="space-y-4">
+                     <li className="flex items-center gap-2">
+                        <Phone size={16} className="text-neon-acid" />
+                        <a href="tel:+79167479970" className="text-zinc-400 hover:text-white font-mono text-xs uppercase tracking-widest transition-colors">
+                           +7 916 747-99-70
+                        </a>
+                     </li>
                      <li className="flex items-center gap-2">
                         <Mail size={16} className="text-neon-acid" />
                         <a href="mailto:contact@codexai.pro" className="text-zinc-400 hover:text-white font-mono text-xs uppercase tracking-widest transition-colors">

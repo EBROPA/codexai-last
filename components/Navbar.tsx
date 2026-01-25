@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Menu, X, Instagram, Send, Mail, ChevronRight, ChevronDown } from 'lucide-react';
+import { Menu, X, Instagram, Send, Mail, ChevronRight, ChevronDown, Phone, Globe, Bot, Brain, Layout, MessageCircle, BarChart, Users } from 'lucide-react';
 import { usePathname, useRouter } from '../lib/router';
 import { useLanguage } from '../lib/i18n';
 import { OptimizedImage } from './Image';
@@ -25,6 +25,24 @@ export const Navbar: React.FC = () => {
         setIsOpen(false);
         setIsMobileServicesOpen(false);
     };
+
+    const [isVisible, setIsVisible] = useState(true);
+    const [lastScrollY, setLastScrollY] = useState(0);
+
+    React.useEffect(() => {
+        const handleScroll = () => {
+            const currentScrollY = window.scrollY;
+            if (currentScrollY > lastScrollY && currentScrollY > 50) {
+                setIsVisible(false);
+            } else {
+                setIsVisible(true);
+            }
+            setLastScrollY(currentScrollY);
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [lastScrollY]);
 
     const isActive = (path: string) => {
         if (path === '/') return pathname === '/';
@@ -91,7 +109,9 @@ export const Navbar: React.FC = () => {
     return (
         <>
             {/* Top Bar */}
-            <nav className="fixed top-0 left-0 w-full z-[80] px-6 py-6 flex justify-between items-start mix-blend-difference text-white pointer-events-none">
+            {/* Top Bar */}
+            {/* Top Bar */}
+            <nav className={`fixed top-0 left-0 w-full z-[80] px-6 py-6 flex justify-between items-center text-white transition-all duration-300 ${isVisible ? 'translate-y-0' : '-translate-y-full'}`}>
                 <button
                     onClick={() => handleNav('/')}
                     className="font-serif font-bold text-2xl tracking-tighter pointer-events-auto cursor-pointer interactive group flex flex-col items-start bg-transparent border-none p-0 text-left"
@@ -100,29 +120,122 @@ export const Navbar: React.FC = () => {
                     <span className="text-[10px] font-mono font-normal opacity-0 group-hover:opacity-100 transition-opacity text-neon-acid tracking-widest">DIGITAL AGENCY</span>
                 </button>
 
+                {/* Desktop Navigation (Center) */}
+                <div className="hidden md:flex items-center gap-2 pointer-events-auto bg-black/60 backdrop-blur-md pl-6 pr-2 py-2 rounded-full border border-white/10 shadow-lg">
+                    {menuItems.map((item) => (
+                        <div
+                            key={item.id}
+                            className="relative group p-1"
+                            onMouseEnter={() => item.id === '/services' && setHoveredItem('/services')}
+                            onMouseLeave={() => item.id === '/services' && setHoveredItem(null)}
+                        >
+                            <button
+                                onClick={() => handleNav(item.id)}
+                                className={`
+                                    relative px-4 py-2 font-mono text-xs uppercase tracking-widest transition-all duration-300 rounded-full
+                                    flex items-center gap-2 overflow-hidden
+                                    ${isActive(item.id) ? 'bg-neon-acid text-black font-bold' : 'text-zinc-300 hover:text-white hover:bg-white/10'}
+                                `}
+                            >
+                                {item.label}
+                                {item.id === '/services' && (
+                                    <ChevronDown
+                                        size={12}
+                                        className={`transition-transform duration-300 ${hoveredItem === '/services' ? 'rotate-180 text-black' : 'text-zinc-500'}`}
+                                    />
+                                )}
+                            </button>
+
+                            {/* Dropdown for Services */}
+                            {item.id === '/services' && (
+                                <div className={`absolute top-full left-0 pt-4 w-[600px] transition-all duration-300 transform origin-top-left ${hoveredItem === '/services' ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`}>
+                                    <div className="bg-white rounded-2xl p-2 shadow-2xl grid grid-cols-2 gap-1 border border-zinc-200/50 ring-4 ring-black/5">
+                                        {item.subItems?.map((sub, idx) => {
+                                            // Assign icons dynamically based on index or ID
+                                            const icons = [Globe, Bot, Brain, Layout, MessageCircle, Users, Layout, Send, BarChart];
+                                            const Icon = icons[idx % icons.length];
+
+                                            return (
+                                                <button
+                                                    key={sub.id}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        setHoveredItem(null); // Close dropdown on click
+                                                        handleNav(sub.id);
+                                                    }}
+                                                    className="group/item flex items-center gap-4 p-3 rounded-xl hover:bg-zinc-50 transition-all duration-200 text-left"
+                                                >
+                                                    <div className="w-10 h-10 rounded-lg bg-[#F2FFCC] flex items-center justify-center text-[#668000] group-hover/item:bg-[#CCFF00] group-hover/item:text-black transition-colors duration-300">
+                                                        <Icon size={18} />
+                                                    </div>
+                                                    <div>
+                                                        <div className="font-bold text-zinc-900 text-xs uppercase tracking-wider group-hover/item:text-black transition-colors">
+                                                            {sub.label}
+                                                        </div>
+                                                        <div className="text-[10px] text-zinc-400 font-mono mt-1">
+                                                            Explore service →
+                                                        </div>
+                                                    </div>
+                                                </button>
+                                            )
+                                        })}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    ))}
+
+                    {/* Desktop Language Switcher - Integrated into Nav Pill */}
+                    <div className="w-[1px] h-6 bg-white/10 mx-2"></div>
+                    <button
+                        onClick={toggleLang}
+                        className="font-mono text-xs px-3 py-2 rounded-full hover:bg-white/10 transition-colors text-white flex items-center gap-2"
+                    >
+                        <span className={lang === 'ru' ? 'text-[#CCFF00] font-bold' : 'text-zinc-500'}>RU</span>
+                        <span className="text-zinc-700">/</span>
+                        <span className={lang === 'en' ? 'text-[#CCFF00] font-bold' : 'text-zinc-500'}>EN</span>
+                    </button>
+                </div>
+
+                {/* Right Controls */}
                 <div className="pointer-events-auto flex items-center gap-4">
+
+                    {/* Phone Number (Desktop) */}
+                    <a
+                        href="tel:+79167479970"
+                        className="hidden lg:flex items-center gap-2 font-mono text-xs text-white hover:text-[#CCFF00] transition-colors"
+                    >
+                        <Phone size={14} className="text-[#CCFF00]" />
+                        <span>+7 916 747-99-70</span>
+                    </a>
+
+                    {/* Mobile Burger (Hidden on desktop) */}
                     <button
                         onClick={() => setIsOpen(!isOpen)}
                         aria-label="Toggle menu"
-                        className="flex items-center gap-2 uppercase font-mono text-xs tracking-widest hover:text-neon-acid transition-colors interactive group relative text-white"
+                        className="md:hidden flex items-center gap-2 uppercase font-mono text-xs tracking-widest hover:text-neon-acid transition-colors interactive group relative text-white"
                     >
-                        <div className="hidden md:flex flex-col items-end mr-4">
-                            <span className="block group-hover:-translate-y-1 transition-transform duration-300">
-                                {isOpen ? t.nav.closeMenu : t.nav.openMenu}
-                            </span>
-                        </div>
                         <div className={`
-                relative w-10 h-10 flex items-center justify-center border rounded-full transition-all duration-300 backdrop-blur-sm
-                ${isOpen ? 'border-neon-acid bg-neon-acid/10 text-neon-acid' : 'border-white/20 bg-black/50 text-white group-hover:border-neon-acid'}
-            `}>
+                            relative w-10 h-10 flex items-center justify-center border rounded-full transition-all duration-300 backdrop-blur-sm
+                            ${isOpen ? 'border-neon-acid bg-neon-acid/10 text-neon-acid' : 'border-white/20 bg-black/50 text-white group-hover:border-neon-acid'}
+                        `}>
                             {isOpen ? <X size={16} /> : <Menu size={16} />}
                         </div>
+                    </button>
+
+                    {/* Contact Button Desktop */}
+                    <button
+                        onClick={() => router.push('/contact')}
+                        className="hidden md:flex px-6 py-3 bg-white text-black font-bold font-mono text-xs uppercase tracking-widest hover:bg-[#CCFF00] transition-colors rounded-full items-center gap-2"
+                    >
+                        <span>{lang === 'ru' ? 'Оставить заявку' : 'Leave a Request'}</span>
+                        <ChevronRight size={14} />
                     </button>
                 </div>
             </nav>
 
             {/* Fullscreen Overlay */}
-            <div className={`fixed inset-0 z-[70] bg-black transition-all duration-700 ease-[0.76, 0, 0.24, 1] ${isOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`}>
+            <div className={`fixed inset-0 z-[70] bg-black transition-all duration-700 ease-[0.76, 0, 0.24, 1] md:hidden ${isOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`}>
 
                 <div className="h-full w-full flex flex-col md:flex-row">
 
@@ -205,6 +318,7 @@ export const Navbar: React.FC = () => {
                         <div className={`flex flex-col gap-4 transition-all duration-700 delay-300 mt-8 md:mt-0 ${isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
                             <div className="h-[1px] w-full bg-white/10 mb-4"></div>
                             <div className="flex flex-wrap gap-8 text-zinc-400 font-mono text-xs uppercase tracking-widest">
+                                <a href="tel:+79167479970" className="hover:text-white flex items-center gap-2"><Phone size={12} /> +7 916 747-99-70</a>
                                 <a href="#" className="hover:text-white flex items-center gap-2"><Send size={12} /> Telegram</a>
                                 <a href="#" className="hover:text-white flex items-center gap-2"><Instagram size={12} /> Instagram</a>
                                 <a href="mailto:contact@codexai.pro" className="hover:text-white flex items-center gap-2"><Mail size={12} /> contact@codexai.pro</a>
