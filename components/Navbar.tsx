@@ -103,6 +103,7 @@ export const Navbar: React.FC = () => {
                 <div className="pointer-events-auto flex items-center gap-4">
                     <button
                         onClick={() => setIsOpen(!isOpen)}
+                        aria-label="Toggle menu"
                         className="flex items-center gap-2 uppercase font-mono text-xs tracking-widest hover:text-neon-acid transition-colors interactive group relative text-white"
                     >
                         <div className="hidden md:flex flex-col items-end mr-4">

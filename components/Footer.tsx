@@ -25,7 +25,7 @@ export const Footer: React.FC<FooterProps> = () => {
                </div>
 
                <div>
-                  <h4 className="font-mono text-white text-xs uppercase tracking-widest mb-8">{t.footer.nav}</h4>
+                  <h3 className="font-mono text-white text-xs uppercase tracking-widest mb-8">{t.footer.nav}</h3>
                   <ul className="space-y-4 font-sans text-zinc-400">
                      <li><button onClick={() => router.push('/')} className="hover:text-neon-acid transition-colors">{t.nav.home}</button></li>
                      <li><button onClick={() => router.push('/about')} className="hover:text-neon-acid transition-colors">{t.nav.about}</button></li>
@@ -37,7 +37,7 @@ export const Footer: React.FC<FooterProps> = () => {
                </div>
 
                <div>
-                  <h4 className="font-mono text-white text-xs uppercase tracking-widest mb-8">{t.footer.socials}</h4>
+                  <h3 className="font-mono text-white text-xs uppercase tracking-widest mb-8">{t.footer.socials}</h3>
                   <ul className="space-y-4 font-sans text-zinc-400">
                      <li><a href="https://t.me/codexai_pro" target="_blank" rel="noopener noreferrer" className="hover:text-neon-acid transition-colors flex items-center gap-2">Telegram <ArrowUpRight size={14} /></a></li>
                      <li><a href="https://wa.me/74950322199" target="_blank" rel="noopener noreferrer" className="hover:text-neon-acid transition-colors flex items-center gap-2">WhatsApp <ArrowUpRight size={14} /></a></li>
@@ -46,7 +46,7 @@ export const Footer: React.FC<FooterProps> = () => {
                </div>
 
                <div>
-                  <h4 className="font-mono text-white text-xs uppercase tracking-widest mb-8">{t.footer.contacts}</h4>
+                  <h3 className="font-mono text-white text-xs uppercase tracking-widest mb-8">{t.footer.contacts}</h3>
                   <ul className="space-y-4">
                      <li className="flex items-center gap-2">
                         <Mail size={16} className="text-neon-acid" />

@@ -197,12 +197,14 @@ export const Portfolio: React.FC = () => {
         <div className="flex gap-4">
           <button
             onClick={() => scroll('left')}
+            aria-label="Previous project"
             className="w-14 h-14 rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-black transition-all duration-300 group"
           >
             <ChevronLeft size={24} className="text-white group-hover:text-black group-hover:-translate-x-1 transition-transform" />
           </button>
           <button
             onClick={() => scroll('right')}
+            aria-label="Next project"
             className="w-14 h-14 rounded-full border border-white/20 flex items-center justify-center hover:bg-neon-acid hover:text-black hover:border-neon-acid transition-all duration-300 group"
           >
             <ChevronRight size={24} className="text-white group-hover:text-black group-hover:translate-x-1 transition-transform" />
