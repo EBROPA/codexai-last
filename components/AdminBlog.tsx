@@ -666,7 +666,14 @@ const ArticleEditor: React.FC<{
   isNew: boolean;
 }> = ({ article, onChange, onSave, onCancel, isNew }) => {
   const [activeTab, setActiveTab] = useState<'content' | 'seo' | 'geo'>('content');
-  const [useBlockEditor, setUseBlockEditor] = useState(true);
+  // Determine initial editor mode based on article content:
+  // - If article has blocks with content -> use block editor
+  // - If article has markdown content but no blocks -> use markdown editor
+  // - For new articles -> default to block editor
+  const hasBlocks = article.blocks && article.blocks.length > 0;
+  const hasMarkdownContent = article.content && article.content.trim().length > 0;
+  const initialUseBlockEditor = isNew ? true : (hasBlocks || !hasMarkdownContent);
+  const [useBlockEditor, setUseBlockEditor] = useState(initialUseBlockEditor);
 
   const updateField = <K extends keyof BlogArticle>(field: K, value: BlogArticle[K]) => {
     console.log('[AdminBlog] updateField:', field, value);
@@ -1042,7 +1049,13 @@ const ArticleEditor: React.FC<{
               <label className="block text-zinc-400 text-sm">Режим редактора</label>
               <div className="flex gap-2">
                 <button
-                  onClick={() => setUseBlockEditor(true)}
+                  onClick={() => {
+                    if (!useBlockEditor) {
+                      // Switching to block editor - clear markdown content so blocks will be used
+                      updateField('content', '');
+                    }
+                    setUseBlockEditor(true);
+                  }}
                   className={`px-4 py-2 text-sm font-mono ${
                     useBlockEditor
                       ? 'bg-neon-acid text-black'
@@ -1052,7 +1065,13 @@ const ArticleEditor: React.FC<{
                   Блочный (как VC)
                 </button>
                 <button
-                  onClick={() => setUseBlockEditor(false)}
+                  onClick={() => {
+                    if (useBlockEditor) {
+                      // Switching to markdown editor - clear blocks so markdown content will be used
+                      updateField('blocks', []);
+                    }
+                    setUseBlockEditor(false);
+                  }}
                   className={`px-4 py-2 text-sm font-mono ${
                     !useBlockEditor
                       ? 'bg-neon-acid text-black'
