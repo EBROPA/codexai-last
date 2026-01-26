@@ -97,82 +97,72 @@ export const BlogPage: React.FC = () => {
           </div>
 
           {/* Header */}
-          <div className="mb-8 md:mb-20 text-center relative">
-            <div className="inline-block mb-2 md:mb-4 px-4 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-sm">
-              <span className="font-mono text-neon-acid text-xs uppercase tracking-widest">
-                // {isRu ? 'База знаний' : 'Knowledge Base'}
-              </span>
-            </div>
-            <h1 className="text-4xl md:text-6xl lg:text-8xl font-serif font-bold text-white mb-3 md:mb-6 tracking-tight leading-tight">
-              {isRu ? 'Блог' : 'Blog'} <span className="text-transparent bg-clip-text bg-gradient-to-r from-zinc-400 to-zinc-700">CODEXAI</span>
-            </h1>
-            <p className="text-zinc-400 text-sm md:text-xl max-w-2xl mx-auto leading-relaxed">
-              {isRu
-                ? <>{'Экспертные статьи о веб-разработке, Telegram-ботах, AI и digital-маркетинге.'} <span className="hidden md:inline">Делимся опытом и практическими знаниями для роста вашего бизнеса.</span></>
-                : <>{'Expert articles about web development, Telegram bots, AI and digital marketing.'} <span className="hidden md:inline">Sharing experience and practical knowledge to grow your business.</span></>
-              }
-            </p>
-          </div>
+          {/* Header & Controls */}
+          <div className="mb-16 md:mb-24">
 
-          {/* Filters Bar */}
-          <div className="sticky top-20 md:top-24 z-30 mb-8 md:mb-16 mx-auto max-w-4xl">
-            <div className="p-2 backdrop-blur-xl bg-zinc-900/80 border border-white/10 rounded-2xl md:rounded-full shadow-2xl flex flex-col md:flex-row gap-2">
+            {/* Title */}
+            <div className="mb-12 max-w-4xl">
+              <h1 className="text-4xl md:text-6xl lg:text-7xl font-serif font-bold text-white mb-6 tracking-tight leading-[0.95]">
+                {isRu ? 'Будьте в курсе последних новостей и трендов' : 'Stay up to date with the latest news and trends'}
+              </h1>
+            </div>
+
+            {/* Controls Bar */}
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 md:gap-8 border-b border-white/10 pb-6 mb-12">
+
+              {/* Categories / Tabs */}
+              <div className="flex flex-wrap items-center gap-4 md:gap-8 overflow-x-auto pb-2 md:pb-0 w-full md:w-auto hide-scrollbar">
+                <button
+                  onClick={() => setSelectedCategory('all')}
+                  className={`
+                    whitespace-nowrap px-6 py-2 rounded-lg font-mono text-xs uppercase tracking-widest transition-all duration-300
+                    ${selectedCategory === 'all'
+                      ? 'bg-neon-acid text-black font-bold'
+                      : 'bg-transparent text-zinc-400 hover:text-white'}
+                  `}
+                >
+                  {isRu ? 'Свежее' : 'Latest'}
+                </button>
+
+                {categories.map(([key, meta]) => (
+                  <button
+                    key={key}
+                    onClick={() => setSelectedCategory(key)}
+                    className={`
+                      whitespace-nowrap font-sans text-sm md:text-base font-medium transition-colors duration-200
+                      ${selectedCategory === key
+                        ? 'text-white'
+                        : 'text-zinc-500 hover:text-zinc-300'}
+                    `}
+                  >
+                    {isRu ? meta.name : meta.nameEn}
+                  </button>
+                ))}
+              </div>
+
               {/* Search */}
-              <div className="relative flex-1 group">
-                <label htmlFor="blog-search" className="sr-only">{isRu ? 'Поиск статей' : 'Search articles'}</label>
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-zinc-800 text-zinc-400 group-focus-within:bg-neon-acid group-focus-within:text-black transition-all duration-300">
-                  <Search size={14} />
-                </div>
+              <div className="relative w-full md:w-64 lg:w-80 flex-shrink-0">
                 <input
-                  id="blog-search"
-                  name="search"
                   type="text"
-                  autoComplete="off"
-                  placeholder={isRu ? 'Поиск статей...' : 'Search articles...'}
+                  placeholder={isRu ? 'Искать...' : 'Search...'}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-14 pr-4 py-3 bg-transparent text-white placeholder-zinc-500 focus:outline-none rounded-full"
+                  className="w-full bg-zinc-900/50 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-neon-acid/50 transition-colors"
                 />
+                <Search size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-neon-acid" />
               </div>
 
-              <div className="w-px bg-white/10 hidden md:block my-2" />
-
-              {/* Category Filter */}
-              <div className="relative group min-w-[220px]">
-                <label htmlFor="blog-category" className="sr-only">{isRu ? 'Выбор категории' : 'Select category'}</label>
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-zinc-800 text-zinc-400 group-focus-within:bg-neon-acid group-focus-within:text-black transition-all duration-300 pointer-events-none">
-                  <Filter size={14} />
-                </div>
-                <select
-                  id="blog-category"
-                  name="category"
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="w-full pl-14 pr-8 py-3 bg-transparent text-white focus:outline-none appearance-none cursor-pointer rounded-full hover:bg-white/5 transition-colors"
-                >
-                  <option value="all" className="bg-zinc-900">{isRu ? 'Все категории' : 'All categories'}</option>
-                  {categories.map(([key, meta]) => (
-                    <option key={key} value={key} className="bg-zinc-900">
-                      {isRu ? meta.name : meta.nameEn}
-                    </option>
-                  ))}
-                </select>
-                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-500">
-                  <ChevronRight size={14} className="rotate-90" />
-                </div>
-              </div>
             </div>
           </div>
 
           {/* Articles Grid */}
           {filteredArticles.length > 0 ? (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-y-16">
+            <div className="flex flex-col gap-16">
               {filteredArticles.map((article, index) => (
                 <ArticleCard
                   key={article.id}
                   article={article}
                   isRu={isRu}
-                  featured={index === 0 && !searchQuery && selectedCategory === 'all'} // Make first article featured if no filters
                   onClick={() => router.push(`/blog/${article.slug}`)}
                 />
               ))}
@@ -325,7 +315,7 @@ const BlogImage: React.FC<{
   );
 };
 
-// Article Card Component
+// Refactored Article Card for List View
 const ArticleCard: React.FC<{
   article: BlogArticle;
   isRu: boolean;
@@ -333,8 +323,7 @@ const ArticleCard: React.FC<{
   onClick: () => void;
 }> = ({ article, isRu, featured, onClick }) => {
   const categoryMeta = CATEGORY_META[article.category as ArticleCategory];
-  // Use thumbnail for faster loading in list views
-  const featuredImageUrl = getImageUrl(article.featuredImage, true);
+  const imageUrl = getImageUrl(article.featuredImage, true);
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
@@ -345,107 +334,65 @@ const ArticleCard: React.FC<{
     });
   };
 
-  if (featured) {
-    return (
-      <article
-        onClick={onClick}
-        className="group md:col-span-2 lg:col-span-3 grid md:grid-cols-2 gap-8 md:gap-12 cursor-pointer mb-12"
-      >
-        <div className="aspect-[16/9] md:aspect-auto md:h-[500px] overflow-hidden rounded-2xl relative">
-          <BlogImage
-            src={featuredImageUrl}
-            alt={article.featuredImageAlt}
-            className="transform group-hover:scale-105 transition-transform duration-700"
-          />
-          <div className="absolute inset-0 bg-black/20 z-10 group-hover:bg-transparent transition-colors duration-500" />
-        </div>
-        <div className="flex flex-col justify-center">
-          <div className="flex items-center gap-3 mb-6">
-            <span className="px-3 py-1 rounded-full border border-neon-acid/30 bg-neon-acid/10 text-neon-acid text-xs font-mono uppercase tracking-widest">
-              {isRu ? 'Избранное' : 'Featured'}
-            </span>
-            <span className="w-1 h-1 rounded-full bg-zinc-600" />
-            <span className="text-zinc-400 text-xs font-mono uppercase tracking-widest">
-              {isRu ? categoryMeta?.name : categoryMeta?.nameEn}
-            </span>
-          </div>
-
-          <h2 className="text-3xl md:text-5xl font-serif font-bold text-white mb-6 group-hover:text-neon-acid transition-colors leading-tight">
-            {article.title}
-          </h2>
-
-          <p className="text-zinc-400 text-lg mb-8 line-clamp-3 leading-relaxed">
-            {article.excerpt}
-          </p>
-
-          <div className="flex items-center gap-6 text-sm text-zinc-500 border-t border-white/10 pt-6 mt-auto">
-            <span className="flex items-center gap-2">
-              <Calendar size={14} />
-              {formatDate(article.publishedAt || article.createdAt)}
-            </span>
-            <span className="flex items-center gap-2">
-              <Clock size={14} />
-              {article.readingTime} {isRu ? 'мин' : 'min'}
-            </span>
-            <div className="ml-auto p-3 rounded-full border border-white/20 text-white group-hover:bg-neon-acid group-hover:border-neon-acid group-hover:text-black transition-all duration-300">
-              <ArrowUpRight size={20} />
-            </div>
-          </div>
-        </div>
-      </article>
-    )
-  }
-
   return (
     <article
       onClick={onClick}
-      className="group flex flex-col cursor-pointer"
+      className="group cursor-pointer border-b border-white/10 pb-12 last:border-0"
     >
-      {/* Image */}
-      <div className="aspect-[4/3] overflow-hidden rounded-2xl mb-6 relative">
-        <BlogImage
-          src={featuredImageUrl}
-          alt={article.featuredImageAlt}
-          className="transform group-hover:scale-105 transition-transform duration-700"
-        />
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors z-10" />
-        <div className="absolute top-4 left-4 z-20">
-          <span className="px-3 py-1 rounded-full bg-black/50 backdrop-blur-md border border-white/10 text-white text-xs font-mono uppercase tracking-widest">
-            {isRu ? categoryMeta?.name : categoryMeta?.nameEn}
-          </span>
+      <div className="flex flex-col-reverse md:flex-row gap-8 md:gap-12 items-start">
+
+        {/* Left Content Column */}
+        <div className="flex-1 flex flex-col items-start w-full">
+
+          {/* Title - Bigger and bolder on desktop */}
+          <h2 className="text-2xl md:text-4xl font-serif font-bold text-white mb-4 group-hover:text-neon-acid transition-colors leading-tight">
+            {article.title}
+          </h2>
+
+          {/* Excerpt - Constrained width for readability */}
+          <p className="text-zinc-400 text-sm md:text-base mb-6 line-clamp-3 md:line-clamp-4 leading-relaxed max-w-2xl">
+            {article.excerpt}
+          </p>
+
+          {/* Meta Information */}
+          <div className="mt-auto flex flex-wrap items-center gap-4 text-xs font-mono text-zinc-500 uppercase tracking-widest">
+            <span className="text-neon-acid">
+              // {isRu ? categoryMeta?.name : categoryMeta?.nameEn}
+            </span>
+            <span className="w-1 h-1 rounded-full bg-zinc-800" />
+            <span className="flex items-center gap-2">
+              <Calendar size={12} />
+              {formatDate(article.publishedAt || article.createdAt)}
+            </span>
+            <span className="hidden md:block w-1 h-1 rounded-full bg-zinc-800" />
+            <span className="hidden md:flex items-center gap-2">
+              <Clock size={12} />
+              {article.readingTime} {isRu ? 'мин' : 'min'}
+            </span>
+
+            <div className="hidden md:flex items-center gap-2 text-white group-hover:text-neon-acid transition-colors ml-4">
+              {isRu ? 'Читать' : 'Read'} <ArrowUpRight size={14} />
+            </div>
+          </div>
         </div>
-      </div>
 
-      {/* Content */}
-      <div className="flex-1 flex flex-col">
-        {/* Meta */}
-        <div className="flex items-center gap-4 text-xs text-zinc-500 mb-4">
-          <span className="flex items-center gap-1">
-            <Calendar size={12} />
-            {formatDate(article.publishedAt || article.createdAt)}
-          </span>
-          <span className="w-px h-3 bg-zinc-800" />
-          <span className="flex items-center gap-1">
-            <Clock size={12} />
-            {article.readingTime} {isRu ? 'мин' : 'min'}
-          </span>
+        {/* Right Image Column */}
+        <div className="w-full md:w-[45%] flex-shrink-0">
+          <div className="aspect-[2/1] bg-zinc-900 overflow-hidden rounded-xl relative border border-white/10 group-hover:border-neon-acid/50 transition-colors">
+            <BlogImage
+              src={imageUrl}
+              alt={article.featuredImageAlt}
+              className="transform group-hover:scale-105 transition-transform duration-700"
+            />
+            {/* Mobile Category Badge (Overlay) */}
+            <div className="md:hidden absolute top-3 left-3 z-20">
+              <span className="px-2 py-1 rounded-md bg-black/60 backdrop-blur-md border border-white/10 text-white text-[10px] font-mono uppercase tracking-widest">
+                {isRu ? categoryMeta?.name : categoryMeta?.nameEn}
+              </span>
+            </div>
+          </div>
         </div>
 
-        {/* Title */}
-        <h2 className="text-2xl font-serif font-bold text-white mb-3 group-hover:text-neon-acid transition-colors leading-tight line-clamp-2">
-          {article.title}
-        </h2>
-
-        {/* Excerpt */}
-        <p className="text-zinc-400 text-sm mb-6 line-clamp-3 leading-relaxed flex-1">
-          {article.excerpt}
-        </p>
-
-        {/* Read More */}
-        <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-white group-hover:text-neon-acid transition-colors mt-auto">
-          {isRu ? 'Читать статью' : 'Read Article'}
-          <ArrowUpRight size={14} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-        </div>
       </div>
     </article>
   );
