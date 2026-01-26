@@ -510,6 +510,303 @@ app.post('/api/images/generate-thumbnails', async (req, res) => {
 });
 
 // =====================================================
+// BLOG ARTICLES API
+// =====================================================
+
+// Get all articles (with optional filters)
+app.get('/api/articles', async (req, res) => {
+  try {
+    if (!prisma || !dbConnected) {
+      return res.status(503).json({ error: 'Database not available', articles: [] });
+    }
+
+    const { status, category, limit } = req.query;
+    
+    const where = {};
+    if (status) where.status = status;
+    if (category) where.category = category;
+
+    const articles = await prisma.article.findMany({
+      where,
+      include: {
+        author: true,
+      },
+      orderBy: {
+        publishedAt: 'desc',
+      },
+      take: limit ? parseInt(limit) : undefined,
+    });
+
+    res.json({ success: true, articles });
+  } catch (error) {
+    console.error('[Articles List] Error:', error);
+    res.status(500).json({ error: 'Failed to list articles' });
+  }
+});
+
+// Get single article by slug
+app.get('/api/articles/slug/:slug', async (req, res) => {
+  try {
+    if (!prisma || !dbConnected) {
+      return res.status(503).json({ error: 'Database not available' });
+    }
+
+    const { slug } = req.params;
+
+    const article = await prisma.article.findUnique({
+      where: { slug },
+      include: { author: true },
+    });
+
+    if (!article) {
+      return res.status(404).json({ error: 'Article not found' });
+    }
+
+    // Increment views
+    await prisma.article.update({
+      where: { slug },
+      data: { views: { increment: 1 } },
+    });
+
+    res.json({ success: true, article });
+  } catch (error) {
+    console.error('[Article Get] Error:', error);
+    res.status(500).json({ error: 'Failed to get article' });
+  }
+});
+
+// Get single article by ID
+app.get('/api/articles/:id', async (req, res) => {
+  try {
+    if (!prisma || !dbConnected) {
+      return res.status(503).json({ error: 'Database not available' });
+    }
+
+    const { id } = req.params;
+
+    const article = await prisma.article.findUnique({
+      where: { id },
+      include: { author: true },
+    });
+
+    if (!article) {
+      return res.status(404).json({ error: 'Article not found' });
+    }
+
+    res.json({ success: true, article });
+  } catch (error) {
+    console.error('[Article Get] Error:', error);
+    res.status(500).json({ error: 'Failed to get article' });
+  }
+});
+
+// Create article
+app.post('/api/articles', async (req, res) => {
+  try {
+    if (!prisma || !dbConnected) {
+      return res.status(503).json({ error: 'Database not available' });
+    }
+
+    const articleData = req.body;
+    
+    // Ensure default author exists
+    let author = await prisma.author.findFirst({
+      where: { name: 'CODEXAI Team' },
+    });
+    
+    if (!author) {
+      author = await prisma.author.create({
+        data: {
+          id: 'codexai-team',
+          name: 'CODEXAI Team',
+          role: 'Редакция',
+          bio: 'Команда экспертов CODEXAI с опытом 7+ лет в веб-разработке, AI и digital-маркетинге.',
+          avatar: '/img/codexai-logo.png',
+          social: { telegram: 'https://t.me/codexai_pro' },
+          expertise: ['Web Development', 'AI Integration', 'Telegram Bots', 'SEO'],
+        },
+      });
+    }
+
+    // Check if authorId exists, if not use default
+    if (articleData.authorId && articleData.authorId !== 'codexai-team') {
+      const existingAuthor = await prisma.author.findUnique({
+        where: { id: articleData.authorId },
+      });
+      if (!existingAuthor) {
+        articleData.authorId = author.id;
+      }
+    } else {
+      articleData.authorId = author.id;
+    }
+
+    const article = await prisma.article.create({
+      data: {
+        slug: articleData.slug,
+        title: articleData.title,
+        subtitle: articleData.subtitle || null,
+        excerpt: articleData.excerpt,
+        content: articleData.content || '',
+        blocks: articleData.blocks || [],
+        metaTitle: articleData.metaTitle || null,
+        metaDescription: articleData.metaDescription || null,
+        keywords: articleData.keywords || [],
+        tldr: articleData.tldr || '',
+        keyTakeaways: articleData.keyTakeaways || [],
+        faqs: articleData.faqs || [],
+        stats: articleData.stats || [],
+        category: articleData.category || 'web-development',
+        tags: articleData.tags || [],
+        featuredImage: articleData.featuredImage || '/img/codexai-logo.png',
+        featuredImageAlt: articleData.featuredImageAlt || '',
+        authorId: articleData.authorId,
+        status: articleData.status || 'draft',
+        readingTime: articleData.readingTime || 5,
+        publishedAt: articleData.status === 'published' ? new Date() : null,
+        autoSEO: articleData.autoSEO || false,
+        autoGEO: articleData.autoGEO || false,
+      },
+      include: { author: true },
+    });
+
+    console.log(`[Article Create] Created: ${article.title} (${article.slug})`);
+    res.json({ success: true, article });
+  } catch (error) {
+    console.error('[Article Create] Error:', error);
+    res.status(500).json({ error: 'Failed to create article', details: error.message });
+  }
+});
+
+// Update article
+app.put('/api/articles/:id', async (req, res) => {
+  try {
+    if (!prisma || !dbConnected) {
+      return res.status(503).json({ error: 'Database not available' });
+    }
+
+    const { id } = req.params;
+    const articleData = req.body;
+
+    // Check if article exists
+    const existing = await prisma.article.findUnique({ where: { id } });
+    if (!existing) {
+      return res.status(404).json({ error: 'Article not found' });
+    }
+
+    // Set publishedAt when status changes to published
+    let publishedAt = existing.publishedAt;
+    if (articleData.status === 'published' && existing.status !== 'published') {
+      publishedAt = new Date();
+    }
+
+    const article = await prisma.article.update({
+      where: { id },
+      data: {
+        slug: articleData.slug,
+        title: articleData.title,
+        subtitle: articleData.subtitle || null,
+        excerpt: articleData.excerpt,
+        content: articleData.content || '',
+        blocks: articleData.blocks || [],
+        metaTitle: articleData.metaTitle || null,
+        metaDescription: articleData.metaDescription || null,
+        keywords: articleData.keywords || [],
+        tldr: articleData.tldr || '',
+        keyTakeaways: articleData.keyTakeaways || [],
+        faqs: articleData.faqs || [],
+        stats: articleData.stats || [],
+        category: articleData.category,
+        tags: articleData.tags || [],
+        featuredImage: articleData.featuredImage,
+        featuredImageAlt: articleData.featuredImageAlt || '',
+        authorId: articleData.authorId,
+        status: articleData.status,
+        readingTime: articleData.readingTime || 5,
+        publishedAt,
+        autoSEO: articleData.autoSEO || false,
+        autoGEO: articleData.autoGEO || false,
+      },
+      include: { author: true },
+    });
+
+    console.log(`[Article Update] Updated: ${article.title} (${article.slug})`);
+    res.json({ success: true, article });
+  } catch (error) {
+    console.error('[Article Update] Error:', error);
+    res.status(500).json({ error: 'Failed to update article', details: error.message });
+  }
+});
+
+// Delete article
+app.delete('/api/articles/:id', async (req, res) => {
+  try {
+    if (!prisma || !dbConnected) {
+      return res.status(503).json({ error: 'Database not available' });
+    }
+
+    const { id } = req.params;
+
+    await prisma.article.delete({ where: { id } });
+
+    console.log(`[Article Delete] Deleted article: ${id}`);
+    res.json({ success: true });
+  } catch (error) {
+    console.error('[Article Delete] Error:', error);
+    res.status(500).json({ error: 'Failed to delete article' });
+  }
+});
+
+// =====================================================
+// AUTHORS API
+// =====================================================
+
+// Get all authors
+app.get('/api/authors', async (req, res) => {
+  try {
+    if (!prisma || !dbConnected) {
+      return res.status(503).json({ error: 'Database not available', authors: [] });
+    }
+
+    const authors = await prisma.author.findMany({
+      orderBy: { name: 'asc' },
+    });
+
+    res.json({ success: true, authors });
+  } catch (error) {
+    console.error('[Authors List] Error:', error);
+    res.status(500).json({ error: 'Failed to list authors' });
+  }
+});
+
+// Create author
+app.post('/api/authors', async (req, res) => {
+  try {
+    if (!prisma || !dbConnected) {
+      return res.status(503).json({ error: 'Database not available' });
+    }
+
+    const authorData = req.body;
+
+    const author = await prisma.author.create({
+      data: {
+        name: authorData.name,
+        role: authorData.role || 'Автор',
+        bio: authorData.bio || '',
+        avatar: authorData.avatar || '/img/codexai-logo.png',
+        social: authorData.social || {},
+        expertise: authorData.expertise || [],
+      },
+    });
+
+    console.log(`[Author Create] Created: ${author.name}`);
+    res.json({ success: true, author });
+  } catch (error) {
+    console.error('[Author Create] Error:', error);
+    res.status(500).json({ error: 'Failed to create author', details: error.message });
+  }
+});
+
+// =====================================================
 // CONTACT FORM API
 // =====================================================
 

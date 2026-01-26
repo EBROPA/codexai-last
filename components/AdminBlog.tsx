@@ -117,7 +117,7 @@ export const AdminBlog: React.FC = () => {
     setEditingArticle({ ...article });
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!editingArticle) return;
 
     // Validate required fields
@@ -155,7 +155,7 @@ export const AdminBlog: React.FC = () => {
       }
       
       // Create new author
-      const newAuthor = blogStore.createAuthor({
+      const newAuthor = await blogStore.createAuthor({
         name: customName,
         role: (editingArticle as any).customAuthorRole || 'Автор',
         bio: '',
@@ -173,9 +173,9 @@ export const AdminBlog: React.FC = () => {
 
     try {
       if (isCreating) {
-        blogStore.createArticle(articleToSave);
+        await blogStore.createArticle(articleToSave);
       } else {
-        blogStore.updateArticle(articleToSave.id, articleToSave);
+        await blogStore.updateArticle(articleToSave.id, articleToSave);
       }
 
       setEditingArticle(null);
@@ -188,9 +188,9 @@ export const AdminBlog: React.FC = () => {
     }
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (confirm('Удалить статью? Это действие нельзя отменить.')) {
-      const success = blogStore.deleteArticle(id);
+      const success = await blogStore.deleteArticle(id);
       if (success) {
         // Force reload from store
         setArticles([...blogStore.getAllArticles()]);

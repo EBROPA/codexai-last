@@ -26,3 +26,82 @@ model Image {
 
   @@index([createdAt])
 }
+
+// Blog Author for E-E-A-T signals
+model Author {
+  id        String    @id @default(uuid())
+  name      String
+  role      String    @default("Автор")
+  bio       String    @default("")
+  avatar    String    @default("/img/codexai-logo.png")
+  social    Json      @default("{}")  // { telegram?: string, linkedin?: string, twitter?: string }
+  expertise String[]  @default([])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  articles  Article[]
+
+  @@index([name])
+}
+
+// Blog Article
+model Article {
+  id               String   @id @default(uuid())
+  slug             String   @unique
+  
+  // Basic content
+  title            String
+  subtitle         String?
+  excerpt          String   // 150-160 chars for meta description
+  content          String   @default("") // Legacy Markdown content
+  blocks           Json     @default("[]") // Block-based content as JSON
+  
+  // SEO fields
+  metaTitle        String?
+  metaDescription  String?
+  keywords         String[] @default([])
+  canonicalUrl     String?
+  
+  // GEO optimization fields
+  tldr             String   @default("")
+  keyTakeaways     Json     @default("[]") // Array of { title, description }
+  faqs             Json     @default("[]") // Array of { question, answer }
+  stats            Json     @default("[]") // Array of { label, value, source }
+  
+  // Categorization
+  category         String   @default("web-development")
+  tags             String[] @default([])
+  
+  // Media
+  featuredImage    String   @default("/img/codexai-logo.png")
+  featuredImageAlt String   @default("")
+  
+  // Author relation
+  authorId         String
+  author           Author   @relation(fields: [authorId], references: [id])
+  
+  // Dates
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  publishedAt      DateTime?
+  
+  // Status: draft, published, archived
+  status           String   @default("draft")
+  
+  // Engagement
+  readingTime      Int      @default(5)
+  views            Int      @default(0)
+  
+  // Related content
+  relatedArticles  String[] @default([])
+  relatedServices  String[] @default([])
+  
+  // Auto-generation flags
+  autoSEO          Boolean  @default(false)
+  autoGEO          Boolean  @default(false)
+
+  @@index([slug])
+  @@index([status])
+  @@index([category])
+  @@index([publishedAt])
+  @@index([authorId])
+}
