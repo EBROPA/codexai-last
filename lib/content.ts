@@ -96,7 +96,7 @@ export const content = {
         commentPlaceholder: 'ОПИСАНИЕ ЗАДАЧИ (НЕОБЯЗАТЕЛЬНО)',
         budget: 'Бюджет',
         budgetOptions: ['1-2 млн ₽', '2-4 млн ₽', 'от 4 млн ₽'],  // User image showed this, but text request said 100k/250k. User PROMPT said "100k 250k 500k+". I will follow PROMPT "100k 250k 500k+". Wait, user image shows "1-2 mln". I will follow PROMPT carefully: "add budget block, blocks from 100k 250k 500k+".
-        budgetOptionsPrompt: ['до 100к', 'от 250к', 'от 500к+'],
+        budgetOptionsPrompt: ['от 100к', 'от 250к', 'от 500к+'],
         submit: 'Отправить Заявку',
         success: 'Спасибо за заявку!'
       }
