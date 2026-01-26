@@ -32,7 +32,7 @@ export const Footer: React.FC<FooterProps> = () => {
                      <li><button onClick={() => router.push('/work')} className="hover:text-neon-acid transition-colors">{t.nav.work}</button></li>
                      <li><button onClick={() => router.push('/services')} className="hover:text-neon-acid transition-colors">{t.nav.services}</button></li>
                      <li><button onClick={() => router.push('/blog')} className="hover:text-neon-acid transition-colors">{t.nav.blog || 'Блог'}</button></li>
-                     <li><button onClick={() => router.push('/contact')} className="hover:text-neon-acid transition-colors">{t.nav.contact}</button></li>
+                     <li><button onClick={() => router.push('/request')} className="hover:text-neon-acid transition-colors">{t.nav.contact}</button></li>
                   </ul>
                </div>
 
@@ -68,7 +68,7 @@ export const Footer: React.FC<FooterProps> = () => {
                      </li>
                   </ul>
                   <button
-                     onClick={() => router.push('/contact')}
+                     onClick={() => router.push('/request')}
                      className="mt-8 px-6 py-3 border border-white/20 text-white font-mono text-xs uppercase tracking-widest hover:bg-neon-acid hover:text-black hover:border-neon-acid transition-all duration-300"
                   >
                      {t.footer.cta}

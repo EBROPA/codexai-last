@@ -270,53 +270,53 @@ const fixImageUrl = (url: string): string => {
 const generateArticleSchema = (article: BlogArticle, author: BlogAuthor | undefined) => {
   const imageUrl = fixImageUrl(article.featuredImage);
   return {
-  '@context': 'https://schema.org',
-  '@type': 'Article',
-  '@id': `https://codexai.pro/blog/${article.slug}`,
-  headline: article.title,
-  description: article.metaDescription || article.excerpt,
-  image: imageUrl.startsWith('http')
-    ? imageUrl
-    : `https://codexai.pro${imageUrl}`,
-  datePublished: article.publishedAt || article.createdAt,
-  dateModified: article.updatedAt,
-  author: {
-    '@type': 'Person',
-    '@id': `https://codexai.pro/team/${article.authorId}`,
-    name: author?.name || 'CODEXAI Team',
-    url: `https://codexai.pro/team/${article.authorId}`,
-    jobTitle: author?.role,
-    sameAs: author ? Object.values(author.social).filter(Boolean) : []
-  },
-  publisher: {
-    '@type': 'Organization',
-    '@id': 'https://codexai.pro/#organization',
-    name: 'CODEXAI',
-    logo: {
-      '@type': 'ImageObject',
-      url: 'https://codexai.pro/img/codexai-logo.png'
-    }
-  },
-  mainEntityOfPage: {
-    '@type': 'WebPage',
-    '@id': `https://codexai.pro/blog/${article.slug}`
-  },
-  articleSection: CATEGORY_META[article.category as ArticleCategory]?.name,
-  keywords: article.keywords.join(', '),
-  wordCount: article.content.split(/\s+/).length,
-  timeRequired: `PT${article.readingTime}M`,
-  // For AI citation - key information
-  about: article.keyTakeaways.map(t => ({
-    '@type': 'Thing',
-    name: t.title,
-    description: t.description
-  })),
-  citation: article.stats?.map(s => ({
-    '@type': 'CreativeWork',
-    text: `${s.label}: ${s.value}`,
-    author: s.source || 'CODEXAI'
-  }))
-};
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    '@id': `https://codexai.pro/blog/${article.slug}`,
+    headline: article.title,
+    description: article.metaDescription || article.excerpt,
+    image: imageUrl.startsWith('http')
+      ? imageUrl
+      : `https://codexai.pro${imageUrl}`,
+    datePublished: article.publishedAt || article.createdAt,
+    dateModified: article.updatedAt,
+    author: {
+      '@type': 'Person',
+      '@id': `https://codexai.pro/team/${article.authorId}`,
+      name: author?.name || 'CODEXAI Team',
+      url: `https://codexai.pro/team/${article.authorId}`,
+      jobTitle: author?.role,
+      sameAs: author ? Object.values(author.social).filter(Boolean) : []
+    },
+    publisher: {
+      '@type': 'Organization',
+      '@id': 'https://codexai.pro/#organization',
+      name: 'CODEXAI',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://codexai.pro/img/codexai-logo.png'
+      }
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `https://codexai.pro/blog/${article.slug}`
+    },
+    articleSection: CATEGORY_META[article.category as ArticleCategory]?.name,
+    keywords: article.keywords.join(', '),
+    wordCount: article.content.split(/\s+/).length,
+    timeRequired: `PT${article.readingTime}M`,
+    // For AI citation - key information
+    about: article.keyTakeaways.map(t => ({
+      '@type': 'Thing',
+      name: t.title,
+      description: t.description
+    })),
+    citation: article.stats?.map(s => ({
+      '@type': 'CreativeWork',
+      text: `${s.label}: ${s.value}`,
+      author: s.source || 'CODEXAI'
+    }))
+  };
 };
 
 // Generate FAQ Schema
@@ -644,7 +644,7 @@ export const ArticlePage: React.FC = () => {
                   }
                 </p>
                 <button
-                  onClick={() => router.push('/contact')}
+                  onClick={() => router.push('/request')}
                   className="px-8 py-4 bg-white text-black font-bold font-mono text-sm uppercase tracking-widest hover:bg-neon-acid transition-colors inline-flex items-center gap-2"
                 >
                   {isRu ? 'Начать проект' : 'Start Project'}

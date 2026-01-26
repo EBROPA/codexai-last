@@ -13,7 +13,7 @@ const imageCache = new Map<string, boolean>();
 // Preload image utility
 const preloadImage = (src: string): Promise<void> => {
   if (imageCache.has(src)) return Promise.resolve();
-  
+
   return new Promise((resolve) => {
     const img = new Image();
     img.onload = () => {
@@ -208,7 +208,7 @@ export const BlogPage: React.FC = () => {
                 }
               </p>
               <button
-                onClick={() => router.push('/contact')}
+                onClick={() => router.push('/request')}
                 className="px-8 py-4 bg-neon-acid text-black font-bold font-mono text-sm uppercase tracking-widest hover:bg-white transition-all transform hover:scale-105 duration-300"
               >
                 {isRu ? 'Обсудить проект' : 'Discuss Project'}
@@ -263,7 +263,7 @@ const BlogImage: React.FC<{
           observer.disconnect();
         }
       },
-      { 
+      {
         threshold: 0,
         rootMargin: '200px' // Start loading 200px before entering viewport
       }
@@ -285,17 +285,17 @@ const BlogImage: React.FC<{
     <div ref={containerRef} className="absolute inset-0">
       {/* Solid background - always visible immediately */}
       <div className="absolute inset-0 bg-zinc-800" />
-      
+
       {/* Gradient shimmer effect while loading */}
       {!isLoaded && !hasError && (
-        <div className="absolute inset-0 bg-gradient-to-r from-zinc-800 via-zinc-700 to-zinc-800 animate-shimmer" 
+        <div className="absolute inset-0 bg-gradient-to-r from-zinc-800 via-zinc-700 to-zinc-800 animate-shimmer"
           style={{
             backgroundSize: '200% 100%',
             animation: 'shimmer 1.5s ease-in-out infinite'
           }}
         />
       )}
-      
+
       {/* Actual image - only render when cached or loaded */}
       {!hasError && (
         <img
@@ -303,9 +303,8 @@ const BlogImage: React.FC<{
           src={isLoaded ? src : undefined}
           data-src={src}
           alt={alt}
-          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
-            isLoaded ? 'opacity-100' : 'opacity-0'
-          } ${className}`}
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'
+            } ${className}`}
           onLoad={() => {
             imageCache.set(src, true);
             setIsLoaded(true);
@@ -313,7 +312,7 @@ const BlogImage: React.FC<{
           onError={handleError}
         />
       )}
-      
+
       {/* Fallback on error */}
       {hasError && (
         <img

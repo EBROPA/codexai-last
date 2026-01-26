@@ -224,7 +224,7 @@ export const AuthorPage: React.FC<AuthorPageProps> = ({ authorId = 'founder', la
         {/* CTA */}
         <div className="flex justify-center">
           <button
-            onClick={() => router.push('/contact')}
+            onClick={() => router.push('/request')}
             className="group px-10 py-6 bg-neon-acid text-black font-bold font-mono text-sm uppercase tracking-widest hover:bg-white transition-colors flex items-center gap-3"
           >
             {isRu ? 'Обсудить проект' : 'Discuss Project'}

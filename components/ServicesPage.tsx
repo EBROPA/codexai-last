@@ -220,7 +220,7 @@ export const ServicesPage: React.FC = () => {
                 {/* CTA */}
                 <div className="flex justify-end">
                     <button
-                        onClick={() => router.push('/contact')}
+                        onClick={() => router.push('/request')}
                         className="group relative px-10 py-6 bg-neon-acid text-black font-bold font-mono text-sm uppercase tracking-widest hover:bg-white transition-colors overflow-hidden"
                     >
                         <span className="relative z-10 flex items-center gap-3">
