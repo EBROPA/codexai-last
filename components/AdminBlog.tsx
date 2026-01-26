@@ -119,32 +119,73 @@ export const AdminBlog: React.FC = () => {
   const handleSave = () => {
     if (!editingArticle) return;
 
-    if (isCreating) {
-      blogStore.createArticle(editingArticle);
-    } else {
-      blogStore.updateArticle(editingArticle.id, editingArticle);
+    // Validate required fields
+    if (!editingArticle.title.trim()) {
+      alert('Введите заголовок статьи');
+      return;
+    }
+    if (!editingArticle.slug.trim()) {
+      alert('Введите URL (slug) статьи');
+      return;
+    }
+    if (!editingArticle.excerpt.trim()) {
+      alert('Введите краткое описание (excerpt)');
+      return;
     }
 
-    setEditingArticle(null);
-    setIsCreating(false);
-    loadArticles();
+    // Check if article has content
+    const hasBlocks = editingArticle.blocks && editingArticle.blocks.length > 0 && 
+      editingArticle.blocks.some(b => b.type === 'paragraph' && b.content?.trim());
+    const hasContent = editingArticle.content?.trim();
+    
+    if (!hasBlocks && !hasContent) {
+      alert('Добавьте контент статьи');
+      return;
+    }
+
+    try {
+      if (isCreating) {
+        blogStore.createArticle(editingArticle);
+      } else {
+        blogStore.updateArticle(editingArticle.id, editingArticle);
+      }
+
+      setEditingArticle(null);
+      setIsCreating(false);
+      // Force reload from store
+      setArticles([...blogStore.getAllArticles()]);
+    } catch (error) {
+      console.error('Error saving article:', error);
+      alert('Ошибка при сохранении статьи');
+    }
   };
 
   const handleDelete = (id: string) => {
-    if (confirm('Удалить статью?')) {
-      blogStore.deleteArticle(id);
-      loadArticles();
+    if (confirm('Удалить статью? Это действие нельзя отменить.')) {
+      const success = blogStore.deleteArticle(id);
+      if (success) {
+        // Force reload from store
+        setArticles([...blogStore.getAllArticles()]);
+      } else {
+        alert('Ошибка при удалении статьи');
+      }
     }
   };
 
   const handlePublish = (id: string) => {
-    blogStore.publishArticle(id);
-    loadArticles();
+    const updated = blogStore.publishArticle(id);
+    if (updated) {
+      // Force reload from store to get fresh data
+      setArticles([...blogStore.getAllArticles()]);
+    }
   };
 
   const handleUnpublish = (id: string) => {
-    blogStore.unpublishArticle(id);
-    loadArticles();
+    const updated = blogStore.unpublishArticle(id);
+    if (updated) {
+      // Force reload from store to get fresh data
+      setArticles([...blogStore.getAllArticles()]);
+    }
   };
 
   // Login form
@@ -289,6 +330,27 @@ const ArticlesList: React.FC<{
   onPublish: (id: string) => void;
   onUnpublish: (id: string) => void;
 }> = ({ articles, onEdit, onDelete, onPublish, onUnpublish }) => {
+  const [loadingId, setLoadingId] = useState<string | null>(null);
+
+  const handlePublishClick = async (id: string) => {
+    setLoadingId(id);
+    // Small delay for visual feedback
+    await new Promise(resolve => setTimeout(resolve, 100));
+    onPublish(id);
+    setLoadingId(null);
+  };
+
+  const handleUnpublishClick = async (id: string) => {
+    setLoadingId(id);
+    await new Promise(resolve => setTimeout(resolve, 100));
+    onUnpublish(id);
+    setLoadingId(null);
+  };
+
+  const handleDeleteClick = (id: string) => {
+    onDelete(id);
+  };
+
   return (
     <>
       {/* Stats */}
@@ -311,97 +373,112 @@ const ArticlesList: React.FC<{
         </div>
       </div>
 
-      {/* Articles table */}
-      <div className="bg-zinc-950 border border-white/10">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-white/10">
-                <th className="text-left p-4 font-mono text-xs text-zinc-500 uppercase tracking-widest">Статья</th>
-                <th className="text-left p-4 font-mono text-xs text-zinc-500 uppercase tracking-widest">Категория</th>
-                <th className="text-left p-4 font-mono text-xs text-zinc-500 uppercase tracking-widest">Статус</th>
-                <th className="text-left p-4 font-mono text-xs text-zinc-500 uppercase tracking-widest">Просмотры</th>
-                <th className="text-left p-4 font-mono text-xs text-zinc-500 uppercase tracking-widest">Дата</th>
-                <th className="text-right p-4 font-mono text-xs text-zinc-500 uppercase tracking-widest">Действия</th>
-              </tr>
-            </thead>
-            <tbody>
-              {articles.map((article) => {
-                const analytics = analyticsStore.getArticleAnalytics(article.id);
-                return (
-                  <tr key={article.id} className="border-b border-white/5 hover:bg-white/5">
-                    <td className="p-4">
-                      <div className="text-white font-medium">{article.title}</div>
-                      <div className="text-zinc-500 text-sm">/blog/{article.slug}</div>
-                    </td>
-                    <td className="p-4">
-                      <span className="text-zinc-400 text-sm">
-                        {CATEGORY_META[article.category as ArticleCategory]?.name}
-                      </span>
-                    </td>
-                    <td className="p-4">
-                      {article.status === 'published' ? (
-                        <span className="flex items-center gap-1 text-green-500 text-sm">
-                          <CheckCircle size={14} />
-                          Опубликовано
-                        </span>
-                      ) : (
-                        <span className="flex items-center gap-1 text-yellow-500 text-sm">
-                          <FileText size={14} />
-                          Черновик
-                        </span>
-                      )}
-                    </td>
-                    <td className="p-4">
-                      <span className="text-zinc-400 text-sm">
-                        {analytics?.views || 0}
-                      </span>
-                    </td>
-                    <td className="p-4 text-zinc-500 text-sm">
-                      {new Date(article.updatedAt).toLocaleDateString('ru-RU')}
-                    </td>
-                    <td className="p-4">
-                      <div className="flex items-center justify-end gap-2">
-                        <button
-                          onClick={() => onEdit(article)}
-                          className="p-2 text-zinc-500 hover:text-neon-acid transition-colors"
-                          title="Редактировать"
-                        >
-                          <Edit2 size={16} />
-                        </button>
-                        {article.status === 'published' ? (
-                          <button
-                            onClick={() => onUnpublish(article.id)}
-                            className="p-2 text-zinc-500 hover:text-yellow-500 transition-colors"
-                            title="Снять с публикации"
-                          >
-                            <EyeOff size={16} />
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() => onPublish(article.id)}
-                            className="p-2 text-zinc-500 hover:text-green-500 transition-colors"
-                            title="Опубликовать"
-                          >
-                            <Eye size={16} />
-                          </button>
-                        )}
-                        <button
-                          onClick={() => onDelete(article.id)}
-                          className="p-2 text-zinc-500 hover:text-red-500 transition-colors"
-                          title="Удалить"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+      {/* Empty state */}
+      {articles.length === 0 && (
+        <div className="bg-zinc-950 border border-white/10 p-12 text-center">
+          <FileText size={48} className="mx-auto text-zinc-700 mb-4" />
+          <p className="text-zinc-500">Нет статей. Создайте первую статью!</p>
         </div>
-      </div>
+      )}
+
+      {/* Articles table */}
+      {articles.length > 0 && (
+        <div className="bg-zinc-950 border border-white/10">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-white/10">
+                  <th className="text-left p-4 font-mono text-xs text-zinc-500 uppercase tracking-widest">Статья</th>
+                  <th className="text-left p-4 font-mono text-xs text-zinc-500 uppercase tracking-widest">Категория</th>
+                  <th className="text-left p-4 font-mono text-xs text-zinc-500 uppercase tracking-widest">Статус</th>
+                  <th className="text-left p-4 font-mono text-xs text-zinc-500 uppercase tracking-widest">Просмотры</th>
+                  <th className="text-left p-4 font-mono text-xs text-zinc-500 uppercase tracking-widest">Дата</th>
+                  <th className="text-right p-4 font-mono text-xs text-zinc-500 uppercase tracking-widest">Действия</th>
+                </tr>
+              </thead>
+              <tbody>
+                {articles.map((article) => {
+                  const analytics = analyticsStore.getArticleAnalytics(article.id);
+                  const isLoading = loadingId === article.id;
+                  return (
+                    <tr key={article.id} className={`border-b border-white/5 hover:bg-white/5 transition-colors ${isLoading ? 'opacity-50' : ''}`}>
+                      <td className="p-4">
+                        <div className="text-white font-medium">{article.title || 'Без названия'}</div>
+                        <div className="text-zinc-500 text-sm">/blog/{article.slug || 'no-slug'}</div>
+                      </td>
+                      <td className="p-4">
+                        <span className="text-zinc-400 text-sm">
+                          {CATEGORY_META[article.category as ArticleCategory]?.name || article.category}
+                        </span>
+                      </td>
+                      <td className="p-4">
+                        {article.status === 'published' ? (
+                          <span className="flex items-center gap-1 text-green-500 text-sm">
+                            <CheckCircle size={14} />
+                            Опубликовано
+                          </span>
+                        ) : (
+                          <span className="flex items-center gap-1 text-yellow-500 text-sm">
+                            <FileText size={14} />
+                            Черновик
+                          </span>
+                        )}
+                      </td>
+                      <td className="p-4">
+                        <span className="text-zinc-400 text-sm">
+                          {analytics?.views || 0}
+                        </span>
+                      </td>
+                      <td className="p-4 text-zinc-500 text-sm">
+                        {new Date(article.updatedAt).toLocaleDateString('ru-RU')}
+                      </td>
+                      <td className="p-4">
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            onClick={() => onEdit(article)}
+                            className="p-2 text-zinc-500 hover:text-neon-acid transition-colors"
+                            title="Редактировать"
+                            disabled={isLoading}
+                          >
+                            <Edit2 size={16} />
+                          </button>
+                          {article.status === 'published' ? (
+                            <button
+                              onClick={() => handleUnpublishClick(article.id)}
+                              className="p-2 text-zinc-500 hover:text-yellow-500 transition-colors"
+                              title="Снять с публикации"
+                              disabled={isLoading}
+                            >
+                              <EyeOff size={16} />
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => handlePublishClick(article.id)}
+                              className="p-2 text-zinc-500 hover:text-green-500 transition-colors"
+                              title="Опубликовать"
+                              disabled={isLoading}
+                            >
+                              <Eye size={16} />
+                            </button>
+                          )}
+                          <button
+                            onClick={() => handleDeleteClick(article.id)}
+                            className="p-2 text-zinc-500 hover:text-red-500 transition-colors"
+                            title="Удалить"
+                            disabled={isLoading}
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
     </>
   );
 };
@@ -602,14 +679,34 @@ const ArticleEditor: React.FC<{
     onChange((prev: BlogArticle) => ({ ...prev, blocks, readingTime }));
   };
 
-  // Auto-generate SEO fields
+  // Auto-generate SEO fields with improved logic
   const generateSEO = () => {
-    if (!article.blocks || article.blocks.length === 0) return;
+    if (!article.title) {
+      alert('Сначала введите заголовок статьи');
+      return;
+    }
 
-    const text = blocksToText(article.blocks);
-    const keywords = extractKeywords(text, 10);
-    const metaDescription = generateMetaDescription(article.title, text);
-    const metaTitle = article.title; // Will be formatted with suffix on display
+    const text = article.blocks && article.blocks.length > 0 
+      ? blocksToText(article.blocks) 
+      : article.content || '';
+    
+    if (!text.trim()) {
+      alert('Сначала добавьте контент статьи');
+      return;
+    }
+
+    // Generate keywords from title + content
+    const titleWords = article.title.toLowerCase().split(/\s+/).filter(w => w.length > 3);
+    const contentKeywords = extractKeywords(text, 8);
+    const keywords = [...new Set([...titleWords.slice(0, 3), ...contentKeywords])].slice(0, 10);
+    
+    // Generate meta description - prioritize excerpt if available
+    let metaDescription = article.excerpt || generateMetaDescription(article.title, text);
+    if (metaDescription.length > 160) {
+      metaDescription = metaDescription.slice(0, 157) + '...';
+    }
+    
+    const metaTitle = article.title;
 
     onChange({
       ...article,
@@ -620,36 +717,97 @@ const ArticleEditor: React.FC<{
     });
   };
 
-  // Auto-generate GEO fields
+  // Auto-generate GEO fields with improved logic
   const generateGEO = () => {
-    if (!article.blocks || article.blocks.length === 0) return;
+    if (!article.title) {
+      alert('Сначала введите заголовок статьи');
+      return;
+    }
 
-    const tldr = generateTLDR(article.title, article.blocks);
-    const keyTakeaways = generateKeyTakeaways(article.blocks);
-    const faqs = generateFAQs(article.title, article.blocks);
-    const stats = generateStats(article.blocks);
+    const text = article.blocks && article.blocks.length > 0 
+      ? blocksToText(article.blocks) 
+      : article.content || '';
+    
+    if (!text.trim()) {
+      alert('Сначала добавьте контент статьи');
+      return;
+    }
+
+    // Generate TL;DR - use excerpt as base if available
+    let tldr = article.excerpt || '';
+    if (!tldr || tldr.length < 50) {
+      tldr = generateTLDR(article.title, article.blocks || []);
+    }
+    
+    // Generate key takeaways
+    const keyTakeaways = article.keyTakeaways.length > 0 
+      ? article.keyTakeaways 
+      : generateKeyTakeaways(article.blocks || []);
+    
+    // Generate FAQs
+    const faqs = article.faqs.length > 0 
+      ? article.faqs 
+      : generateFAQs(article.title, article.blocks || []);
+    
+    // Generate stats
+    const stats = (article.stats && article.stats.length > 0) 
+      ? article.stats 
+      : generateStats(article.blocks || []);
 
     onChange({
       ...article,
       tldr,
       keyTakeaways,
-      faqs: article.faqs.length > 0 ? article.faqs : faqs,
-      stats: article.stats && article.stats.length > 0 ? article.stats : stats,
+      faqs,
+      stats,
       autoGEO: true
     });
   };
 
-  // Generate all automatically
+  // Generate all automatically with validation
   const generateAll = () => {
-    if (!article.blocks || article.blocks.length === 0) return;
+    if (!article.title) {
+      alert('Сначала введите заголовок статьи');
+      return;
+    }
 
-    const text = blocksToText(article.blocks);
-    const keywords = extractKeywords(text, 10);
-    const metaDescription = generateMetaDescription(article.title, text);
-    const tldr = generateTLDR(article.title, article.blocks);
-    const keyTakeaways = generateKeyTakeaways(article.blocks);
-    const faqs = generateFAQs(article.title, article.blocks);
-    const stats = generateStats(article.blocks);
+    const text = article.blocks && article.blocks.length > 0 
+      ? blocksToText(article.blocks) 
+      : article.content || '';
+    
+    if (!text.trim()) {
+      alert('Сначала добавьте контент статьи');
+      return;
+    }
+
+    // Generate keywords
+    const titleWords = article.title.toLowerCase().split(/\s+/).filter(w => w.length > 3);
+    const contentKeywords = extractKeywords(text, 8);
+    const keywords = [...new Set([...titleWords.slice(0, 3), ...contentKeywords])].slice(0, 10);
+    
+    // Generate meta description
+    let metaDescription = article.excerpt || generateMetaDescription(article.title, text);
+    if (metaDescription.length > 160) {
+      metaDescription = metaDescription.slice(0, 157) + '...';
+    }
+
+    // Generate TL;DR
+    let tldr = article.excerpt || generateTLDR(article.title, article.blocks || []);
+    
+    // Generate key takeaways (only if empty)
+    const keyTakeaways = article.keyTakeaways.length > 0 
+      ? article.keyTakeaways 
+      : generateKeyTakeaways(article.blocks || []);
+    
+    // Generate FAQs (only if empty)
+    const faqs = article.faqs.length > 0 
+      ? article.faqs 
+      : generateFAQs(article.title, article.blocks || []);
+    
+    // Generate stats (only if empty)
+    const stats = (article.stats && article.stats.length > 0) 
+      ? article.stats 
+      : generateStats(article.blocks || []);
 
     onChange({
       ...article,
@@ -658,8 +816,8 @@ const ArticleEditor: React.FC<{
       metaTitle: article.title,
       tldr,
       keyTakeaways,
-      faqs: article.faqs.length > 0 ? article.faqs : faqs,
-      stats: article.stats && article.stats.length > 0 ? article.stats : stats,
+      faqs,
+      stats,
       autoSEO: true,
       autoGEO: true
     });

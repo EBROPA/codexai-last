@@ -459,23 +459,42 @@ export const generateMetaTitle = (title: string, category: ArticleCategory, maxL
 // Generate TL;DR from content
 export const generateTLDR = (title: string, blocks: ContentBlock[], targetWords = 50): string => {
   const text = blocksToText(blocks);
+  if (!text.trim()) {
+    return `${title}. Подробная информация в статье.`;
+  }
+  
   const sentences = text.split(/[.!?]/).filter(s => s.trim().length > 20);
+  
+  // Prioritize sentences with key information (prices, numbers, key terms)
+  const keyPatterns = [/\d+\s*(₽|руб|рублей)/i, /от\s+\d+/i, /стоит|стоимость/i, /срок|дней|недел/i];
+  const prioritySentences: string[] = [];
+  const otherSentences: string[] = [];
+  
+  for (const sentence of sentences) {
+    if (keyPatterns.some(p => p.test(sentence))) {
+      prioritySentences.push(sentence.trim());
+    } else {
+      otherSentences.push(sentence.trim());
+    }
+  }
+  
+  const orderedSentences = [...prioritySentences, ...otherSentences];
   
   let tldr = '';
   let wordCount = 0;
   
-  for (const sentence of sentences.slice(0, 5)) {
-    const sentenceWords = sentence.trim().split(/\s+/).length;
+  for (const sentence of orderedSentences.slice(0, 5)) {
+    const sentenceWords = sentence.split(/\s+/).length;
     if (wordCount + sentenceWords <= targetWords + 10) {
-      tldr += sentence.trim() + '. ';
+      tldr += sentence + '. ';
       wordCount += sentenceWords;
     }
     if (wordCount >= targetWords - 10) break;
   }
   
   if (!tldr) {
-    // Fallback
-    return `${title}. Подробности в статье.`;
+    // Fallback - use first sentence
+    return sentences[0] ? sentences[0].trim() + '.' : `${title}. Подробности в статье.`;
   }
   
   return tldr.trim();
@@ -524,41 +543,89 @@ export const generateKeyTakeaways = (blocks: ContentBlock[]): KeyTakeaway[] => {
 // Generate FAQ from content (based on headings and content)
 export const generateFAQs = (title: string, blocks: ContentBlock[]): ArticleFAQ[] => {
   const faqs: ArticleFAQ[] = [];
-  
-  // Common question patterns to generate
-  const questionTemplates = [
-    { pattern: /стоимость|цен[аы]|сколько стоит|бюджет/i, question: 'Сколько это стоит?' },
-    { pattern: /срок[иа]?|время|долго|быстро/i, question: 'Сколько времени это займёт?' },
-    { pattern: /гарант/i, question: 'Какие гарантии вы даёте?' },
-    { pattern: /преимуществ|выгод|польз/i, question: 'Какие преимущества?' },
-    { pattern: /как работает|процесс|этап/i, question: 'Как проходит процесс?' },
-  ];
-  
   const text = blocksToText(blocks);
+  
+  if (!text.trim()) {
+    return [{
+      question: `Что такое ${title.slice(0, 50)}?`,
+      answer: 'Подробная информация доступна в статье выше.'
+    }];
+  }
+  
+  // Extract title keywords for contextual questions
+  const titleLower = title.toLowerCase();
+  
+  // Dynamic question templates based on content and title
+  const questionTemplates = [
+    { 
+      pattern: /стоимость|цен[аы]|сколько стоит|бюджет|от\s+\d+.*₽/i, 
+      question: titleLower.includes('стоит') || titleLower.includes('цен') 
+        ? `Сколько стоит ${extractMainTopic(title)}?`
+        : 'Какая стоимость услуги?' 
+    },
+    { 
+      pattern: /срок[иа]?|время|дней|недел|месяц/i, 
+      question: 'Сколько времени это займёт?' 
+    },
+    { 
+      pattern: /гарант/i, 
+      question: 'Какие гарантии предоставляются?' 
+    },
+    { 
+      pattern: /включа|входит|состав/i, 
+      question: 'Что входит в услугу?' 
+    },
+    { 
+      pattern: /как\s+(работает|заказать|начать)/i, 
+      question: 'Как начать работу?' 
+    },
+  ];
   
   // Generate contextual FAQs based on content
   for (const template of questionTemplates) {
     if (template.pattern.test(text) && faqs.length < 3) {
-      // Find relevant paragraph
-      const sentences = text.split(/[.!?]/).filter(s => template.pattern.test(s));
+      const sentences = text.split(/[.!?]/).filter(s => s.trim().length > 30 && template.pattern.test(s));
       if (sentences.length > 0) {
+        let answer = sentences[0].trim();
+        // Clean up answer
+        if (answer.length > 250) {
+          answer = answer.slice(0, 247) + '...';
+        }
         faqs.push({
           question: template.question,
-          answer: sentences[0].trim().slice(0, 200) + (sentences[0].length > 200 ? '...' : '')
+          answer: answer
         });
       }
     }
   }
   
-  // Add a general FAQ based on title
-  if (faqs.length < 3) {
+  // Add question based on title if we don't have enough
+  if (faqs.length < 2) {
+    const mainTopic = extractMainTopic(title);
+    const firstParagraph = text.split(/[.!?]/).slice(0, 2).join('. ').trim();
     faqs.push({
-      question: `Что важно знать о "${title.slice(0, 30)}${title.length > 30 ? '...' : ''}"?`,
-      answer: blocksToText(blocks).slice(0, 200) + '...'
+      question: `Что такое ${mainTopic}?`,
+      answer: firstParagraph.length > 250 ? firstParagraph.slice(0, 247) + '...' : firstParagraph + '.'
     });
   }
   
   return faqs.slice(0, 5);
+};
+
+// Helper to extract main topic from title
+const extractMainTopic = (title: string): string => {
+  // Remove year and common prefixes
+  const cleaned = title
+    .replace(/в\s+\d{4}(\s+году?)?/gi, '')
+    .replace(/^(как|что такое|зачем|почему|сколько стоит)\s+/i, '')
+    .replace(/:\s+.+$/, '')
+    .trim();
+  
+  // Return shortened version
+  if (cleaned.length > 40) {
+    return cleaned.slice(0, 37) + '...';
+  }
+  return cleaned.toLowerCase();
 };
 
 // Generate statistics from content
