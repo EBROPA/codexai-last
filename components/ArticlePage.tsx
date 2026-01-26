@@ -22,6 +22,23 @@ import {
   CalloutBlock
 } from '../lib/blogTypes';
 
+// Parse inline markdown formatting (links, bold, italic, code)
+const parseInlineMarkdown = (text: string): string => {
+  return text
+    // Links: [text](url)
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-neon-acid border-b border-neon-acid/30 hover:border-neon-acid transition-colors" target="_blank" rel="noopener noreferrer">$1</a>')
+    // Bold: **text** or __text__
+    .replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-white">$1</strong>')
+    .replace(/__(.*?)__/g, '<strong class="font-bold text-white">$1</strong>')
+    // Italic: *text* or _text_
+    .replace(/\*([^*]+)\*/g, '<em class="italic">$1</em>')
+    .replace(/_([^_]+)_/g, '<em class="italic">$1</em>')
+    // Inline code: `code`
+    .replace(/`([^`]+)`/g, '<code class="bg-white/10 px-2 py-0.5 text-neon-acid text-sm rounded">$1</code>')
+    // Line breaks
+    .replace(/\n/g, '<br>');
+};
+
 // Render a single content block
 const renderBlock = (block: ContentBlock, index: number): React.ReactNode => {
   switch (block.type) {
@@ -30,7 +47,7 @@ const renderBlock = (block: ContentBlock, index: number): React.ReactNode => {
         <div
           key={block.id}
           className="text-zinc-300 leading-relaxed mb-6 text-lg"
-          dangerouslySetInnerHTML={{ __html: block.content }}
+          dangerouslySetInnerHTML={{ __html: parseInlineMarkdown(block.content) }}
         />
       );
 
@@ -153,7 +170,7 @@ const renderBlock = (block: ContentBlock, index: number): React.ReactNode => {
               {block.style === 'bullet' && (
                 <span className="mt-2.5 w-1.5 h-1.5 bg-zinc-600 rounded-full flex-shrink-0" />
               )}
-              <span>{item}</span>
+              <span dangerouslySetInnerHTML={{ __html: parseInlineMarkdown(item) }} />
             </li>
           ))}
         </ListTag>
@@ -174,7 +191,7 @@ const renderBlock = (block: ContentBlock, index: number): React.ReactNode => {
               {block.title}
             </div>
           )}
-          <div className="leading-relaxed text-lg opacity-90">{block.content}</div>
+          <div className="leading-relaxed text-lg opacity-90" dangerouslySetInnerHTML={{ __html: parseInlineMarkdown(block.content) }} />
         </div>
       );
 

@@ -10,6 +10,7 @@ import { blogStore } from '../lib/blogStore';
 import { analyticsStore } from '../lib/analyticsStore';
 import {
   BlogArticle,
+  BlogAuthor,
   ArticleCategory,
   CATEGORY_META,
   generateSlug,
@@ -143,11 +144,38 @@ export const AdminBlog: React.FC = () => {
       return;
     }
 
+    let articleToSave = { ...editingArticle };
+
+    // Handle custom author creation
+    if (editingArticle.authorId === 'custom') {
+      const customName = (editingArticle as any).customAuthorName?.trim();
+      if (!customName) {
+        alert('Введите имя автора');
+        return;
+      }
+      
+      // Create new author
+      const newAuthor = blogStore.createAuthor({
+        name: customName,
+        role: (editingArticle as any).customAuthorRole || 'Автор',
+        bio: '',
+        avatar: (editingArticle as any).customAuthorAvatar || '/img/codexai-logo.png',
+        social: {},
+        expertise: []
+      });
+      
+      articleToSave.authorId = newAuthor.id;
+      // Remove custom fields
+      delete (articleToSave as any).customAuthorName;
+      delete (articleToSave as any).customAuthorRole;
+      delete (articleToSave as any).customAuthorAvatar;
+    }
+
     try {
       if (isCreating) {
-        blogStore.createArticle(editingArticle);
+        blogStore.createArticle(articleToSave);
       } else {
-        blogStore.updateArticle(editingArticle.id, editingArticle);
+        blogStore.updateArticle(articleToSave.id, articleToSave);
       }
 
       setEditingArticle(null);
@@ -979,8 +1007,8 @@ const ArticleEditor: React.FC<{
               />
             </div>
 
-            {/* Category & Slug */}
-            <div className="grid grid-cols-2 gap-4">
+            {/* Category, Slug & Author */}
+            <div className="grid grid-cols-3 gap-4">
               <div>
                 <label className="block text-zinc-400 text-sm mb-2">Категория *</label>
                 <select
@@ -1004,7 +1032,60 @@ const ArticleEditor: React.FC<{
                   placeholder="url-statyi"
                 />
               </div>
+
+              <div>
+                <label className="block text-zinc-400 text-sm mb-2">Автор</label>
+                <select
+                  value={article.authorId}
+                  onChange={(e) => updateField('authorId', e.target.value)}
+                  className="w-full px-4 py-3 bg-zinc-900 border border-white/10 text-white focus:border-neon-acid focus:outline-none"
+                >
+                  {blogStore.getAuthors().map((author) => (
+                    <option key={author.id} value={author.id}>{author.name}</option>
+                  ))}
+                  <option value="custom">+ Добавить автора</option>
+                </select>
+              </div>
             </div>
+
+            {/* Custom Author Fields */}
+            {article.authorId === 'custom' && (
+              <div className="p-4 bg-zinc-900/50 border border-white/10 rounded space-y-4">
+                <p className="text-zinc-400 text-sm">Новый автор (будет сохранён автоматически)</p>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-zinc-500 text-xs mb-1">Имя автора *</label>
+                    <input
+                      type="text"
+                      value={(article as any).customAuthorName || ''}
+                      onChange={(e) => updateField('customAuthorName' as any, e.target.value)}
+                      className="w-full px-3 py-2 bg-zinc-900 border border-white/10 text-white text-sm focus:border-neon-acid focus:outline-none"
+                      placeholder="Иван Петров"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-zinc-500 text-xs mb-1">Должность</label>
+                    <input
+                      type="text"
+                      value={(article as any).customAuthorRole || ''}
+                      onChange={(e) => updateField('customAuthorRole' as any, e.target.value)}
+                      className="w-full px-3 py-2 bg-zinc-900 border border-white/10 text-white text-sm focus:border-neon-acid focus:outline-none"
+                      placeholder="Senior Developer"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-zinc-500 text-xs mb-1">Аватар (URL)</label>
+                  <input
+                    type="text"
+                    value={(article as any).customAuthorAvatar || ''}
+                    onChange={(e) => updateField('customAuthorAvatar' as any, e.target.value)}
+                    className="w-full px-3 py-2 bg-zinc-900 border border-white/10 text-white text-sm focus:border-neon-acid focus:outline-none"
+                    placeholder="https://example.com/avatar.jpg или /img/avatar.png"
+                  />
+                </div>
+              </div>
+            )}
 
             {/* Excerpt */}
             <div>

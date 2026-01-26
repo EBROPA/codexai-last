@@ -369,6 +369,18 @@ class BlogStore {
     return this.authors;
   }
 
+  // Create new author
+  createAuthor(author: Omit<BlogAuthor, 'id'>): BlogAuthor {
+    this.init();
+    const newAuthor: BlogAuthor = {
+      ...author,
+      id: `author-${Date.now()}`
+    };
+    this.authors.push(newAuthor);
+    this.save();
+    return newAuthor;
+  }
+
   // Get all unique tags
   getAllTags(): string[] {
     this.init();
