@@ -28,10 +28,9 @@ export const content = {
       titleLine2: 'Которые Продают',
       titleBadge: '& Усиливают Бренд',
       subtitle: 'Помогаем компаниям в любой нише превращать трафик в заявки и выстраивать премиальное онлайн‑восприятие.',
-      btnDiscuss: 'РАССЧИТАТЬ СТОИМОСТЬ',
-      btnAudit: '',
-      heroTrust: 'Ответ через 15 минут · NDA',
-      mobileTitle1: 'WE BUILD',
+      btnDiscuss: "Обсудить проект",
+      btnAudit: "Рассчитать стоимость",
+      mobileTitle1: "МЫ СОЗДАЕМ",
       mobileTitle2: 'DIGITAL',
       mobileTitle3: 'EMPIRES',
       mobileDesc: 'Создаем сайты, которые продают и выстраивают премиальное восприятие вашего бренда.'
@@ -154,9 +153,9 @@ export const content = {
     reviews: {
       subtitle: '// Социальное Доказательство',
       items: [
-        { client: "KINGSLEY", role: "Основатель, Мебельный бренд", text: "Нужен был сайт, который продает дорогую мебель, а не просто каталог. Команда полностью переосмыслила подачу продукта. Конверсия выросла в 2 раза.", result: "Рост продаж: +40%" },
+        { client: "KINGSLEY", role: "Основатель, Агентство недвижимости", text: "Нужен был сайт, который продает элитную недвижимость, а не просто каталог объектов. Команда создала премиальную подачу каждого лота. Заявки от VIP-клиентов выросли в 2 раза.", result: "Рост заявок: +180%" },
         { client: "AURUM", role: "Creative Director", text: "Мы запускали новый бренд одежды и нам нужно было не просто 'красиво', а функционально. Студия создала имиджевый магазин, который идеально передает философию бренда.", result: "Успешный запуск" },
-        { client: "CAPITAL CORE", role: "CEO, Fintech", text: "Инвесторы отметили уровень упаковки. Это помогло нам закрыть раунд. Сайт окупил себя еще до запуска основного трафика на бренд.", result: "Инвестиции: $2M" }
+        { client: "CAPITAL CORE", role: "CEO, Коммерческая недвижимость", text: "Нам нужен был сайт, который вызывает доверие у корпоративных клиентов. Команда создала презентацию, которая закрывает сделки. B2B-заявки выросли на 220%.", result: "B2B заявки: +220%" }
       ]
     },
     faq: {
@@ -528,10 +527,9 @@ export const content = {
       titleLine2: 'That Sell',
       titleBadge: '& Amplify Brand',
       subtitle: 'We help companies in any niche turn traffic into leads and build a premium online perception.',
-      btnDiscuss: 'CALCULATE COST',
-      btnAudit: '',
-      heroTrust: 'Answer in 15 mins · NDA',
-      mobileTitle1: 'WE BUILD',
+      btnDiscuss: "Discuss Project",
+      btnAudit: "Calculate Cost",
+      mobileTitle1: "WE CREATE",
       mobileTitle2: 'DIGITAL',
       mobileTitle3: 'EMPIRES',
       mobileDesc: 'We create websites that sell and build a premium perception of your brand.'
@@ -645,9 +643,9 @@ export const content = {
     reviews: {
       subtitle: '// Social Proof',
       items: [
-        { client: "KINGSLEY", role: "Founder, Furniture Brand", text: "Needed a site that sells expensive furniture, not just a catalog. The team completely reimagined the product presentation. Conversion doubled.", result: "Sales Growth: +40%" },
+        { client: "KINGSLEY", role: "Founder, Real Estate Agency", text: "Needed a site that sells luxury real estate, not just a property catalog. The team created a premium presentation for every listing. VIP client inquiries doubled.", result: "Lead Growth: +180%" },
         { client: "AURUM", role: "Creative Director", text: "We were launching a new clothing brand and needed functionality, not just beauty. The studio created an image store that perfectly conveys the brand philosophy.", result: "Successful Launch" },
-        { client: "CAPITAL CORE", role: "CEO, Fintech", text: "Investors noted the level of packaging. It helped us close the round. The site paid for itself even before the main traffic launch.", result: "Investment: $2M" }
+        { client: "CAPITAL CORE", role: "CEO, Commercial Real Estate", text: "We needed a website that builds trust with corporate clients. The team created a presentation that closes deals. B2B leads grew by 220%.", result: "B2B Leads: +220%" }
       ]
     },
     faq: {
