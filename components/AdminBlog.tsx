@@ -71,7 +71,9 @@ export const AdminBlog: React.FC = () => {
     }
   };
 
-  const loadArticles = () => {
+  const loadArticles = async () => {
+    // Force refresh from API
+    await blogStore.refresh();
     setArticles(blogStore.getAllArticles());
   };
 

@@ -39,9 +39,13 @@ export const BlogPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    const published = blogStore.getPublishedArticles();
-    setArticles(published);
-    setFilteredArticles(published);
+    const loadArticles = async () => {
+      await blogStore.refresh();
+      const published = blogStore.getPublishedArticles();
+      setArticles(published);
+      setFilteredArticles(published);
+    };
+    loadArticles();
   }, []);
 
   useEffect(() => {

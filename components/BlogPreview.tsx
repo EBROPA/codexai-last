@@ -34,9 +34,13 @@ export const BlogPreview: React.FC = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Get latest published articles (limit to 6 for the slider)
-    const latest = blogStore.getPublishedArticles().slice(0, 6);
-    setArticles(latest);
+    const loadArticles = async () => {
+      // Force refresh from API and get latest published articles (limit to 6)
+      await blogStore.refresh();
+      const latest = blogStore.getPublishedArticles().slice(0, 6);
+      setArticles(latest);
+    };
+    loadArticles();
   }, []);
 
   const scroll = (direction: 'left' | 'right') => {

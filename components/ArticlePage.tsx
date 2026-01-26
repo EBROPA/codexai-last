@@ -368,13 +368,17 @@ export const ArticlePage: React.FC = () => {
   });
 
   useEffect(() => {
-    if (slug) {
-      const found = blogStore.getArticleBySlug(slug);
-      if (found) {
-        setArticle(found);
-        setAuthor(blogStore.getAuthor(found.authorId));
+    const loadArticle = async () => {
+      if (slug) {
+        // Try to get from API first
+        const found = await blogStore.getArticleBySlugAsync(slug);
+        if (found) {
+          setArticle(found);
+          setAuthor(blogStore.getAuthor(found.authorId));
+        }
       }
-    }
+    };
+    loadArticle();
   }, [slug]);
 
   if (!article) {

@@ -10,11 +10,10 @@
     "dev": "concurrently \"npm run dev:vite\" \"npm run dev:server\"",
     "dev:vite": "vite",
     "dev:server": "node server.js",
-    "build": "prisma generate && prisma db push --skip-generate && vite build",
-    "build:local": "prisma generate && vite build",
+    "build": "prisma generate && vite build",
     "postinstall": "prisma generate",
     "preview": "vite preview",
-    "start": "node server.js",
+    "start": "prisma db push && node server.js",
     "db:migrate": "prisma migrate deploy",
     "db:push": "prisma db push"
   },
