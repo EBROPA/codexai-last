@@ -8,17 +8,17 @@ export const FAQ: React.FC = () => {
   const { t } = useLanguage();
 
   return (
-    <section className="py-32 px-4 md:px-12 bg-black border-t border-white/10">
+    <section className="py-32 px-4 md:px-12 bg-black border-t border-white/20">
       <div className="max-w-4xl mx-auto">
         <h2 className="text-4xl md:text-6xl font-serif font-bold text-white mb-16 text-center uppercase">
-          {t.faq.title} <span className="text-zinc-500">{t.faq.titleHighlight}</span>
+          {t.faq.title} <span className="text-zinc-400">{t.faq.titleHighlight}</span>
         </h2>
 
         <div className="space-y-4">
           {t.faq.items.map((item, idx) => (
             <div
               key={idx}
-              className="border border-white/10 bg-zinc-950 overflow-hidden transition-colors hover:border-white/30"
+              className="border border-white/20 bg-zinc-900/40 backdrop-blur-sm overflow-hidden transition-all duration-300 hover:border-neon-acid/50 shadow-[0_0_20px_rgba(255,255,255,0.02)]"
             >
               <button
                 onClick={() => setOpenIndex(openIndex === idx ? null : idx)}
@@ -33,7 +33,7 @@ export const FAQ: React.FC = () => {
               <div
                 className={`transition-all duration-500 ease-in-out overflow-hidden ${openIndex === idx ? 'max-h-80 opacity-100' : 'max-h-0 opacity-0'}`}
               >
-                <div className="p-6 md:p-8 pt-0 text-zinc-400 font-sans text-sm md:text-base leading-relaxed border-t border-white/5">
+                <div className="p-6 md:p-8 pt-0 text-zinc-300 font-sans text-sm md:text-base leading-relaxed border-t border-white/5">
                   {item.a}
                 </div>
               </div>

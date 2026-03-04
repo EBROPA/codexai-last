@@ -7,28 +7,28 @@ export const Problem: React.FC = () => {
   return (
     <section className="py-32 bg-zinc-950 relative overflow-hidden border-b border-white/10">
       <div className="px-4 md:px-12 max-w-[90rem] mx-auto">
-        
+
         <div className="mb-20 text-center">
           <h2 className="text-4xl md:text-6xl font-serif font-bold text-white mb-6 uppercase">
-            Почему 90% сайтов <br/> <span className="text-zinc-600 line-through decoration-neon-acid decoration-4">не работают?</span>
+            Почему 90% сайтов <br /> <span className="text-zinc-600 line-through decoration-neon-acid decoration-4">не работают?</span>
           </h2>
           <p className="text-zinc-400 max-w-2xl mx-auto font-mono text-sm md:text-base leading-relaxed">
             Интернет переполнен шаблонами. Если ваш сайт выглядит как у всех, ваш бизнес воспринимают как "очередной". Внимания пользователя хватает на 3 секунды.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-0 border border-white/10 min-h-[500px]">
-          
+        <div className="grid md:grid-cols-2 gap-0 border border-white/20 min-h-[500px]">
+
           {/* Boring Side */}
-          <div 
+          <div
             onMouseEnter={() => setActiveSide('boring')}
             className={`
               relative p-12 flex flex-col justify-center transition-all duration-700 ease-in-out cursor-crosshair
-              ${activeSide === 'boring' ? 'flex-[1.5] bg-zinc-900 opacity-100 grayscale-0' : 'flex-[1] bg-black opacity-40 grayscale'}
+              ${activeSide === 'boring' ? 'flex-[1.5] bg-zinc-900/80 opacity-100 grayscale-0' : 'flex-[1] bg-black opacity-60 grayscale'}
             `}
           >
             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/graphy.png')] opacity-10"></div>
-            
+
             <div className={`transition-all duration-500 ${activeSide === 'boring' ? 'scale-100 blur-0' : 'scale-90 blur-[2px]'}`}>
               <div className="w-16 h-16 bg-zinc-800 rounded-full flex items-center justify-center mb-8 text-zinc-500">
                 <EyeOff size={32} />
@@ -44,11 +44,11 @@ export const Problem: React.FC = () => {
           </div>
 
           {/* CodexAI Side */}
-          <div 
+          <div
             onMouseEnter={() => setActiveSide('codexai')}
             className={`
               relative p-12 flex flex-col justify-center overflow-hidden transition-all duration-700 ease-in-out cursor-default
-              ${activeSide === 'codexai' ? 'flex-[1.5] bg-void border-l border-neon-acid' : 'flex-[1] bg-void border-l border-white/10'}
+              ${activeSide === 'codexai' ? 'flex-[1.5] bg-[#050505] border-l border-neon-acid shadow-[inset_0_0_30px_rgba(204,255,0,0.05)]' : 'flex-[1] bg-void border-l border-white/20'}
             `}
           >
             {/* Background Animation */}
@@ -64,19 +64,19 @@ export const Problem: React.FC = () => {
               </h3>
               <ul className="space-y-4 font-mono text-sm text-white">
                 <li className="flex items-center gap-2">
-                  <span className="text-neon-acid">{'>>>'}</span> 
+                  <span className="text-neon-acid">{'>>>'}</span>
                   <span className="bg-neon-acid/10 px-1">Эмоциональный захват</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className="text-neon-acid">{'>>>'}</span> 
+                  <span className="text-neon-acid">{'>>>'}</span>
                   Визуальная доминация
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className="text-neon-acid">{'>>>'}</span> 
+                  <span className="text-neon-acid">{'>>>'}</span>
                   Сценарий продаж
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className="text-neon-acid">{'>>>'}</span> 
+                  <span className="text-neon-acid">{'>>>'}</span>
                   Технологическое превосходство
                 </li>
               </ul>

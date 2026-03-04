@@ -23,16 +23,19 @@ interface ProjectStats {
 }
 
 export interface ProjectData extends Project {
+  slug: string;
   niche: string;
   task: string;
   result: string;
   stats?: ProjectStats[];
+  pdf?: string;
 }
 
 export const getProjects = (lang: string): ProjectData[] => [
   {
     id: 1,
     title: "KINGSLEY",
+    slug: "kingsley",
     category: "Real Estate",
     niche: lang === 'ru' ? "Элитная недвижимость" : "Luxury Real Estate",
     task: lang === 'ru' ? "Сайт для агентства элитной недвижимости с фокусом на VIP-сегмент." : "Website for luxury real estate agency targeting VIP segment.",
@@ -48,29 +51,33 @@ export const getProjects = (lang: string): ProjectData[] => [
     ],
     image: kingsleyImg,
     url: "https://kingsley-new.vercel.app/",
+    pdf: "/pdf/kingsley.pdf",
     year: "2025"
   },
   {
-    id: 2,
-    title: "BETTER SLAY",
-    category: "Event / Entertainment",
-    niche: lang === 'ru' ? "Мероприятие" : "Event",
-    task: lang === 'ru' ? "Создать вирусный промо-сайт для закрытого мероприятия." : "Create viral promo site for private event.",
-    result: lang === 'ru' ? "Вирусное распространение и аншлаг." : "Viral spread and sold-out event.",
+    id: 5,
+    title: "MERIN COFFEE",
+    slug: "merin-coffee",
+    category: "HoReCa",
+    niche: lang === 'ru' ? "Кофейня" : "Coffee Shop",
+    task: lang === 'ru' ? "Атмосферный промо-сайт для сети кофеен." : "Atmospheric promo site for coffee shop chain.",
+    result: lang === 'ru' ? "Рост узнаваемости и трафика с карт." : "Growth in recognition and map traffic.",
     stats: lang === 'ru' ? [
-      { label: "Охват", value: "50K+", period: "уникальных посетителей" },
-      { label: "Регистрации", value: "100%", period: "заполнение" }
+      { label: "Трафик с карт", value: "+340%", period: "за 3 месяца" },
+      { label: "Отзывы Google", value: "4.9", period: "средний рейтинг" }
     ] : [
-      { label: "Reach", value: "50K+", period: "unique visitors" },
-      { label: "Registrations", value: "100%", period: "sold out" }
+      { label: "Map traffic", value: "+340%", period: "in 3 months" },
+      { label: "Google reviews", value: "4.9", period: "average rating" }
     ],
-    image: betterSlayImg,
-    url: "https://better-slay-obem.vercel.app/",
+    image: merenCoffeeImg,
+    url: "https://merincoffe.vercel.app/",
+    pdf: "/pdf/merin-coffee.pdf",
     year: "2025"
   },
   {
     id: 3,
     title: "AURUM",
+    slug: "aurum",
     category: "Fashion Store",
     niche: lang === 'ru' ? "Дизайнерская одежда" : "Designer Clothes",
     task: lang === 'ru' ? "Создание имиджевого интернет-магазина премиум-сегмента." : "Creating premium segment image e-commerce store.",
@@ -84,11 +91,13 @@ export const getProjects = (lang: string): ProjectData[] => [
     ],
     image: aurumImg,
     url: "https://aurumfashion.vercel.app/",
+    pdf: "/pdf/aurum.pdf",
     year: "2025"
   },
   {
     id: 4,
     title: "SECURE",
+    slug: "secure",
     category: "SaaS / IT",
     niche: lang === 'ru' ? "Кибербезопасность" : "Cybersecurity",
     task: lang === 'ru' ? "Лендинг для B2B SaaS продукта в сфере кибербезопасности." : "Landing page for B2B SaaS cybersecurity product.",
@@ -104,29 +113,14 @@ export const getProjects = (lang: string): ProjectData[] => [
     ],
     image: secureImg,
     url: "https://sec-uwtt.vercel.app/",
+    pdf: "/pdf/secure.pdf",
     year: "2025"
   },
-  {
-    id: 5,
-    title: "MERIN COFFEE",
-    category: "HoReCa",
-    niche: lang === 'ru' ? "Кофейня" : "Coffee Shop",
-    task: lang === 'ru' ? "Атмосферный промо-сайт для сети кофеен." : "Atmospheric promo site for coffee shop chain.",
-    result: lang === 'ru' ? "Рост узнаваемости и трафика с карт." : "Growth in recognition and map traffic.",
-    stats: lang === 'ru' ? [
-      { label: "Трафик с карт", value: "+340%", period: "за 3 месяца" },
-      { label: "Отзывы Google", value: "4.9", period: "средний рейтинг" }
-    ] : [
-      { label: "Map traffic", value: "+340%", period: "in 3 months" },
-      { label: "Google reviews", value: "4.9", period: "average rating" }
-    ],
-    image: merenCoffeeImg,
-    url: "https://merincoffe.vercel.app/",
-    year: "2025"
-  },
+
   {
     id: 6,
     title: "CAPITAL CORE",
+    slug: "capital-core",
     category: "Commercial Real Estate",
     niche: lang === 'ru' ? "Коммерческая недвижимость" : "Commercial Real Estate",
     task: lang === 'ru' ? "Корпоративный сайт для агентства коммерческой недвижимости." : "Corporate website for commercial real estate agency.",
@@ -140,11 +134,13 @@ export const getProjects = (lang: string): ProjectData[] => [
     ],
     image: capitalCoreImg,
     url: "https://capital-core-2i83.vercel.app/",
+    pdf: "/pdf/capital-core.pdf",
     year: "2024"
   },
   {
     id: 7,
     title: "DM LEADS",
+    slug: "dm-leads",
     category: "Marketing Ecosystem",
     niche: lang === 'ru' ? "Лидогенерация" : "Lead Generation",
     task: lang === 'ru' ? "Разработка двух сайтов (RU/Global) для масштабирования бизнеса." : "Development of two websites (RU/Global) for business scaling.",
@@ -190,7 +186,7 @@ export const Portfolio: React.FC = () => {
             <span className="animate-pulse">●</span> {t.portfolio.selectedWorks}
           </div>
           <h2 className="text-6xl md:text-9xl font-serif text-white uppercase tracking-tighter leading-none relative z-10">
-            {t.portfolio.title} <br /><span className="text-zinc-500">{t.portfolio.titleHighlight}</span>
+            {t.portfolio.title} <br /><span className="text-zinc-400">{t.portfolio.titleHighlight}</span>
           </h2>
         </div>
 
@@ -225,7 +221,7 @@ export const Portfolio: React.FC = () => {
       <div className="px-4 md:px-12 flex justify-center">
         <button
           onClick={() => router.push('/work')}
-          className="group relative flex items-center gap-6 px-12 py-8 border border-white/10 hover:border-neon-acid transition-colors duration-500 bg-zinc-900/50 backdrop-blur-sm overflow-hidden"
+          className="group relative flex items-center gap-6 px-12 py-8 border border-white/20 hover:border-neon-acid transition-colors duration-500 bg-zinc-900/40 backdrop-blur-sm overflow-hidden shadow-[0_0_30px_rgba(255,255,255,0.02)]"
         >
           <div className="absolute inset-0 bg-neon-acid/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[0.22,1,0.36,1]"></div>
 
@@ -233,7 +229,7 @@ export const Portfolio: React.FC = () => {
             {t.portfolio.btnAll}
           </span>
 
-          <div className="relative z-10 w-12 h-12 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-neon-acid group-hover:border-neon-acid transition-all duration-500">
+          <div className="relative z-10 w-12 h-12 rounded-full border border-white/30 flex items-center justify-center group-hover:bg-neon-acid group-hover:border-neon-acid transition-all duration-500">
             <ArrowRight className="w-5 h-5 text-white group-hover:text-black transform group-hover:-rotate-45 transition-transform duration-500" />
           </div>
         </button>
@@ -247,6 +243,10 @@ export const PortfolioCard: React.FC<{ project: ProjectData, index: number, t: a
   const [isHovered, setIsHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
+  const router = useRouter(); // Use custom router hook
+
+  // Mobile check might not be strictly needed if we treat all viewports similar for this static card,
+  // but keeping it doesn't hurt.
   useEffect(() => {
     setIsMobile(window.innerWidth < 768);
   }, []);
@@ -254,89 +254,51 @@ export const PortfolioCard: React.FC<{ project: ProjectData, index: number, t: a
   return (
     <div className="snap-center flex-none w-[90vw] md:w-[60vw] lg:w-[45vw] flex flex-col group perspective-[1000px]">
 
-      <div className="text-xs font-mono text-zinc-500 mb-4 flex justify-between uppercase tracking-widest border-b border-white/10 pb-2">
+      <div className="text-xs font-mono text-zinc-400 mb-4 flex justify-between uppercase tracking-widest border-b border-white/20 pb-2">
         <span className="group-hover:text-neon-acid transition-colors">0{index + 1} // {project.niche}</span>
         <span>{project.year}</span>
       </div>
 
-      <a
-        href={project.url}
-        target="_blank"
-        rel="noopener noreferrer"
+      <div
+        onClick={() => router.push(`/work/${project.slug}`)}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        className="relative aspect-[16/10] bg-zinc-900 border border-white/10 overflow-hidden transition-all duration-700 transform group-hover:scale-[1.01] shadow-xl mb-8"
+        className="relative aspect-[16/10] bg-zinc-900 border border-white/20 overflow-hidden transition-all duration-700 transform group-hover:scale-[1.01] shadow-xl mb-8 group/card cursor-pointer"
       >
-        <div className="absolute top-0 left-0 right-0 h-8 bg-zinc-900 z-30 flex items-center px-4 gap-2 border-b border-white/5">
-          <div className="flex gap-1.5">
-            <div className="w-2 h-2 rounded-full bg-red-500/50"></div>
-            <div className="w-2 h-2 rounded-full bg-yellow-500/50"></div>
-            <div className="w-2 h-2 rounded-full bg-green-500/50"></div>
-          </div>
-          <div className="flex-1 text-[9px] font-mono text-zinc-500 text-center truncate px-4 bg-zinc-800/50 rounded-sm py-0.5 mx-2 shadow-sm border border-white/5">
-            {project.url}
-          </div>
+        {/* Static Image / PDF Preview */}
+        <div className={`w-full h-full relative transition-all duration-700 ${isHovered ? 'blur-[2px] opacity-60 scale-[1.02]' : 'blur-0 opacity-100 scale-100'}`}>
+          <OptimizedImage
+            src={project.image || '/img/codexai-logo.png'}
+            alt={project.title}
+            className="w-full h-full object-cover"
+            priority={index < 2} // Prioritize first couple images
+          />
+          {/* Overlay Gradient */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60"></div>
         </div>
 
-        {/* --- MOBILE OPTIMIZATION: Render static image instead of heavy iframe --- */}
-        {isMobile ? (
-          <div className="w-full h-full pt-8 relative">
-            <OptimizedImage
-              src={project.image || '/img/codexai-logo.png'}
-              alt={project.title}
-              className="w-full h-full opacity-70"
-              priority={true}
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80"></div>
-            <div className="absolute bottom-4 left-4 right-4 text-center">
-              <span className="font-mono text-[10px] text-neon-acid border border-neon-acid/50 px-2 py-1 rounded-full bg-black/80 backdrop-blur-sm">
-                TAP TO VIEW
-              </span>
-            </div>
-          </div>
-        ) : (
-          <>
-            {isLoading && (
-              <div className="absolute inset-0 flex items-center justify-center bg-zinc-900 z-10 pt-8">
-                <div className="flex flex-col items-center gap-2">
-                  <Loader2 className="animate-spin text-neon-acid" size={32} />
-                  <span className="text-[10px] font-mono text-zinc-500 animate-pulse">LOADING PREVIEW...</span>
-                </div>
-              </div>
-            )}
-
-            <div className={`w-full h-full overflow-hidden transition-all duration-700 bg-zinc-900 ${isHovered ? 'blur-[2px] opacity-90' : 'blur-0 opacity-100'}`}>
-              <iframe
-                src={project.url}
-                title={project.title}
-                className="absolute top-8 left-0 w-[200%] h-[200%] border-0 origin-top-left pointer-events-none select-none bg-white"
-                style={{ transform: 'scale(0.5)' }}
-                onLoad={() => setIsLoading(false)}
-                scrolling="no"
-                tabIndex={-1}
-                loading="lazy"
-              />
-            </div>
-          </>
-        )}
-
-        <div className={`absolute inset-0 bg-black/60 z-40 flex items-center justify-center backdrop-blur-sm transition-all duration-500 ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
-          <div className="w-24 h-24 rounded-full border border-neon-acid/50 bg-black flex items-center justify-center transform scale-0 group-hover:scale-100 transition-transform duration-500 hover:bg-neon-acid hover:text-black text-white">
-            <ArrowUpRight className="w-8 h-8 transition-colors" />
-          </div>
+        {/* Hover Action - READ CASE only */}
+        <div className={`absolute inset-0 z-40 flex items-center justify-center transition-all duration-500 ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
+          <button
+            className="group/btn relative px-8 py-4 bg-neon-acid text-black font-bold font-mono text-xs uppercase tracking-widest flex items-center gap-3 overflow-hidden transition-transform duration-300 hover:scale-105"
+          >
+            <span className="relative z-10">{t.portfolio.readCase}</span>
+            <ArrowRight size={16} className="relative z-10 group-hover/btn:translate-x-1 transition-transform" />
+            <div className="absolute inset-0 bg-white opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300 mix-blend-overlay"></div>
+          </button>
         </div>
-      </a>
+      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-t border-white/10 pt-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-t border-white/20 pt-6">
         <div>
           <h3 className="text-3xl font-serif text-white group-hover:text-neon-acid transition-colors duration-500 leading-none mb-2">
             {project.title}
           </h3>
-          <p className="text-zinc-500 font-mono text-xs uppercase tracking-widest">{project.category}</p>
+          <p className="text-zinc-400 font-mono text-xs uppercase tracking-widest">{project.category}</p>
         </div>
         <div className="space-y-2 text-sm">
           <div className="flex gap-2">
-            <span className="text-zinc-500 font-mono uppercase">{t.portfolio.task}:</span>
+            <span className="text-zinc-400 font-mono uppercase">{t.portfolio.task}:</span>
             <span className="text-zinc-300">{project.task}</span>
           </div>
           <div className="flex gap-2">
@@ -348,13 +310,13 @@ export const PortfolioCard: React.FC<{ project: ProjectData, index: number, t: a
 
       {/* Stats Section for GEO - specific metrics for AI citation */}
       {project.stats && project.stats.length > 0 && (
-        <div className="mt-4 pt-4 border-t border-white/5">
+        <div className="mt-4 pt-4 border-t border-white/10">
           <div className="flex flex-wrap gap-4">
             {project.stats.map((stat, idx) => (
-              <div key={idx} className="bg-zinc-900/50 px-4 py-3 border border-white/5">
+              <div key={idx} className="bg-zinc-900/60 px-4 py-3 border border-white/20 shadow-[0_0_15px_rgba(255,255,255,0.01)]">
                 <div className="text-neon-acid font-bold font-mono text-lg">{stat.value}</div>
-                <div className="text-zinc-500 text-xs uppercase tracking-wide">{stat.label}</div>
-                {stat.period && <div className="text-zinc-600 text-[10px]">{stat.period}</div>}
+                <div className="text-zinc-300 text-xs uppercase tracking-wide">{stat.label}</div>
+                {stat.period && <div className="text-zinc-400 text-[10px]">{stat.period}</div>}
               </div>
             ))}
           </div>

@@ -14,7 +14,8 @@ body {
   background-color: #000000;
   color: white;
   overflow-x: hidden;
-  overflow-y: auto; /* Ensure native scroll is active */
+  overflow-y: auto;
+  /* Ensure native scroll is active */
   cursor: none;
   margin: 0;
   width: 100%;
@@ -80,6 +81,7 @@ body {
   0% {
     background-position: -200% 0;
   }
+
   100% {
     background-position: 200% 0;
   }
@@ -87,11 +89,9 @@ body {
 
 .animate-shimmer {
   animation: shimmer 1.5s ease-in-out infinite;
-  background: linear-gradient(
-    90deg,
-    #27272a 0%,
-    #3f3f46 50%,
-    #27272a 100%
-  );
+  background: linear-gradient(90deg,
+      #27272a 0%,
+      #3f3f46 50%,
+      #27272a 100%);
   background-size: 200% 100%;
 }

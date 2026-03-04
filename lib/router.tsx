@@ -106,5 +106,10 @@ export const useParams = () => {
     return { slug: segments[1] };
   }
 
+  // /work/[slug]
+  if (segments[0] === 'work' && segments[1]) {
+    return { slug: segments[1] };
+  }
+
   return {};
 };

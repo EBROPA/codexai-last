@@ -55,14 +55,14 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
   };
 
   return (
-    <div 
-      ref={imgRef} 
+    <div
+      ref={imgRef}
       className={`relative overflow-hidden ${className}`}
       style={{ width, height }}
     >
       {/* Placeholder */}
       {placeholder === 'blur' && !isLoaded && (
-        <div 
+        <div
           className="absolute inset-0 bg-zinc-800 animate-pulse"
           style={{
             backgroundImage: blurDataURL ? `url(${blurDataURL})` : undefined,
@@ -85,9 +85,8 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
           decoding="async"
           onLoad={handleLoad}
           onError={handleError}
-          className={`transition-opacity duration-500 ${
-            isLoaded ? 'opacity-100' : 'opacity-0'
-          } w-full h-full object-cover`}
+          className={`transition-opacity duration-500 ${isLoaded ? 'opacity-100' : 'opacity-0'
+            } w-full h-full object-cover`}
         />
       )}
 
