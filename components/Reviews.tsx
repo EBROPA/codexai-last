@@ -24,19 +24,19 @@ export const Reviews: React.FC = () => {
 
             <div className="grid md:grid-cols-3 gap-8">
                {t.reviews.items.map((review, idx) => (
-                  <div key={idx} className="bg-zinc-900/40 backdrop-blur-sm border border-white/20 p-10 hover:border-neon-acid/50 transition-all duration-300 group hover:-translate-y-1 shadow-[0_0_20px_rgba(255,255,255,0.02)]">
+                  <div key={idx} className="bg-zinc-950 border border-white/10 p-10 hover:border-white/30 transition-all duration-300 group hover:-translate-y-1 shadow-sm">
                      <div className="flex flex-col gap-1 mb-8">
                         <div className="font-serif font-bold text-2xl text-white">{review.client}</div>
-                        <div className="text-[10px] font-mono text-zinc-300 uppercase tracking-wide opacity-80">{review.role}</div>
+                        <div className="text-[10px] font-mono text-zinc-400 uppercase tracking-wide">{review.role}</div>
                      </div>
 
-                     <p className="text-base text-zinc-300 mb-8 leading-relaxed font-sans group-hover:text-white transition-colors">
+                     <p className="text-base text-zinc-300 mb-8 leading-relaxed font-sans">
                         "{review.text}"
                      </p>
 
                      <div className="border-t border-white/10 pt-4 flex items-center gap-2">
                         <span className="text-neon-acid font-mono text-xs uppercase font-bold">{t.portfolio.result}:</span>
-                        <span className="text-white font-bold text-sm tracking-tight">{review.result}</span>
+                        <span className="text-white font-bold text-sm">{review.result}</span>
                      </div>
                   </div>
                ))}

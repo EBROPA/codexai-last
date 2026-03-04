@@ -53,8 +53,7 @@ export const content = {
       selectedWorks: 'SELECTED WORKS',
       btnAll: 'Смотреть все кейсы',
       task: 'Задача',
-      result: 'Результат',
-      readCase: 'Читать кейс'
+      result: 'Результат'
     },
     services: {
       title: 'Наши',
@@ -553,8 +552,7 @@ export const content = {
       selectedWorks: 'SELECTED WORKS',
       btnAll: 'View All Cases',
       task: 'Task',
-      result: 'Result',
-      readCase: 'Read Case'
+      result: 'Result'
     },
     services: {
       title: 'Our',

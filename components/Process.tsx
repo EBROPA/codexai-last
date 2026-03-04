@@ -8,7 +8,7 @@ export const Process: React.FC = () => {
   const { t } = useLanguage();
 
   return (
-    <section className="py-20 md:py-32 border-t border-white/20 bg-black relative overflow-hidden">
+    <section className="py-20 md:py-32 border-t border-white/10 bg-black relative overflow-hidden">
       <div className="px-4 md:px-12 max-w-[90rem] mx-auto flex flex-col">
 
         <div className="flex flex-col md:flex-row justify-between items-end mb-12 md:mb-16">
@@ -17,11 +17,11 @@ export const Process: React.FC = () => {
               {t.process.subtitle}
             </div>
             <h2 className="text-5xl md:text-8xl font-serif font-bold text-white uppercase tracking-tighter leading-none">
-              {t.process.title} <br /><span className="text-transparent bg-clip-text bg-gradient-to-r from-zinc-400 to-white">{t.process.titleHighlight}</span>
+              {t.process.title} <br /><span className="text-transparent bg-clip-text bg-gradient-to-r from-zinc-500 to-white">{t.process.titleHighlight}</span>
             </h2>
           </div>
           <div className="hidden md:block text-right max-w-xs">
-            <p className="text-zinc-300 text-sm font-mono leading-relaxed">
+            <p className="text-zinc-400 text-sm font-mono leading-relaxed">
               {t.process.desc}
             </p>
           </div>
@@ -40,27 +40,27 @@ export const Process: React.FC = () => {
                   if (window.innerWidth >= 768) setActiveStep(idx);
                 }}
                 className={`
-                  relative overflow-hidden transition-all duration-500 ease-out cursor-pointer group border border-white/20
+                  relative overflow-hidden transition-all duration-500 ease-out cursor-pointer group border border-white/10
                   
                   /* Mobile Styles (Accordion) */
                   w-full
-                  ${isActive ? 'h-auto bg-zinc-900/60 backdrop-blur-sm border-neon-acid/40 shadow-[0_0_20px_rgba(255,255,255,0.02)]' : 'h-[72px] bg-black hover:bg-zinc-900/30'}
+                  ${isActive ? 'h-auto bg-zinc-900 border-neon-acid/30' : 'h-[72px] bg-black hover:bg-zinc-900/50'}
 
                   /* Desktop Styles (Flex Expansion) */
                   md:h-auto md:flex md:flex-col
-                  ${isActive ? 'md:flex-[3] md:bg-zinc-900/60' : 'md:flex-[1] md:bg-black'}
+                  ${isActive ? 'md:flex-[3] md:bg-zinc-900' : 'md:flex-[1] md:bg-black'}
                 `}
               >
 
                 {/* --- MOBILE HEADER (Visible always) --- */}
                 <div className="md:hidden flex items-center justify-between px-6 h-[72px] absolute top-0 left-0 w-full z-20">
                   <div className="flex items-center gap-4">
-                    <span className={`font-mono text-lg ${isActive ? 'text-neon-acid' : 'text-zinc-500'}`}>{step.num}</span>
-                    <span className={`font-serif text-lg font-bold uppercase ${isActive ? 'text-white' : 'text-zinc-300'}`}>{step.title}</span>
+                    <span className={`font-mono text-lg ${isActive ? 'text-neon-acid' : 'text-zinc-600'}`}>{step.num}</span>
+                    <span className={`font-serif text-lg font-bold uppercase ${isActive ? 'text-white' : 'text-zinc-400'}`}>{step.title}</span>
                   </div>
                   <ChevronDown
                     size={20}
-                    className={`transition-transform duration-300 ${isActive ? 'rotate-180 text-neon-acid' : 'text-zinc-500'}`}
+                    className={`transition-transform duration-300 ${isActive ? 'rotate-180 text-neon-acid' : 'text-zinc-600'}`}
                   />
                 </div>
 
@@ -79,7 +79,7 @@ export const Process: React.FC = () => {
                   hidden md:flex absolute inset-0 items-center justify-center transition-opacity duration-300
                   ${isActive ? 'opacity-0 pointer-events-none' : 'opacity-100'}
                 `}>
-                  <div className="rotate-90 whitespace-nowrap text-xl font-serif font-bold text-zinc-400 uppercase tracking-widest group-hover:text-white transition-colors">
+                  <div className="rotate-90 whitespace-nowrap text-xl font-serif font-bold text-zinc-500 uppercase tracking-widest group-hover:text-white transition-colors">
                     {step.title}
                   </div>
                 </div>
@@ -116,7 +116,7 @@ export const Process: React.FC = () => {
                       {step.subtitle}
                     </div>
                     <div className={`hidden md:block w-12 h-[1px] bg-white/20 mb-6 transition-all duration-700 ${isActive ? 'w-24 bg-neon-acid' : 'w-12'}`}></div>
-                    <p className="text-zinc-300 text-sm md:text-base leading-relaxed max-w-md">
+                    <p className="text-zinc-400 text-sm md:text-base leading-relaxed max-w-md">
                       {step.desc}
                     </p>
                   </div>

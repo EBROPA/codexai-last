@@ -67,7 +67,7 @@ export const Services: React.FC = () => {
   ];
 
   return (
-    <section className="py-32 bg-black border-t border-white/20 relative overflow-hidden">
+    <section className="py-32 bg-black border-t border-white/10 relative overflow-hidden">
 
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff03_1px,transparent_1px),linear-gradient(to_bottom,#ffffff03_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none"></div>
 
@@ -81,7 +81,7 @@ export const Services: React.FC = () => {
               {t.services.title} <span className="text-neon-acid">{t.services.titleHighlight}</span>
             </h2>
           </div>
-          <p className="text-zinc-400 font-mono text-sm uppercase tracking-widest max-w-md text-right">
+          <p className="text-zinc-500 font-mono text-sm uppercase tracking-widest max-w-md text-right">
             {t.services.desc}
           </p>
         </div>
@@ -95,13 +95,13 @@ export const Services: React.FC = () => {
                 onMouseEnter={() => setHoveredId(service.id)}
                 onMouseLeave={() => setHoveredId(null)}
                 className={`
-                  relative flex flex-col justify-between p-8 md:p-12 border border-white/20 bg-zinc-900/40 backdrop-blur-sm
+                  relative flex flex-col justify-between p-8 md:p-12 border border-white/10 bg-zinc-950/50 
                   transition-all duration-500 group text-left cursor-pointer
-                  hover:bg-zinc-900/60 hover:border-neon-acid/50 shadow-[0_0_20px_rgba(255,255,255,0.02)]
+                  hover:bg-zinc-900 hover:border-white/30
                 `}
               >
                 <div className="flex items-start justify-between w-full mb-8 lg:mb-0 lg:w-auto lg:gap-8">
-                  <div className="p-3 border border-white/20 rounded-full bg-black group-hover:border-neon-acid transition-colors">
+                  <div className="p-3 border border-white/10 rounded-full bg-black group-hover:border-neon-acid transition-colors">
                     {service.icon}
                   </div>
                 </div>
@@ -111,13 +111,13 @@ export const Services: React.FC = () => {
                     <h3 className="text-3xl font-serif font-bold text-white mb-2 group-hover:text-neon-acid transition-colors">
                       {service.title}
                     </h3>
-                    <p className="text-zinc-300 font-mono text-xs uppercase tracking-widest leading-relaxed">
+                    <p className="text-zinc-400 font-mono text-xs uppercase tracking-widest">
                       {service.desc}
                     </p>
                   </div>
 
                   <div className="mt-8">
-                    <div className="flex items-center gap-2 text-sm text-zinc-300 font-mono group-hover:text-white transition-colors group-hover:translate-x-2 duration-300">
+                    <div className="flex items-center gap-2 text-sm text-zinc-400 font-mono group-hover:text-white transition-colors group-hover:translate-x-2 duration-300">
                       <span className="uppercase tracking-widest">{t.services.details}</span>
                       <ArrowRight size={14} />
                     </div>

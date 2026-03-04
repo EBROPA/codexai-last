@@ -7,7 +7,6 @@ import { useLanguage } from './lib/i18n';
 
 // Lazy load heavy components for better code splitting
 const WorkPage = lazy(() => import('./components/WorkPage').then(m => ({ default: m.WorkPage })));
-const CasePage = lazy(() => import('./components/CasePage').then(m => ({ default: m.CasePage })));
 const ServicesPage = lazy(() => import('./components/ServicesPage').then(m => ({ default: m.ServicesPage })));
 const Contact = lazy(() => import('./components/Contact').then(m => ({ default: m.Contact })));
 const Marquee = lazy(() => import('./components/Marquee').then(m => ({ default: m.Marquee })));
@@ -216,15 +215,6 @@ const AppContent: React.FC = () => {
           <Contact />
         </>
       );
-    }
-
-    if (path.startsWith('/work/') && path !== '/work') {
-      return (
-        <>
-          <CasePage />
-          <Contact />
-        </>
-      )
     }
 
     // Services (Dynamic)

@@ -34,15 +34,15 @@ export const WhyUs: React.FC = () => {
           {t.whyUs.items.map((item, idx) => (
             <div
               key={idx}
-              className="group p-8 md:p-12 border border-white/20 bg-zinc-900/40 backdrop-blur-sm transition-all duration-300 hover:-translate-y-2 hover:border-neon-acid/50 shadow-[0_0_20px_rgba(255,255,255,0.02)]"
+              className="group p-8 md:p-12 border border-white/10 bg-zinc-950/50 hover:bg-zinc-900 transition-all duration-300 hover:-translate-y-2 hover:border-neon-acid/50"
             >
-              <div className="mb-6 text-zinc-400 group-hover:text-neon-acid transition-colors duration-300">
+              <div className="mb-6 text-zinc-500 group-hover:text-neon-acid transition-colors duration-300">
                 {ICONS[idx]}
               </div>
               <h3 className="text-2xl font-serif font-bold text-white mb-4 group-hover:translate-x-1 transition-transform">
                 {item.title}
               </h3>
-              <p className="text-zinc-300 text-sm leading-relaxed font-sans group-hover:text-white transition-colors">
+              <p className="text-zinc-400 text-sm leading-relaxed font-sans group-hover:text-zinc-300 transition-colors">
                 {item.desc}
               </p>
             </div>

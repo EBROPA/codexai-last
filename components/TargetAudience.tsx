@@ -27,16 +27,16 @@ export const TargetAudience: React.FC = () => {
 
         <div className="grid md:grid-cols-3 gap-8">
           {t.targetAudience.items.map((item, idx) => (
-            <div key={idx} className="bg-zinc-900/40 backdrop-blur-sm border border-white/20 p-8 md:p-12 hover:border-neon-acid/50 transition-all duration-300 group shadow-[0_0_20px_rgba(255,255,255,0.02)]">
-              <div className="mb-8 text-zinc-400 group-hover:text-neon-acid transition-colors">
+            <div key={idx} className="bg-void border border-white/10 p-8 md:p-12 hover:border-neon-acid/50 transition-colors group">
+              <div className="mb-8 text-zinc-500 group-hover:text-neon-acid transition-colors">
                 {ICONS[idx]}
               </div>
               <h3 className="text-2xl font-serif font-bold text-white mb-4">{item.title}</h3>
-              <p className="text-zinc-300 mb-8 font-sans leading-relaxed">{item.desc}</p>
+              <p className="text-zinc-400 mb-8 font-sans leading-relaxed">{item.desc}</p>
               <ul className="space-y-3">
                 {item.points.map((point, i) => (
-                  <li key={i} className="flex items-center gap-3 text-sm font-mono text-zinc-300 uppercase tracking-wide">
-                    <div className="w-1.5 h-1.5 bg-neon-acid rounded-full shadow-[0_0_8px_rgba(204,255,0,0.4)]"></div>
+                  <li key={i} className="flex items-center gap-3 text-sm font-mono text-zinc-400 uppercase tracking-wide">
+                    <div className="w-1.5 h-1.5 bg-neon-acid rounded-full"></div>
                     {point}
                   </li>
                 ))}
